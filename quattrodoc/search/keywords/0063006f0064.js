@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("cod",["Variable"],[["code",,[["Localization::LocaleIdentifier",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:Localization.LocaleIdentifier.code","CClass:Localization.LocaleIdentifier:code"]]]]);

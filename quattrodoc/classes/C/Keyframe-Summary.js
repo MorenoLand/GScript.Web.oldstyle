@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("CClass:Keyframe","Keyframe");NDSummary.OnSummaryLoaded("CClass:Keyframe",[["C/C++","C"]],[["Classes","Class"],["Functions","Function"],["Groups","Group"]],[[25236,0,0,"Keyframe"],[7908,0,2,"Functions","Functions"],[7909,0,1,"<span class=\"Qualifier\">keyframe::</span>&#8203;create","keyframe.create"]]);

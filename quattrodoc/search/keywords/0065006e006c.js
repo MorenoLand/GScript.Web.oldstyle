@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("enl",["Variable"],[["enlightenvertexstream",,[["MeshRenderer",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:MeshRenderer.enlightenvertexstream","CClass:MeshRenderer:enlightenvertexstream"]]]]);

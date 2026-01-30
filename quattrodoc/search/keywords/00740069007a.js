@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("tiz",["Variable"],[["tizenplayer",,[["RuntimePlatform::runtimeplatform",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:RuntimePlatform.runtimeplatform.tizenplayer","CClass:RuntimePlatform:runtimeplatform.tizenplayer"]]]]);

@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("inn",["Variable"],[["innerspotangle",,[["Light",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:Light.innerspotangle","CClass:Light:innerspotangle"]]]]);

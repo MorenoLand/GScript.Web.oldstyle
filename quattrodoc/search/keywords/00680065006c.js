@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("hel",["Variable"],[["help",,[["KeyCode::keycode",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:KeyCode.keycode.help","CClass:KeyCode:keycode.help"]]]]);

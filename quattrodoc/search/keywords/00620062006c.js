@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("bbl",["Function"],[["bblankanonaccount",,[["Steamworks::CSteamID",,,,0,"File:scriptfunctions_client_Steamworks_doc.cpp:Steamworks.CSteamID.bblankanonaccount","CClass:Steamworks.CSteamID:bblankanonaccount"]]]]);

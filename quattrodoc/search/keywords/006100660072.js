@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("afr",["Variable"],[["afrikaans",,[["SystemLanguage::systemlanguage",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:SystemLanguage.systemlanguage.afrikaans","CClass:SystemLanguage:systemlanguage.afrikaans"]]]]);

@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("xra",["Variable"],[["xractiveeye",,[["Rendering_PostProcessing::PostProcessRenderContext",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:Rendering_PostProcessing.PostProcessRenderContext.xractiveeye","CClass:Rendering_PostProcessing.PostProcessRenderContext:xractiveeye"]]]]);

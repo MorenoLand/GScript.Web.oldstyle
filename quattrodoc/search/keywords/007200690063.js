@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("ric",["Variable"],[["richtext",,[["TextGenerationSettings",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:TextGenerationSettings.richtext","CClass:TextGenerationSettings:richtext"],["TextMesh",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:TextMesh.richtext","CClass:TextMesh:richtext"]]]]);

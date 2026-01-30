@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("fft",["Class","Variable"],[["FFTWindow",,[[,,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:FFTWindow","CClass:FFTWindow"],["type","fftwindow",,,1,"File:scriptfunctions_client_Type_doc.cpp:type.fftwindow"],["Type::type","fftwindow",,,1,"File:scriptfunctions_client_unityScripting_doc.cpp:Type.type.fftwindow","CClass:Type:type.fftwindow"]]]]);

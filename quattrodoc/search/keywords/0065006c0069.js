@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("eli",["Variable"],[["eligibleforclick",,[["EventSystems::PointerEventData",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:EventSystems.PointerEventData.eligibleforclick","CClass:EventSystems.PointerEventData:eligibleforclick"]]]]);

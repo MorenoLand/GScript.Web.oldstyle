@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("ice",["Variable"],[["icelandic",,[["SystemLanguage::systemlanguage",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:SystemLanguage.systemlanguage.icelandic","CClass:SystemLanguage:systemlanguage.icelandic"]]]]);

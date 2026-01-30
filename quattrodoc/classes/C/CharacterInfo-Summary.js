@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("CClass:CharacterInfo","CharacterInfo");NDSummary.OnSummaryLoaded("CClass:CharacterInfo",[["C/C++","C"]],[["Classes","Class"],["Functions","Function"],["Groups","Group"]],[[22704,0,0,"CharacterInfo"],[6100,0,2,"Functions","Functions"],[6101,0,1,"<span class=\"Qualifier\">characterinfo::</span>&#8203;create","characterinfo.create"]]);

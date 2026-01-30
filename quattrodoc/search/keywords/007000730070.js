@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("psp",["Variable"],[["psp2",,[["RuntimePlatform::runtimeplatform",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:RuntimePlatform.runtimeplatform.psp2","CClass:RuntimePlatform:runtimeplatform.psp2"]]]]);

@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("CClass:TServerPlayer","TServerPlayer");NDSummary.OnSummaryLoaded("CClass:TServerPlayer",[["C/C++","C"]],[["Classes","Class"],["Groups","Group"],["Variables","Variable"]],[[2666,0,0,"TServerPlayer"],[2667,0,1,"Variables","Variables"],[2668,0,2,"gameobject","gameobject"]]);

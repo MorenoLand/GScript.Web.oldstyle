@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("tap",["Variable"],[["tapcount",,[["Touch",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:Touch.tapcount","CClass:Touch:tapcount"]]]]);

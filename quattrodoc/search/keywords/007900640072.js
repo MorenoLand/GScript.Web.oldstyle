@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("ydr",["Variable"],[["ydrive",,[["ArticulationBody",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:ArticulationBody.ydrive","CClass:ArticulationBody:ydrive"]]]]);

@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("CClass:UICharInfo","UICharInfo");NDSummary.OnSummaryLoaded("CClass:UICharInfo",[["C/C++","C"]],[["Classes","Class"],["Functions","Function"],["Groups","Group"]],[[35230,0,0,"UICharInfo"],[16591,0,2,"Functions","Functions"],[16592,0,1,"<span class=\"Qualifier\">uicharinfo::</span>&#8203;create","uicharinfo.create"]]);

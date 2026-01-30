@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("zfa",["Variable"],[["zfar",,[["FrustumPlanes",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:FrustumPlanes.zfar","CClass:FrustumPlanes:zfar"]]]]);

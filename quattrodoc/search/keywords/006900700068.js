@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("iph",["Variable"],[["iphoneplayer",,[["RuntimePlatform::runtimeplatform",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:RuntimePlatform.runtimeplatform.iphoneplayer","CClass:RuntimePlatform:runtimeplatform.iphoneplayer"]]]]);

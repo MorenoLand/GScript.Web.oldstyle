@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("ape",["Variable"],[["aperture",,[["Rendering_PostProcessing::DepthOfField",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:Rendering_PostProcessing.DepthOfField.aperture","CClass:Rendering_PostProcessing.DepthOfField:aperture"]]]]);

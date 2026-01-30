@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("pag",["Variable"],[["pagedown",,[["KeyCode::keycode",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:KeyCode.keycode.pagedown","CClass:KeyCode:keycode.pagedown"]]],["pageup",,[["KeyCode::keycode",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:KeyCode.keycode.pageup","CClass:KeyCode:keycode.pageup"]]]]);

@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("cpu",["Variable"],[["cpusynchronisation",,[["Rendering::GraphicsFenceType::rendering::graphicsfencetype",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:Rendering.GraphicsFenceType.rendering.graphicsfencetype.cpusynchronisation","CClass:Rendering.GraphicsFenceType:rendering.graphicsfencetype.cpusynchronisation"]]]]);

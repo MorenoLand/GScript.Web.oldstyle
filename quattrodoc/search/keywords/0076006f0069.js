@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("voi",["Variable"],[["void",,[["type",,,,0,"File:scriptfunctions_client_Type_doc.cpp:type.void"],["Type::type",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:Type.type.void","CClass:Type:type.void"]]]]);

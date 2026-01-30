@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("uii",["Variable"],[["uiintvaluechanged",,[["HutongGames_PlayMaker::FsmEvent::hutonggames_playmaker::fsmevent",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:HutongGames_PlayMaker.FsmEvent.hutonggames_playmaker.fsmevent.uiintvaluechanged","CClass:HutongGames_PlayMaker.FsmEvent:hutonggames_playmaker.fsmevent.uiintvaluechanged"]]]]);

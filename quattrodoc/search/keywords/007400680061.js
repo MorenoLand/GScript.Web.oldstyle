@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("tha",["Variable"],[["thai",,[["SystemLanguage::systemlanguage",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:SystemLanguage.systemlanguage.thai","CClass:SystemLanguage:systemlanguage.thai"]]]]);

@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("fps",["Variable"],[["fps",,[["ParticleSystemAnimationTimeMode::particlesystemanimationtimemode",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:ParticleSystemAnimationTimeMode.particlesystemanimationtimemode.fps","CClass:ParticleSystemAnimationTimeMode:particlesystemanimationtimemode.fps"]]]]);

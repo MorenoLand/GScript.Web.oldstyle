@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("CClass:RectInt","RectInt");NDSummary.OnSummaryLoaded("CClass:RectInt",[["C/C++","C"]],[["Classes","Class"],["Functions","Function"],["Groups","Group"]],[[29823,0,0,"RectInt"],[12867,0,2,"Functions","Functions"],[12868,0,1,"<span class=\"Qualifier\">rectint::</span>&#8203;create","rectint.create"]]);

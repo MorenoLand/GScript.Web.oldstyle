@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("bor",["Variable"],[["border",,[["Sprite",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:Sprite.border","CClass:Sprite:border"]]]]);

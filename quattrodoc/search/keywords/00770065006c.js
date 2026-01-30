@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("wel",["Variable"],[["weldcolocatedvertices",,[["MeshColliderCookingOptions::meshcollidercookingoptions",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:MeshColliderCookingOptions.meshcollidercookingoptions.weldcolocatedvertices","CClass:MeshColliderCookingOptions:meshcollidercookingoptions.weldcolocatedvertices"]]]]);

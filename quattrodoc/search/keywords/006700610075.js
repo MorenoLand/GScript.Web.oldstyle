@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("gau",["Variable"],[["gaussiandownsample",,[["Rendering_PostProcessing_PostProcessResources::ComputeShaders",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:Rendering_PostProcessing_PostProcessResources.ComputeShaders.gaussiandownsample","CClass:Rendering_PostProcessing_PostProcessResources.ComputeShaders:gaussiandownsample"]]]]);

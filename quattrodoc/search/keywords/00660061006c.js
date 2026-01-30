@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("fal",["Variable"],[["falloffintensity",,[["Rendering_Universal::Light2D",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:Rendering_Universal.Light2D.falloffintensity","CClass:Rendering_Universal.Light2D:falloffintensity"]]]]);

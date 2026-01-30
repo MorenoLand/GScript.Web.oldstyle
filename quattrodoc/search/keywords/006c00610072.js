@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("lar",["Variable"],[["large",,[["Rendering_PostProcessing::KernelSize::rendering_postprocessing::kernelsize",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:Rendering_PostProcessing.KernelSize.rendering_postprocessing.kernelsize.large","CClass:Rendering_PostProcessing.KernelSize:rendering_postprocessing.kernelsize.large"]]]]);

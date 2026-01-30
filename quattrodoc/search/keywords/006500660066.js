@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("eff",["Variable"],[["effectiveoffset",,[["Cinemachine::CinemachineTransposer",,,,0,"File:scriptfunctions_client_Cinemachine_doc.cpp:Cinemachine.CinemachineTransposer.effectiveoffset","CClass:Cinemachine.CinemachineTransposer:effectiveoffset"]]]]);

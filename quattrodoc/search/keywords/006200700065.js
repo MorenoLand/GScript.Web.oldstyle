@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("bpe",["Function"],[["bpersistentgameserveraccount",,[["Steamworks::CSteamID",,,,0,"File:scriptfunctions_client_Steamworks_doc.cpp:Steamworks.CSteamID.bpersistentgameserveraccount","CClass:Steamworks.CSteamID:bpersistentgameserveraccount"]]]]);

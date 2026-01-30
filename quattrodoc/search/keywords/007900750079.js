@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("yuy",["Variable"],[["yuy2",,[["TextureFormat::textureformat",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:TextureFormat.textureformat.yuy2","CClass:TextureFormat:textureformat.yuy2"]]]]);

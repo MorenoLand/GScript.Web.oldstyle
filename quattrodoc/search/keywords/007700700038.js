@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("wp8",["Variable"],[["wp8player",,[["RuntimePlatform::runtimeplatform",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:RuntimePlatform.runtimeplatform.wp8player","CClass:RuntimePlatform:runtimeplatform.wp8player"]]]]);

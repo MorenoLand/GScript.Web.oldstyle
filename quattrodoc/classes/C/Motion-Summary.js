@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("CClass:Motion","Motion");NDSummary.OnSummaryLoaded("CClass:Motion",[["C/C++","C"]],[["Classes","Class"],["Functions","Function"],["Groups","Group"]],[[27908,0,0,"Motion"],[11044,0,2,"Functions","Functions"],[11045,0,1,"<span class=\"Qualifier\">motion::</span>&#8203;fromassetbundle","motion.fromassetbundle"]]);

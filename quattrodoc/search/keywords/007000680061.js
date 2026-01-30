@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("pha",["Variable"],[["phase",,[["Touch",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:Touch.phase","CClass:Touch:phase"]]]]);

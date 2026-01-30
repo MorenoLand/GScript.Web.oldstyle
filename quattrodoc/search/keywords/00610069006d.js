@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("aim",["Variable"],[["aim",,[["Cinemachine_CinemachineCore::Stage::cinemachine_cinemachinecore::stage",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:Cinemachine_CinemachineCore.Stage.cinemachine_cinemachinecore.stage.aim","CClass:Cinemachine_CinemachineCore.Stage:cinemachine_cinemachinecore.stage.aim"]]]]);

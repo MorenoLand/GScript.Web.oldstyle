@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("pho",["Variable"],[["phonepad",,[["TouchScreenKeyboardType::touchscreenkeyboardtype",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:TouchScreenKeyboardType.touchscreenkeyboardtype.phonepad","CClass:TouchScreenKeyboardType:touchscreenkeyboardtype.phonepad"]]]]);

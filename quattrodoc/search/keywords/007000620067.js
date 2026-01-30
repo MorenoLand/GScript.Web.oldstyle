@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("pbg",["Variable"],[["pbgra",,[["Steamworks::HTML_NeedsPaint_t",,,,0,"File:scriptfunctions_client_Steamworks_doc.cpp:Steamworks.HTML_NeedsPaint_t.pbgra","CClass:Steamworks.HTML_NeedsPaint_t:pbgra"]]]]);

@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("yea",["Variable"],[["year",,[["System::DateTime",,,,0,"File:scriptfunctions_client_System_doc.cpp:System.DateTime.year","CClass:System.DateTime:year"]]]]);

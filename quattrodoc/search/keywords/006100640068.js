@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("adh",["Variable"],[["adhoc",,[["ApplicationInstallMode::applicationinstallmode",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:ApplicationInstallMode.applicationinstallmode.adhoc","CClass:ApplicationInstallMode:applicationinstallmode.adhoc"]]]]);

@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("vru",["Variable"],[["vrusage",,[["RenderTexture",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:RenderTexture.vrusage","CClass:RenderTexture:vrusage"],["RenderTextureDescriptor",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:RenderTextureDescriptor.vrusage","CClass:RenderTextureDescriptor:vrusage"]]]]);

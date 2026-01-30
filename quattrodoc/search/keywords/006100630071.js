@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("acq",["Function"],[["acquirereadonlymeshdata",,[["Mesh::mesh",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:Mesh.mesh.acquirereadonlymeshdata","CClass:Mesh:mesh.acquirereadonlymeshdata"]]]]);

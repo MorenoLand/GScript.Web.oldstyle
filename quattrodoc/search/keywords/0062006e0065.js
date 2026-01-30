@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("bne",["Variable"],[["bnewnavigation",,[["Steamworks::HTML_URLChanged_t",,,,0,"File:scriptfunctions_client_Steamworks_doc.cpp:Steamworks.HTML_URLChanged_t.bnewnavigation","CClass:Steamworks.HTML_URLChanged_t:bnewnavigation"]]]]);

@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("uv",["Variable"],[["uv",,[["Sprite",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:Sprite.uv","CClass:Sprite:uv"]]]]);

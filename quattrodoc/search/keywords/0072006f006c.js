@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("rol",["Variable"],[["rolloffmode",,[["AudioSource",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:AudioSource.rolloffmode","CClass:AudioSource:rolloffmode"]]]]);

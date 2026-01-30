@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("aff",["Variable"],[["affectedlayers",,[["TestNameSpace::Decal",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:TestNameSpace.Decal.affectedlayers","CClass:TestNameSpace.Decal:affectedlayers"]]]]);

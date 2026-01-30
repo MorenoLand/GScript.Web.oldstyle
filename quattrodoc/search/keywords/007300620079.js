@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("sby",["Variable"],[["sbyte",,[["type",,,,0,"File:scriptfunctions_client_Type_doc.cpp:type.sbyte"],["Type::type",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:Type.type.sbyte","CClass:Type:type.sbyte"]]]]);

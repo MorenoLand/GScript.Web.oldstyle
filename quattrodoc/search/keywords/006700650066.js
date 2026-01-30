@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("gef",["Variable"],[["gefsmstates",,[["Quattro::PlayMakerFSMProxyComponent",,,,0,"File:scriptfunctions_client_Quattro_doc.cpp:Quattro.PlayMakerFSMProxyComponent.gefsmstates","CClass:Quattro.PlayMakerFSMProxyComponent:gefsmstates"]]]]);

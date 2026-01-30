@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("dpi",["Variable"],[["dpi",,[["Screen::screen",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:Screen.screen.dpi","CClass:Screen:screen.dpi"]]]]);

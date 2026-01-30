@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("CClass:BoneWeight","BoneWeight");NDSummary.OnSummaryLoaded("CClass:BoneWeight",[["C/C++","C"]],[["Classes","Class"],["Functions","Function"],["Groups","Group"]],[[22560,0,0,"BoneWeight"],[5929,0,2,"Functions","Functions"],[5930,0,1,"<span class=\"Qualifier\">boneweight::</span>&#8203;create","boneweight.create"]]);

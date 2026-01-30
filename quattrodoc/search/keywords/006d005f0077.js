@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("m_w",["Variable"],[["m_worldupoverride",,[["Cinemachine::CinemachineBrain",,,,0,"File:scriptfunctions_client_Cinemachine_doc.cpp:Cinemachine.CinemachineBrain.m_worldupoverride","CClass:Cinemachine.CinemachineBrain:m_worldupoverride"]]]]);

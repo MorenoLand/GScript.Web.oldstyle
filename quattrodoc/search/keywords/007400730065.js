@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("tse",["Class"],[["TServerPlayer",,[[,,,,0,"File:scriptfunctions_client_misceallenous.cpp:TServerPlayer","CClass:TServerPlayer"]]]]);

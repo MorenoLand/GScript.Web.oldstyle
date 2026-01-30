@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("vca",["Variable"],[["vcamstate",,[["Cinemachine::CinemachineComponentBase",,,,0,"File:scriptfunctions_client_Cinemachine_doc.cpp:Cinemachine.CinemachineComponentBase.vcamstate","CClass:Cinemachine.CinemachineComponentBase:vcamstate"]]]]);

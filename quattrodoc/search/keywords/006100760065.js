@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("ave",["Variable"],[["average",,[["PhysicMaterialCombine::physicmaterialcombine",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:PhysicMaterialCombine.physicmaterialcombine.average","CClass:PhysicMaterialCombine:physicmaterialcombine.average"]]]]);

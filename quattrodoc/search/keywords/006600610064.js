@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("fad",["Variable"],[["fade",,[["UI_Toggle::ToggleTransition::ui_toggle::toggletransition",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:UI_Toggle.ToggleTransition.ui_toggle.toggletransition.fade","CClass:UI_Toggle.ToggleTransition:ui_toggle.toggletransition.fade"]]]]);

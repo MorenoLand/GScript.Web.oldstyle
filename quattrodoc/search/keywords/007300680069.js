@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("shi",["Variable"],[["shift",,[["Event",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:Event.shift","CClass:Event:shift"],["EventModifiers::eventmodifiers",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:EventModifiers.eventmodifiers.shift","CClass:EventModifiers:eventmodifiers.shift"]]]]);

@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("upa",["Variable"],[["uparrow",,[["KeyCode::keycode",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:KeyCode.keycode.uparrow","CClass:KeyCode:keycode.uparrow"]]]]);

@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("gc",["Class","Variable"],[["gc",,[["System","GC",,,0,"File:scriptfunctions_client_System_doc.cpp:System.GC","CClass:System.GC"],["type::system",,,,1,"File:scriptfunctions_client_Type_doc.cpp:type.system.gc"],["Type::type::system",,,,1,"File:scriptfunctions_client_unityScripting_doc.cpp:Type.type.system.gc","CClass:Type:type.system.gc"]]]]);

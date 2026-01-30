@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("goo",["Function"],[["googleinappreview",,[["quattro::android",,,,0,"File:scriptfunctions_client_Quattro_doc.cpp:quattro.android.googleinappreview"]]]]);

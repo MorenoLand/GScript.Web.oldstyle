@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("xmi",["Variable"],[["xmin",,[["Rect",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:Rect.xmin","CClass:Rect:xmin"]]]]);

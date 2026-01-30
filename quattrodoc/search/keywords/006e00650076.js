@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("nev",["Variable"],[["neversleep",,[["RigidbodySleepMode2D::rigidbodysleepmode2d",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:RigidbodySleepMode2D.rigidbodysleepmode2d.neversleep","CClass:RigidbodySleepMode2D:rigidbodysleepmode2d.neversleep"]]]]);

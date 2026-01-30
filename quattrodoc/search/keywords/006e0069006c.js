@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("nil",["Variable"],[["nil",,[["steamworks::csteamid",,,,0,"File:scriptfunctions_client_Steamworks_doc.cpp:steamworks.csteamid.nil"],["Steamworks::CSteamID::steamworks::csteamid",,,,0,"File:scriptfunctions_client_Steamworks_doc.cpp:Steamworks.CSteamID.steamworks.csteamid.nil","CClass:Steamworks.CSteamID:steamworks.csteamid.nil"]]]]);

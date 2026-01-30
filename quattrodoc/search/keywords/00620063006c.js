@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("bcl",["Function"],[["bclanaccount",,[["Steamworks::CSteamID",,,,0,"File:scriptfunctions_client_Steamworks_doc.cpp:Steamworks.CSteamID.bclanaccount","CClass:Steamworks.CSteamID:bclanaccount"]]]]);

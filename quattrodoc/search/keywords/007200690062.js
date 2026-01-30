@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("rib",["Variable"],[["ribbon",,[["ParticleSystemTrailMode::particlesystemtrailmode",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:ParticleSystemTrailMode.particlesystemtrailmode.ribbon","CClass:ParticleSystemTrailMode:particlesystemtrailmode.ribbon"]]]]);

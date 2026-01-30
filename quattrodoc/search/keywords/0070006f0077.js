@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("pow",["Function"],[["pow",,[["Mathf::mathf",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:Mathf.mathf.pow","CClass:Mathf:mathf.pow"]]]]);

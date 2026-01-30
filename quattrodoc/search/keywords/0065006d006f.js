@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("emo",["Variable"],[["emousecursor",,[["Steamworks::HTML_SetCursor_t",,,,0,"File:scriptfunctions_client_Steamworks_doc.cpp:Steamworks.HTML_SetCursor_t.emousecursor","CClass:Steamworks.HTML_SetCursor_t:emousecursor"]]]]);

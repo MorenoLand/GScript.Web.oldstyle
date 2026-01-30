@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("fou",["Variable"],[["fourbones",,[["SkinWeights::skinweights",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:SkinWeights.skinweights.fourbones","CClass:SkinWeights:skinweights.fourbones"]]]]);

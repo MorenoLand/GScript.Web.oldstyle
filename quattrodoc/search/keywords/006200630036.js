@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("bc6",["Variable"],[["bc6h",,[["TextureFormat::textureformat",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:TextureFormat.textureformat.bc6h","CClass:TextureFormat:textureformat.bc6h"]]]]);

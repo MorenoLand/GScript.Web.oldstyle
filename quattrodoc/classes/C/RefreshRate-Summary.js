@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("CClass:RefreshRate","RefreshRate");NDSummary.OnSummaryLoaded("CClass:RefreshRate",[["C/C++","C"]],[["Classes","Class"],["Functions","Function"],["Groups","Group"]],[[29859,0,0,"RefreshRate"],[12913,0,2,"Functions","Functions"],[12914,0,1,"<span class=\"Qualifier\">refreshrate::</span>&#8203;create","refreshrate.create"]]);

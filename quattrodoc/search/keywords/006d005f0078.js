@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("m_x",["Variable"],[["m_xdamping",,[["Cinemachine::CinemachineTransposer",,,,0,"File:scriptfunctions_client_Cinemachine_doc.cpp:Cinemachine.CinemachineTransposer.m_xdamping","CClass:Cinemachine.CinemachineTransposer:m_xdamping"]]]]);

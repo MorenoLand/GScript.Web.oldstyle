@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("nea",["Variable"],[["nearclipplane",,[["Camera",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:Camera.nearclipplane","CClass:Camera:nearclipplane"],["Cinemachine::LensSettings",,,,0,"File:scriptfunctions_client_Cinemachine_doc.cpp:Cinemachine.LensSettings.nearclipplane","CClass:Cinemachine.LensSettings:nearclipplane"]]]]);

@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("hit",["Variable"],[["hitbreakpoint",,[["HutongGames_PlayMaker::Fsm::hutonggames_playmaker::fsm",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:HutongGames_PlayMaker.Fsm.hutonggames_playmaker.fsm.hitbreakpoint","CClass:HutongGames_PlayMaker.Fsm:hutonggames_playmaker.fsm.hitbreakpoint"]]]]);

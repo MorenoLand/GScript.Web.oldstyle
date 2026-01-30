@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("deg",["Variable"],[["deg2rad",,[["Mathf::mathf",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:Mathf.mathf.deg2rad","CClass:Mathf:mathf.deg2rad"]]]]);

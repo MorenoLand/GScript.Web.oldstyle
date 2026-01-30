@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("tel",["Function"],[["teleportroot",,[["ArticulationBody",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:ArticulationBody.teleportroot","CClass:ArticulationBody:teleportroot"]]]]);

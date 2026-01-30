@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("CClass:Joint2D","Joint2D");NDSummary.OnSummaryLoaded("CClass:Joint2D",[["C/C++","C"]],[["Classes","Class"],["Functions","Function"],["Groups","Group"]],[[26685,0,0,"Joint2D"],[9230,0,2,"Functions","Functions"],[9231,0,1,"<span class=\"Qualifier\">joint2d::</span>&#8203;fromassetbundle","joint2d.fromassetbundle"]]);

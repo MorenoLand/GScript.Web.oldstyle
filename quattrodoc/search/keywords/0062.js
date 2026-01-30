@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("b",["Variable"],[["b",,[["Color",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:Color.b","CClass:Color:b"],["Color32",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:Color32.b","CClass:Color32:b"],["KeyCode::keycode",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:KeyCode.keycode.b","CClass:KeyCode:keycode.b"]]]]);

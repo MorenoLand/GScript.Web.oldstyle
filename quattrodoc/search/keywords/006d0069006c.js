@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("mil",["Variable"],[["millisecond",,[["System::DateTime",,,,0,"File:scriptfunctions_client_System_doc.cpp:System.DateTime.millisecond","CClass:System.DateTime:millisecond"]]],["milliseconds",,[["System::TimeSpan",,,,0,"File:scriptfunctions_client_System_doc.cpp:System.TimeSpan.milliseconds","CClass:System.TimeSpan:milliseconds"]]]]);

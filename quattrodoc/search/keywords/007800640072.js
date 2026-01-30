@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("xdr",["Variable"],[["xdrive",,[["ArticulationBody",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:ArticulationBody.xdrive","CClass:ArticulationBody:xdrive"]]]]);

@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("rin",["Variable"],[["rint",,[["RenderTextureFormat::rendertextureformat",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:RenderTextureFormat.rendertextureformat.rint","CClass:RenderTextureFormat:rendertextureformat.rint"]]]]);

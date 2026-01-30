@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("dof",["Variable"],[["dofcount",,[["ArticulationBody",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:ArticulationBody.dofcount","CClass:ArticulationBody:dofcount"]]]]);

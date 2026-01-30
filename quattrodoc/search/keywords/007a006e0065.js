@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("zne",["Variable"],[["znear",,[["FrustumPlanes",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:FrustumPlanes.znear","CClass:FrustumPlanes:znear"]]]]);

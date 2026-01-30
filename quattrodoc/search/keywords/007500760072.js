@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("uvr",["Variable"],[["uvrect",,[["UI::RawImage",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:UI.RawImage.uvrect","CClass:UI.RawImage:uvrect"]]]]);
