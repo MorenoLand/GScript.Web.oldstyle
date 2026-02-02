@@ -9,7 +9,8 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="css/shared.css?v=6">
 <style>
-  body{margin:0;padding:0;min-height:100vh;background:transparent;color:#fff;overflow:hidden;}
+  html{height:100%;overflow-y:scroll;}
+  body{margin:0;padding:0;background:transparent;color:#fff;overflow-x:hidden;min-height:100%;}
   .container{transition:opacity 0.4s ease;position:absolute;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;overflow-x:auto;}
   .container.fade-out{opacity:0;}
   .monaco-editor-container .view-line span { text-shadow: 0 0 2px rgba(0,0,0,0.8) !important; }
@@ -60,6 +61,7 @@
 <script src="js/graph.js"></script>
 <script src="js/list.js"></script>
 <script src="js/changes.js"></script>
+<script src="js/gsdoc.js"></script>
 <script src="js/gs2.js" onload="window.gs2Loaded = true;" onerror="console.error('Failed to load gs2.js');"></script>
 <script type="module">
   import init, { decompile_bytecode } from './js/gbf.js';
@@ -442,6 +444,7 @@ function App() {
     const params = new URLSearchParams(window.location.search);
     return params.has('byte') || window.location.hostname === 'byte.gscript.dev';
   });
+  const [showDocs, setShowDocs] = useState(() => new URLSearchParams(window.location.search).has('docs') || window.location.hostname === 'docs.gscript.dev');
   const [isStatsDomain, setIsStatsDomain] = useState(() => window.location.hostname === 'stats.gscript.dev' || window.location.hostname === 'gstats.moreno.land');
   const [statsView, setStatsView] = useState(() => {
     const params = new URLSearchParams(window.location.search);
@@ -539,6 +542,7 @@ function App() {
           showIndexing ? React.createElement(React.Fragment, null, React.createElement('div', { style: { position: 'fixed', top: '20px', left: '20px', zIndex: 1000 } }, React.createElement('a', { href: '/', onClick: (e) => { e.preventDefault(); setShowIndexing(false); window.history.pushState(null, '', '/'); setTimeout(() => { if (typeof initMenus === 'function') initMenus(); }, 100); }, style: { fontSize: '16px', color: '#40ff40', cursor: 'pointer' } }, React.createElement('i', { className: 'fas fa-arrow-left' }), ' Back')), typeof IndexingTutorial !== 'undefined' ? React.createElement(IndexingTutorial) : null) :
           showBeautify ? React.createElement(React.Fragment, null, React.createElement('div', { style: { position: 'fixed', top: '20px', left: '20px', zIndex: 1000 } }, React.createElement('a', { href: '/', onClick: (e) => { e.preventDefault(); setShowBeautify(false); window.history.pushState(null, '', '/'); setTimeout(() => { if (typeof initMenus === 'function') initMenus(); }, 100); }, style: { fontSize: '16px', color: '#40ff40', cursor: 'pointer' } }, React.createElement('i', { className: 'fas fa-arrow-left' }), ' Back')), typeof BeautifyTool !== 'undefined' ? React.createElement(BeautifyTool) : null) :
           showByte ? React.createElement(React.Fragment, null, React.createElement('div', { style: { position: 'fixed', top: '20px', left: '20px', zIndex: 1000 } }, React.createElement('a', { href: '/', onClick: (e) => { e.preventDefault(); setShowByte(false); window.history.pushState(null, '', '/'); setTimeout(() => { if (typeof initMenus === 'function') initMenus(); }, 100); }, style: { fontSize: '16px', color: '#40ff40', cursor: 'pointer' } }, React.createElement('i', { className: 'fas fa-arrow-left' }), ' Back')), React.createElement(BytecodeConverter)) :
+          showDocs ? React.createElement(React.Fragment, null, typeof GSDoc !== 'undefined' ? React.createElement(GSDoc) : null) :
           <><div className="links">
               <div className="dropdown">
                 <span className="dropdown-btn">
