@@ -95,7 +95,83 @@ function GraphApp() {
       credits: { enabled: false },
       legend: { enabled: true, itemStyle: { color: '#ffffff', fontWeight: 'bold', fontFamily: 'Tempus Sans ITC' }},
       accessibility: { enabled: true },
-      exporting: {buttons: {contextButton: {menuItems: ['downloadCSV', 'downloadXLS', 'downloadPDF', 'downloadPNG'], style: { color: '#ffffff', backgroundColor: 'transparent', border: 'none', borderRadius: '0', padding: '5px 10px', cursor: 'pointer' }, align: 'right', verticalAlign: 'bottom', y: -10, x: -10}}, scale: 2, sourceWidth: undefined, sourceHeight: undefined}
+      exporting: {
+        buttons: {
+          contextButton: {
+            menuItems: [
+            'downloadPDF',
+            'downloadPNG',
+            {
+              text: 'Download CSV',
+              onclick: function() {
+                const headers = ['Timestamp', 'Date', 'Server Name', 'Player Count'];
+                const rows = dataPoints.map(point => [
+                  point.timestamp,
+                  new Date(point.timestamp * 1000).toISOString(),
+                  point.serverName,
+                  point.playerCount
+                ]);
+                const csvContent = [headers, ...rows].map(row => row.join(',')).join('\n');
+                const blob = new Blob([csvContent], { type: 'text/csv' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'graal_stats_' + viewTitle.toLowerCase().replace(/\s+/g, '_') + '.csv';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+              }
+            },
+            {
+              text: 'Download JSON',
+              onclick: function() {
+                const data = dataPoints.map(point => ({
+                  timestamp: point.timestamp,
+                  date: new Date(point.timestamp * 1000).toISOString(),
+                  serverName: point.serverName,
+                  playerCount: point.playerCount
+                }));
+                const json = JSON.stringify(data, null, 2);
+                const blob = new Blob([json], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'graal_stats_' + viewTitle.toLowerCase().replace(/\s+/g, '_') + '.json';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+              }
+            }
+          ],
+            style: { color: '#ffffff', backgroundColor: 'transparent', border: 'none', borderRadius: '0', padding: '5px 10px', cursor: 'pointer' },
+            align: 'right',
+            verticalAlign: 'bottom',
+            y: -10,
+            x: -10
+          }
+        },
+        scale: 2,
+        sourceWidth: undefined,
+        sourceHeight: undefined,
+        chartOptions: {
+          xAxis: {
+            labels: { style: { color: '#000000' } },
+            title: { style: { color: '#000000' } }
+          },
+          yAxis: {
+            labels: { style: { color: '#000000' } },
+            title: { style: { color: '#000000' } }
+          },
+          legend: {
+            itemStyle: { color: '#000000', fontWeight: 'bold' }
+          },
+          title: {
+            style: { color: '#000000' }
+          }
+        }
+      }
     });
     chartInstanceRef.current.reflow();
     return () => { if (chartInstanceRef.current) { chartInstanceRef.current.destroy(); chartInstanceRef.current = null; }};

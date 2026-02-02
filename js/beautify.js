@@ -270,6 +270,7 @@ function BeautifyTool() {
     } else {
       loadMonaco();
     }
+  }, []);
 
   React.useEffect(() => { if (monacoReady && inputEditorRef.current) { monaco.editor.setModelLanguage(inputEditorRef.current.getModel(), language); if (outputEditorRef.current) monaco.editor.setModelLanguage(outputEditorRef.current.getModel(), language); } }, [language, monacoReady]);
 
