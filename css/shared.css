@@ -125,6 +125,14 @@ span { text-shadow: 1px 1px 1px rgba(0, 0, 255, 1); }
 .byte-copy-btn:hover{opacity:1;background:#44475a;transform:scale(1.1)}
 .byte-panel-body{flex:1;display:flex;flex-direction:column;overflow:hidden}
 .byte-controls{padding:15px;background:#1e1f29;border-top:1px solid #44475a;display:flex;gap:10px}
+.byte-controls button{padding:10px 20px;background:#6272a4;color:#f8f8f2;border:none;border-radius:4px;cursor:pointer;font-weight:600;font-size:13px;transition:all 0.2s}
+.byte-controls button:hover{background:#7081a9;transform:translateY(-1px)}
+.byte-controls button:active{transform:translateY(0)}
+.byte-controls button:disabled{background:#44475a;color:#6272a4;cursor:not-allowed;transform:none}
+.byte-controls .btn-save{background:#50fa7b;color:#282a36}
+.byte-controls .btn-save:hover{background:#5af78e}
+.byte-info{color:#8be9fd;padding:10px 15px;background:#1e1f29;border-top:1px solid #44475a;font-size:12px}
+.byte-info.error{color:#ff5555}
 .byte-mode-toggle{display:flex;align-items:center;gap:8px;color:#f8f8f2;font-size:13px;padding:0 10px}
 .byte-mode-toggle input{width:18px;height:18px;cursor:pointer;appearance:auto;-webkit-appearance:checkbox}
 .byte-mode-toggle label{cursor:pointer;user-select:none}

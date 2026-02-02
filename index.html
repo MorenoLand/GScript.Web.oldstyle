@@ -7,7 +7,7 @@
 <title>GScript.dev</title>
 <link rel="icon" type="image/x-icon" href="favicon.ico">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="stylesheet" href="css/shared.css?v=5">
+<link rel="stylesheet" href="css/shared.css?v=6">
 <style>
   body{margin:0;padding:0;min-height:100vh;background:transparent;color:#fff;overflow-x:hidden;}
   .container{transition:opacity 0.4s ease;position:absolute;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;min-height:100vh;overflow-x:hidden;}
@@ -33,6 +33,13 @@
 <script src="https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.6.12"></script>
 <script src="js/indexing.js"></script>
 <script src="js/beautify.js"></script>
+<script src="js/gs2.js" onload="window.gs2Loaded = true;" onerror="console.error('Failed to load gs2.js');"></script>
+<script type="module">
+  import init, { decompile_bytecode } from './js/gbf.js';
+  window.gbfWasmInit = init;
+  window.gbfDecompileBytecode = decompile_bytecode;
+</script>
+<script src="js/byte.js"></script>
 
 <script type="text/babel">
 const { useState, useEffect, useRef, useCallback } = React;
@@ -348,10 +355,84 @@ function DiscordWidget() {
   );
 }
 
+const BytecodeConverter = () => {
+  React.useEffect(() => {
+    if (typeof initBytecodeConverter === 'function') {
+      initBytecodeConverter();
+    }
+  }, []);
+
+  return React.createElement('div', { className: 'byte-container', style: { position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 } },
+    React.createElement('div', { className: 'modal-overlay byte-modal-overlay', id: 'saveModal' },
+      React.createElement('div', { className: 'modal-dialog byte-modal-dialog' },
+        React.createElement('div', { className: 'modal-header byte-modal-header' }, 'Save Bytecode'),
+        React.createElement('input', { type: 'text', className: 'modal-input byte-modal-input', id: 'filenameInput', placeholder: 'Enter filename...', defaultValue: 'output' }),
+        React.createElement('div', { className: 'modal-buttons byte-modal-buttons' },
+          React.createElement('button', { className: 'modal-btn byte-modal-btn byte-modal-btn-secondary', id: 'cancelBtn' }, 'Cancel'),
+          React.createElement('button', { className: 'modal-btn byte-modal-btn byte-modal-btn-primary', id: 'confirmSaveBtn' }, 'Save')
+        )
+      )
+    ),
+    React.createElement('div', { className: 'modal-overlay byte-modal-overlay', id: 'pythonModal' },
+      React.createElement('div', { style: { display: 'flex', flexDirection: 'column', maxHeight: '90vh' } },
+        React.createElement('div', { id: 'pythonModalContent', style: { padding: '40px', maxWidth: '900px', margin: '0 auto', flex: 1, overflowY: 'auto' } }),
+        React.createElement('div', { className: 'modal-buttons byte-modal-buttons', style: { justifyContent: 'center' } },
+          React.createElement('button', { className: 'modal-btn byte-modal-btn byte-modal-btn-primary', id: 'closePythonBtn' }, 'Close')
+        )
+      )
+    ),
+    React.createElement('div', { className: 'byte-main', style: { paddingTop: '60px' } },
+      React.createElement('div', { className: 'byte-panel' },
+        React.createElement('div', { className: 'byte-panel-header' },
+          React.createElement('span', {}, 'GS2 Source Code')
+        ),
+        React.createElement('div', { className: 'byte-panel-body', style: { padding: 0 } },
+          React.createElement('div', { id: 'sourceEditor', className: 'byte-editor-container' })
+        )
+      ),
+      React.createElement('div', { className: 'byte-panel' },
+        React.createElement('div', { className: 'byte-panel-header' },
+          React.createElement('span', {}, 'Bytecode Output'),
+          React.createElement('button', { className: 'byte-copy-btn', id: 'copyBtn', title: 'Copy to clipboard' }, '📋')
+        ),
+        React.createElement('div', { className: 'byte-panel-body', style: { padding: 0 } },
+          React.createElement('div', { id: 'outputEditor', className: 'byte-editor-container' })
+        )
+      )
+    ),
+    React.createElement('div', { className: 'byte-controls' },
+      React.createElement('div', { className: 'byte-mode-toggle' },
+        React.createElement('input', { type: 'checkbox', id: 'decompileMode' }),
+        React.createElement('label', { htmlFor: 'decompileMode' }, 'Decompile')
+      ),
+      React.createElement('button', { id: 'convertBtn' }, 'Convert to Bytecode'),
+      React.createElement('button', { id: 'saveBtn', className: 'btn-save' }, 'Save Bytecode'),
+      React.createElement('button', { id: 'clearBtn' }, 'Clear'),
+      React.createElement('button', { id: 'pythonBtn', style: { marginLeft: 'auto' } }, '🐍')
+    ),
+    React.createElement('div', { className: 'byte-info', id: 'statusInfo' }, 'Ready')
+  );
+};
+
 function App() {
   const [fadeClass, setFadeClass] = useState('');
   const [showIndexing, setShowIndexing] = useState(() => new URLSearchParams(window.location.search).has('indexing'));
   const [showBeautify, setShowBeautify] = useState(() => new URLSearchParams(window.location.search).has('beautify'));
+  const [showByte, setShowByte] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.has('byte') || window.location.hostname === 'byte.gscript.dev';
+  });
+
+  useEffect(() => {
+    const handlePopState = () => {
+      const params = new URLSearchParams(window.location.search);
+      setShowIndexing(params.has('indexing'));
+      setShowBeautify(params.has('beautify'));
+      setShowByte(params.has('byte') || window.location.hostname === 'byte.gscript.dev');
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
   const handleLinkClick = (e) => {
     const link = e.currentTarget;
@@ -376,8 +457,10 @@ function App() {
     <div className={`container ${fadeClass}`}>
       {showIndexing ? <div style={{ position: 'fixed', top: '20px', left: '20px', zIndex: 1000 }}><a href="/" onClick={(e) => { e.preventDefault(); setShowIndexing(false); window.history.pushState(null, '', '/'); setTimeout(() => { if (typeof initMenus === 'function') initMenus(); }, 100); }} style={{ fontSize: '16px', color: '#40ff40', cursor: 'pointer' }}><i className="fas fa-arrow-left"></i> Back</a></div> : null}
       {showBeautify ? <div style={{ position: 'fixed', top: '20px', left: '20px', zIndex: 1000 }}><a href="/" onClick={(e) => { e.preventDefault(); setShowBeautify(false); window.history.pushState(null, '', '/'); setTimeout(() => { if (typeof initMenus === 'function') initMenus(); }, 100); }} style={{ fontSize: '16px', color: '#40ff40', cursor: 'pointer' }}><i className="fas fa-arrow-left"></i> Back</a></div> : null}
+      {showByte ? <div style={{ position: 'fixed', top: '20px', left: '20px', zIndex: 1000 }}><a href="/" onClick={(e) => { e.preventDefault(); setShowByte(false); window.history.pushState(null, '', '/'); setTimeout(() => { if (typeof initMenus === 'function') initMenus(); }, 100); }} style={{ fontSize: '16px', color: '#40ff40', cursor: 'pointer' }}><i className="fas fa-arrow-left"></i> Back</a></div> : null}
       {showIndexing ? <IndexingTutorial /> :
       showBeautify ? <BeautifyTool /> :
+      showByte ? <BytecodeConverter /> :
       <React.Fragment>
       <div className="links">
         <div className="dropdown">
@@ -493,7 +576,13 @@ function App() {
       </div>
 
       <div className="character">
-        <div className="character-img"></div>
+        <div className="character-img" onClick={(e) => {
+          if (e.ctrlKey) {
+            e.preventDefault();
+            setShowByte(true);
+            window.history.pushState(null, '', '/?byte');
+          }
+        }}></div>
       </div>
 
       <footer style={{ textAlign: 'center', color: '#ffffff', textShadow: '1px 1px 1px rgba(0, 0, 255, 1)', width: '100%', fontSize: '18px' }}>
