@@ -31,6 +31,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.7/beautify-html.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.6.12"></script>
+<script src="js/indexing.js"></script>
+<script src="js/beautify.js"></script>
 
 <script type="text/babel">
 const { useState, useEffect, useRef, useCallback } = React;
@@ -346,498 +348,6 @@ function DiscordWidget() {
   );
 }
 
-const tutorials = {
-  photoshop: `
-## Tutorial: Indexing bodies or other images for Graal (Using Photoshop 6.0)
-
-When working with default body images in Graal, you might think you need to use specific color indexes to create a body. However, that's not the case! Graal relies on a palette table and the order of colors within it. The first seven color indexes are reserved for the default Graal coloring system:
-
-- **0:** Outline
-- **1:** Belt
-- **2:** Transparency
-- **3:** Shoes
-- **4:** Sleeves
-- **5:** Skin
-- **6:** Coat
-
-If you create a body without considering these indexes, you might find that your image isn't transparent or that some colors are incorrect. This happens because when you index an image, it assigns used colors to a table. If your body uses colors assigned to the first seven indexes, Graal will treat them as recolorable. Additionally, Graal uses a palette index for transparency instead of traditional transparency methods.
-
-#### 1. Index Your Image
-In this tutorial, I will demonstrate how to work with your palette table to either utilize Graal's recoloring system or avoid it altogether. Let's start with **body.png**. Begin by indexing your image:
-
-![Indexing Image](/gfx/pstutorial/bodytut1.PNG)
-
-#### 2. Create a Custom Palette
-Next, you want to create a custom palette:
-
-![Custom Palette](/gfx/pstutorial/bodytut2.PNG)
-
-#### 3. Assign Colors to the Palette
-You have two options here:
-
-- If you want to use Graal's default body coloring system, assign colors to the palette as outlined above.
-- If you prefer not to have your body recolored, fill the first seven boxes with colors that your body does not use. Remember, the third color must match the color you want to be transparent.
-
-![Assigning Colors](/gfx/pstutorial/bodytut3.PNG)
-
-#### 4. Selecting Colors
-To select colors, click on the first box. Your mouse will change to an eyedropper when you hover over your image, allowing you to easily select the desired color:
-
-![Selecting Colors](/gfx/pstutorial/bodytut4.PNG)
-
-#### 5. Filling the Palette with Filler Colors
-If you want to use your own colors without being limited by Graal's recoloring system, fill the palette with filler colors:
-
-![Filling Palette](/gfx/pstutorial/bodytut5.PNG)
-
-Ensure that all **seven** boxes are filled with colors that are not used in your graphics. For example, I used red (#FF0000) as it was not utilized in my design. You don't need to index the rest of your colors; Photoshop will automatically assign them to the remaining table slots.
-
-#### 6. Saving Your Image
-When you're done, click **OK** and then save the image. Chances are it will work fine! Remember, I use Photoshop 6.0; newer versions may have a different setup, and I'm not sure about other programs like GIMP. However, they likely allow you to customize the palette in some way.
-
-**Bonus Tip:** Someone asked if you can combine the two methods to have, say, a purple belt with a body that can change colors. The answer is **YES**! Simply color the belt purple, but in the palette table, the belt box should be filled with a filler color as shown in the second example. This will allow your belt to stay purple while still allowing you to color other parts of the body.
-  `,
-  gimp: `
-## Tutorial: Indexing bodies or other images for Graal (Using GIMP)
-
-Let's learn how to index for Graal! Here I will describe how to properly index bodies to upload them with zero issues. I will be using the program GIMP for PC to do this. The program is free and simple to use! Alright, let's get onto indexing! (Please note that my GIMP set up may visually look different than yours. I am currently using an older version with a different toolbox set up as it is my preference. You should still be able to follow this tutorial just fine though!)
-
-### Step One
-
-Let's get the basics set up. Your body should have a total of **seven** colours. If you are indexing a body with "extensions" or other parts, I will be setting up a guide for that in the future as well. Here are the seven hex code colours you need:
-
-![Outline color black](/gfx/gimptutorial/image-2.webp) The outline colour black: #000000
-
-![Belt color blue](/gfx/gimptutorial/image-3.webp) The belt colour blue: #0000ff
-
-![Background color green](/gfx/gimptutorial/image-4.webp) The background colour green: #008400
-
-![Shoe color dark red](/gfx/gimptutorial/image-5.webp) The shoe colour dark red: #ce1829
-
-![Sleeve color red](/gfx/gimptutorial/image-6.webp) The sleeve colour red: #ff0000
-
-![Glove color orange](/gfx/gimptutorial/image-8.webp) The glove colour orange: #ffad6b
-
-![Coat color white](/gfx/gimptutorial/image-9.webp) The coat colour white: #ffffff
-
-In this tutorial, I will be using the basic default body for simplicity! Let's get started!
-
-### Step Two
-
-You should have your body opened on GIMP with the seven correct colour hexes shown above. Now, let's go to **Image > Mode > Indexed...** in the menus at the top!
-
-![Indexed mode](/gfx/gimptutorial/image-11.png)
-
-You should now be on a screen that looks like this:
-
-![Indexed screen](/gfx/gimptutorial/image-12.png)
-
-Let's click on **Use custom palette**. Then, click on the multi-coloured gradient you see under it! Once you click it, click the **open the palette selection dialogue** option that is circled below.
-
-![Custom palette option](/gfx/gimptutorial/image-13.png)
-
-After clicking that option, it should have opened a large selection of palettes. Ignore these. They are palettes that come pre-built into GIMP. We will be making our own!
-
-![Palette list](/gfx/gimptutorial/image-15.png)
-
-### Step Three
-
-You're doing great so far! Let's continue! Now that we're on the **Palettes** menu, let's click on **create a new palette** circled below.
-
-![Create new palette](/gfx/gimptutorial/image-16.png)
-
-You will be taken to the **Palette Editor** pop up! It will look something like this:
-
-![Palette editor](/gfx/gimptutorial/image-17.png)
-
-You can name your palette in the area that says Untitled! For now I'm going to name mine *Index Colours*, but you can name yours whatever you'd like!
-
-### Step Four
-
-After naming our palette, let's start adding our colours! First thing you wanna do is **create seven entries from the background colour**. Sounds confusing yeah? Don't worry, it's simple!
-
-On the **Palette Editor**, **Ctrl + Click the circled option below** seven times! It is very very important that you **Ctrl + Click** this option instead of regular clicking. Your Palette Editor should look something like this now!
-
-![Seven entries](/gfx/gimptutorial/image-20.png)
-
-Now, let's start adding the colours! **Double-click** on the first square (the one on the far far left) on the Palette Editor. It should open the **Edit Palette Colour** menu! Now, click on the **Eyedropper** tool circled below.
-
-![Eyedropper tool](/gfx/gimptutorial/image-21.png)
-
-Once you've clicked that, we're going to be adding our first colour: the outline colour black! With the Eyedropper tool clicked, click on the outline of your body. It will automatically select that colour for you! Once you click the black outline colour, press **OK**! Your Palette Editor should look like this now:
-
-![First color added](/gfx/gimptutorial/image-22.png)
-
-Now that you know how to use the Eyedropper tool and add a new colour to your palette board, let's add the rest of our needed colours! Here is the order you will need to do it in: **Black, Blue, Green, Dark Red, Red, Orange, White.** Once you have all those colours selected, it should look like this!
-
-![All colors added](/gfx/gimptutorial/image-23.png)
-
-### Step Five
-
-You're doing amazing, we're nearly done! Our next step is to apply our new palette we made to our body! Let's go back to **Image > Mode > Indexed...** in the top menus once again. Click on **Use Custom Palette** and then on the multi-coloured gradient square.
-
-Look through the list of palettes until you see your palette you named and created!
-
-![Select your palette](/gfx/gimptutorial/image-24.png)
-
-Click on your palette! Once you click it, **uncheckmark the Remove unused and duplicate colors from colormap** option right below it, it's very important to uncheck it!
-
-![Uncheck remove unused](/gfx/gimptutorial/image-26.png)
-
-Nice! Now that you've unchecked that option stated above and clicked on your palette for the custom palette, click **Convert**. One more step to complete!
-
-### Step Six
-
-YOUR BODY IS NOW INDEXED! YAY! We have one final step to complete though. Let's head to **File > Export As...** in the menus at the top.
-
-![Export as](/gfx/gimptutorial/image-27.png)
-
-Once on the Export Image pop up, name your file whatever you'd like! Here, I named it "Indexed Body.png". Remember to include the **.png** at the end! Save it to wherever you'd like on your computer.
-
-![Name file](/gfx/gimptutorial/image-29.png)
-
-Now click **Export**! You will get another pop up. On this pop up, make sure you **uncheckmark Save background color**. It is very very important that it is left unchecked!
-
-![Export options](/gfx/gimptutorial/image-30.png)
-
-Now press Export once again! And yay! We're all done with indexing! You're free to upload your body to Graal. There should be no issues if everything was done correctly. If there are questions, you can message me on Graal, my username is always Bryden!
-
-When uploading you also **do not need to set transparency**, for Classic at least!
-  `
-};
-
-function BeautifyTool() {
-  const [language, setLanguage] = useState('graalscript');
-  const [stripComments, setStripComments] = useState(true);
-  const [stripSpaces, setStripSpaces] = useState(false);
-  const [beautify, setBeautify] = useState(false);
-  const [indentSize, setIndentSize] = useState('2');
-  const [copySuccess, setCopySuccess] = useState(false);
-  const [monacoReady, setMonacoReady] = useState(false);
-  const inputEditorRef = useRef(null);
-  const outputEditorRef = useRef(null);
-  const inputContainerRef = useRef(null);
-  const outputContainerRef = useRef(null);
-
-  const processCode = () => {
-    if (!inputEditorRef.current) return;
-    const code = inputEditorRef.current.getValue();
-    if (!code.trim()) return;
-    let processedCode = code;
-    if (stripComments) {
-      const directives = [];
-      processedCode = processedCode.replace(/^\/\/#CLIENTSIDE\s*$/gm, (match) => { directives.push(match); return `__DIRECTIVE_${directives.length - 1}__`; });
-      const lang = { javascript: { singleLine: ['//', '///'], multiLine: [['/*', '*/']], stringDelimiters: ['"', "'", '`'] } };
-      const l = lang.javascript;
-      const single = l.singleLine || [];
-      const multi = l.multiLine || [];
-      const strings = l.stringDelimiters || ['"', "'"];
-      const lines = processedCode.split('\n');
-      const result = [];
-      let inMulti = false;
-      let inString = false;
-      let strDelim = '';
-      let escaped = false;
-      for (const line of lines) {
-        let res = '';
-        let j = 0;
-        let hasCode = false;
-        while (j < line.length) {
-          if (inMulti) {
-            if (line.substring(j, j + 2) === '*/') {
-              j += 2;
-              inMulti = false;
-            } else {
-              j++;
-            }
-            continue;
-          }
-          if (inString) {
-            if (line[j] === '\\' && !escaped) {
-              res += line[j];
-              escaped = true;
-              j++;
-              continue;
-            }
-            if (line.substring(j, j + strDelim.length) === strDelim && !escaped) {
-              res += strDelim;
-              j += strDelim.length;
-              inString = false;
-              hasCode = true;
-              continue;
-            }
-            res += line[j];
-            if (escaped) escaped = false;
-            j++;
-            continue;
-          }
-          let strMatch = false;
-          for (const delim of strings) {
-            if (line.substring(j, j + delim.length) === delim) {
-              res += delim;
-              j += delim.length;
-              inString = true;
-              strDelim = delim;
-              hasCode = true;
-              strMatch = true;
-              break;
-            }
-          }
-          if (strMatch) continue;
-          let multiMatch = false;
-          for (const [start, end] of multi) {
-            if (line.substring(j, j + start.length) === start) {
-              inMulti = true;
-              j += start.length;
-              if (line.indexOf(end, j) !== -1) {
-                j = line.indexOf(end, j) + end.length;
-                inMulti = false;
-              }
-              multiMatch = true;
-              break;
-            }
-          }
-          if (multiMatch) continue;
-          let singleMatch = false;
-          for (const start of single) {
-            if (line.substring(j, j + start.length) === start) {
-              j = line.length;
-              singleMatch = true;
-              break;
-            }
-          }
-          if (singleMatch) continue;
-          if (!(/^\s*$/.test(line[j]))) hasCode = true;
-          res += line[j];
-          j++;
-        }
-        result.push(res);
-      }
-      processedCode = result.join('\n');
-      directives.forEach((dir, i) => { processedCode = processedCode.replace(`__DIRECTIVE_${i}__`, dir); });
-    }
-    if (stripSpaces) { const lines = processedCode.split('\n').filter(line => line.trim() !== ''); processedCode = lines.map(line => line.trimRight()).join('\n'); }
-    if (beautify) {
-      try {
-        processedCode = js_beautify(processedCode, { indent_size: indentSize === 'tab' ? 1 : parseInt(indentSize), indent_char: indentSize === 'tab' ? '\t' : ' ', 'wrap_line_length': 0, 'brace_style': 'collapse', 'preserve_newlines': false, 'max_preserve_newlines': 0 });
-      } catch (e) { }
-    }
-    if (outputEditorRef.current) outputEditorRef.current.setValue(processedCode);
-  };
-
-  const copyToClipboard = () => { if (!outputEditorRef.current) return; navigator.clipboard.writeText(outputEditorRef.current.getValue()).then(() => { setCopySuccess(true); setTimeout(() => setCopySuccess(false), 1500); }); };
-
-  useEffect(() => {
-    require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs' }});
-    require(['vs/editor/editor.main'], function() {
-      monaco.languages.register({ id: 'graalscript' });
-      monaco.languages.setMonarchTokensProvider('graalscript', {
-        keywords: [
-          'break', 'case', 'continue', 'default', 'do', 'else', 'elseif', 'for', 'if',
-          'in', 'return', 'switch', 'while', 'with', 'join', 'leave', 'public', 'private',
-          'const', 'enum', 'function', 'new', 'datablock', 'true', 'false', 'nil', 'null',
-          'NULL', 'pi', 'timevar2', 'this', 'thiso', 'temp', 'server', 'serverr', 'client',
-          'clientr', 'player', 'name'
-        ],
-        sqlKeywords: [
-          'SELECT', 'INSERT', 'UPDATE', 'DELETE', 'CREATE', 'TABLE', 'FROM', 'WHERE',
-          'VALUES', 'SET', 'INTO', 'AND', 'OR', 'NOT', 'NULL', 'IS', 'AS', 'ON', 'JOIN',
-          'LEFT', 'RIGHT', 'INNER', 'OUTER', 'GROUP', 'BY', 'ORDER', 'LIMIT', 'OFFSET',
-          'DISTINCT', 'COUNT', 'AVG', 'SUM', 'MIN', 'MAX', 'PRIMARY', 'KEY', 'DEFAULT', 'INT', 'TEXT'
-        ],
-        operators: [
-          '=', '>', '<', '!', '~', '?', ':', '==', '<=', '>=', '!=',
-          '&&', '||', '++', '--', '+', '-', '*', '/', '&', '|', '^', '%',
-          '<<', '>>', '>>>', '+=', '-=', '*=', '/=', '&=', '|=', '^=',
-          '%=', '<<=', '>>=', '>>>=', '~', '@', '/'
-        ],
-        symbols: /[=><!~?:&|+\-*\/\^%@]+/,
-        escapes: /\\(?:[abfnrtv\\"']|x[0-9A-Fa-f]{1,4}|u[0-9A-Fa-f]{4}|U[0-9A-Fa-f]{8})/,
-        tokenizer: {
-          root: [
-            [/\$[a-zA-Z_][a-zA-Z0-9_]*(?:::[a-zA-Z_][a-zA-Z0-9_]*)*/, 'variable.parameter'],
-            [/[a-z_$][\w$]*/, {
-              cases: {
-                '@keywords': 'keyword',
-                '@default': 'identifier'
-              }
-            }],
-            { include: '@whitespace' },
-            [/[{}()\[\]]/, '@brackets'],
-            [/@symbols/, {
-              cases: {
-                '@operators': 'operator',
-                '@default': ''
-              }
-            }],
-            [/\d*\.\d+([eE][\-+]?\d+)?/, 'number.float'],
-            [/0[xX][0-9a-fA-F]+/, 'number.hex'],
-            [/\b\d+\b/, 'number'],
-            [/[;,.]/, 'delimiter'],
-            [/"([^"\\]|\\.)*$/, 'string.invalid'],
-            [/"/, 'string.sql', '@sqlstring'],
-            [/'[^\\']'/, 'string'],
-            [/(')(@escapes)(')/, ['string', 'string.escape', 'string']],
-            [/'/, 'string.invalid']
-          ],
-          sqlstring: [
-            [/\b(SELECT|INSERT|UPDATE|DELETE|CREATE|TABLE|FROM|WHERE|VALUES|SET|INTO|AND|OR|NOT|NULL|IS|AS|ON|JOIN|LEFT|RIGHT|INNER|OUTER|GROUP|BY|ORDER|LIMIT|OFFSET|DISTINCT|COUNT|AVG|SUM|MIN|MAX|PRIMARY|KEY|DEFAULT|INT|TEXT)\b/, 'keyword.other.sql'],
-            [/[^\\"]+/, 'string'],
-            [/"/, 'string', '@pop'],
-            [/@escapes/, 'string.escape'],
-            [/\\./, 'string.escape.invalid']
-          ],
-          whitespace: [
-            [/[ \t\r\n]+/, 'white'],
-            [/\/\/.*$/, 'comment'],
-            [/^\s*#.*$/, 'comment'],
-            [/(?:^|\s)\/\*/, 'comment', '@comment']
-          ],
-          comment: [
-            [/[^\/*]+/, 'comment'],
-            [/\/\*/, 'comment', '@push'],
-            ['\\*/', 'comment', '@pop'],
-            [/[\/*]/, 'comment']
-          ],
-        }
-      });
-      monaco.editor.defineTheme('dracula', {
-        base: 'vs-dark',
-        inherit: true,
-        rules: [
-          { token: 'comment', foreground: '6272a4', fontStyle: 'italic' },
-          { token: 'keyword', foreground: 'ff79c6' },
-          { token: 'keyword.other.sql', foreground: 'ff79c6', fontStyle: 'italic' },
-          { token: 'string.sql', foreground: 'f1fa8c' },
-          { token: 'string', foreground: 'f1fa8c' },
-          { token: 'number', foreground: 'bd93f9' },
-          { token: 'type', foreground: 'ff79c6' },
-          { token: 'identifier', foreground: 'f8f8f2' },
-          { token: 'variable.parameter', foreground: 'ffb86c' },
-        ],
-        colors: {
-          'editor.background': '#282a36',
-          'editor.foreground': '#f8f8f2',
-          'editorLineNumber.foreground': '#6272a4cc',
-          'editorLineNumber.activeForeground': '#f8f8f2',
-          'editor.selectionBackground': '#44475a',
-          'editorCursor.foreground': '#f8f8f2',
-          'editor.lineHighlightBorder': '#282a36',
-          'editor.lineHighlightBackground': '#282a3644',
-        }
-      });
-      if (inputContainerRef.current) {
-        inputEditorRef.current = monaco.editor.create(inputContainerRef.current, {
-          value: '',
-          language: 'javascript',
-          theme: 'dracula',
-          automaticLayout: true,
-          fontSize: 14,
-          fontFamily: "'Consolas', 'Monaco', 'Courier New', monospace",
-          lineHeight: 21,
-          minimap: { enabled: false },
-          scrollBeyondLastLine: false,
-          wordWrap: 'off',
-          tabSize: 2,
-          renderLineHighlight: 'all',
-          overviewRulerLanes: 0,
-          scrollbar: { useShadows: false },
-          renderValidationDecorations: 'off',
-        });
-      }
-      if (outputContainerRef.current) {
-        outputEditorRef.current = monaco.editor.create(outputContainerRef.current, {
-          value: '',
-          language: 'javascript',
-          theme: 'dracula',
-          automaticLayout: true,
-          fontSize: 14,
-          fontFamily: "'Consolas', 'Monaco', 'Courier New', monospace",
-          lineHeight: 21,
-          minimap: { enabled: false },
-          scrollBeyondLastLine: false,
-          wordWrap: 'off',
-          tabSize: 2,
-          renderLineHighlight: 'all',
-          overviewRulerLanes: 0,
-          readOnly: true,
-          scrollbar: { useShadows: false },
-          renderValidationDecorations: 'off',
-        });
-      }
-      setMonacoReady(true);
-    });
-    return () => { if (inputEditorRef.current) inputEditorRef.current.dispose(); if (outputEditorRef.current) outputEditorRef.current.dispose(); };
-  }, []);
-
-  useEffect(() => { if (monacoReady && inputEditorRef.current) { monaco.editor.setModelLanguage(inputEditorRef.current.getModel(), language); if (outputEditorRef.current) monaco.editor.setModelLanguage(outputEditorRef.current.getModel(), language); } }, [language, monacoReady]);
-
-  return <div style={{ width: '100%', maxWidth: '95%', margin: '40px auto', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-    <div style={{ display: 'flex', gap: '25px', width: '100%', height: '75vh' }}>
-      <div style={{ flex: 1, background: 'rgba(30, 30, 46, 0.85)', borderRadius: '8px', border: '1px solid #44475a', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-        <div style={{ padding: '10px 15px', borderBottom: '1px solid #44475a', color: '#bd93f9', fontSize: '14px' }}>Input</div>
-        <div ref={inputContainerRef} style={{ flex: 1, overflow: 'hidden' }} className="monaco-editor-container" />
-      </div>
-      <div style={{ flex: 1, background: 'rgba(30, 30, 46, 0.85)', borderRadius: '8px', border: '1px solid #44475a', display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'relative' }}>
-        <div style={{ position: 'relative', padding: '10px 15px', borderBottom: '1px solid #44475a', color: '#bd93f9', fontSize: '14px' }}>Output <button onClick={copyToClipboard} style={{ position: 'absolute', right: '10px', top: '7px', fontSize: '16px', padding: '2px 4px', backgroundColor: 'transparent', color: copySuccess ? '#50fa7b' : '#bd93f9', border: 'none', cursor: 'pointer' }}>{copySuccess ? '✓' : '📋'}</button></div>
-        <div ref={outputContainerRef} style={{ flex: 1, overflow: 'hidden' }} className="monaco-editor-container" />
-      </div>
-    </div>
-    <div style={{ padding: '20px 0', display: 'flex', justifyContent: 'center', gap: '15px', alignItems: 'center', flexWrap: 'wrap' }}>
-      <select value={language} onChange={(e) => setLanguage(e.target.value)} style={{ backgroundColor: '#282a36', color: '#f8f8f2', border: '1px solid #44475a', borderRadius: '4px', padding: '8px 12px', outline: 'none', fontFamily: '"Tempus Sans ITC", sans-serif', fontSize: '18px', textShadow: '1px 1px 1px rgba(0, 0, 255, 1)' }}><option value="javascript" style={{ fontFamily: '"Tempus Sans ITC", sans-serif' }}>JavaScript</option><option value="graalscript" style={{ fontFamily: '"Tempus Sans ITC", sans-serif' }}>Graal Script</option></select>
-      <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-        <label style={{ display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer', fontFamily: '"Tempus Sans ITC", sans-serif', fontSize: '18px', textShadow: '1px 1px 1px rgba(0, 0, 255, 1)' }}><input type="checkbox" checked={stripComments} onChange={(e) => setStripComments(e.target.checked)} style={{ margin: 0, accentColor: '#40ff40' }} /> Strip Comments</label>
-        <label style={{ display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer', fontFamily: '"Tempus Sans ITC", sans-serif', fontSize: '18px', textShadow: '1px 1px 1px rgba(0, 0, 255, 1)' }}><input type="checkbox" checked={stripSpaces} onChange={(e) => setStripSpaces(e.target.checked)} style={{ margin: 0, accentColor: '#40ff40' }} /> Strip Spaces</label>
-        <label style={{ display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer', fontFamily: '"Tempus Sans ITC", sans-serif', fontSize: '18px', textShadow: '1px 1px 1px rgba(0, 0, 255, 1)' }}><input type="checkbox" checked={beautify} onChange={(e) => setBeautify(e.target.checked)} style={{ margin: 0, accentColor: '#40ff40' }} /> Beautify Code</label>
-        <select value={indentSize} onChange={(e) => setIndentSize(e.target.value)} style={{ marginLeft: '4px', backgroundColor: '#282a36', color: '#f8f8f2', border: '1px solid #44475a', borderRadius: '4px', padding: '8px 12px', outline: 'none', fontFamily: '"Tempus Sans ITC", sans-serif', fontSize: '18px', textShadow: '1px 1px 1px rgba(0, 0, 255, 1)' }}><option value="2" style={{ fontFamily: '"Tempus Sans ITC", sans-serif' }}>2 Spaces</option><option value="4" style={{ fontFamily: '"Tempus Sans ITC", sans-serif' }}>4 Spaces</option><option value="tab" style={{ fontFamily: '"Tempus Sans ITC", sans-serif' }}>Tab</option></select>
-      </div>
-      <button onClick={processCode} style={{ backgroundColor: 'rgba(64, 255, 64, 0.3)', color: '#40ff40', border: '1px solid rgba(64, 255, 64, 0.3)', borderRadius: '4px', padding: '10px 20px', cursor: 'pointer', fontWeight: '500', fontFamily: '"Tempus Sans ITC", sans-serif', fontSize: '18px' }}>Process Code</button>
-    </div>
-  </div>;
-}
-
-function IndexingTutorial() {
-  const [tutorial, setTutorial] = useState('photoshop');
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [viewAll, setViewAll] = useState(false);
-  const content = tutorials[tutorial];
-  const htmlContent = marked.parse(content);
-  const sections = htmlContent.split(/(?=<h[234]>)/).filter(s => s.trim());
-
-  useEffect(() => {
-    const psImages = ['/gfx/pstutorial/bodytut1.PNG', '/gfx/pstutorial/bodytut2.PNG', '/gfx/pstutorial/bodytut3.PNG', '/gfx/pstutorial/bodytut4.PNG', '/gfx/pstutorial/bodytut5.PNG'];
-    const gimpImages = ['/gfx/gimptutorial/image-2.webp', '/gfx/gimptutorial/image-3.webp', '/gfx/gimptutorial/image-4.webp', '/gfx/gimptutorial/image-5.webp', '/gfx/gimptutorial/image-6.webp', '/gfx/gimptutorial/image-8.webp', '/gfx/gimptutorial/image-9.webp', '/gfx/gimptutorial/image-11.png', '/gfx/gimptutorial/image-12.png', '/gfx/gimptutorial/image-13.png', '/gfx/gimptutorial/image-15.png', '/gfx/gimptutorial/image-16.png', '/gfx/gimptutorial/image-17.png', '/gfx/gimptutorial/image-20.png', '/gfx/gimptutorial/image-21.png', '/gfx/gimptutorial/image-22.png', '/gfx/gimptutorial/image-23.png', '/gfx/gimptutorial/image-24.png', '/gfx/gimptutorial/image-26.png', '/gfx/gimptutorial/image-27.png', '/gfx/gimptutorial/image-29.png', '/gfx/gimptutorial/image-30.png'];
-    [...psImages, ...gimpImages].forEach(src => { const img = new Image(); img.src = src; });
-  }, []);
-
-  const nextSlide = () => { if (currentSlide < sections.length - 1) setCurrentSlide(currentSlide + 1); };
-  const prevSlide = () => { if (currentSlide > 0) setCurrentSlide(currentSlide - 1); };
-  const toggleViewAll = () => { setViewAll(!viewAll); };
-  const switchTutorial = (tut) => { setTutorial(tut); setCurrentSlide(0); setViewAll(false); };
-
-  return <div className="container" style={{ position: 'relative', marginTop: '20px', minHeight: 'auto', padding: '0' }}>
-    <div className="content-wrapper">
-      <div className="header">
-        <div className="tutorial-toggle" style={{ display: 'flex', gap: '15px', justifyContent: 'center', marginBottom: '20px' }}>
-          <button className={`toggle-btn ${tutorial === 'photoshop' ? 'active' : ''}`} onClick={() => switchTutorial('photoshop')} style={{ padding: '10px 20px', background: 'rgba(64,255,64,0.2)', color: '#40ff40', border: '1px solid rgba(64,255,64,0.3)', borderRadius: '8px', cursor: 'pointer', fontSize: '14px', fontWeight: '600', transition: 'all 0.2s' }}>Photoshop Tutorial</button>
-          <button className={`toggle-btn ${tutorial === 'gimp' ? 'active' : ''}`} onClick={() => switchTutorial('gimp')} style={{ padding: '10px 20px', background: 'rgba(64,255,64,0.2)', color: '#40ff40', border: '1px solid rgba(64,255,64,0.3)', borderRadius: '8px', cursor: 'pointer', fontSize: '14px', fontWeight: '600', transition: 'all 0.2s' }}>GIMP Tutorial</button>
-        </div>
-        <p className="page-indicator">{viewAll ? 'Viewing all pages' : `Page ${currentSlide + 1} of ${sections.length}`}</p>
-      </div>
-      {!viewAll && <div className="nav-dots">{sections.map((_, i) => <div key={i} className={`nav-dot ${i === currentSlide ? 'active' : ''}`} onClick={() => setCurrentSlide(i)} />)}</div>}
-      <div className={`content-box ${viewAll ? 'all-content' : ''}`}>
-        {viewAll ? sections.map((section, i) => <div key={i} className="slide active"><div dangerouslySetInnerHTML={{ __html: section }} /></div>) : <div className="slide active"><div dangerouslySetInnerHTML={{ __html: sections[currentSlide] }} /></div>}
-      </div>
-      <div className="nav-buttons">
-        {!viewAll && <button className="nav-btn" onClick={prevSlide} disabled={currentSlide === 0}>← Previous</button>}
-        <button className="nav-btn view-all-btn" onClick={toggleViewAll}>{viewAll ? 'View Paged' : 'View All'}</button>
-        {!viewAll && <button className="nav-btn" onClick={nextSlide} disabled={currentSlide === sections.length - 1}>Next →</button>}
-      </div>
-      {tutorial === 'gimp' && <div className="credits"><a href="https://brydengfx.wordpress.com/how-to-index/" target="_blank" style={{ color: '#40ff40' }}>Source: brydengfx.wordpress.com</a></div>}
-    </div>
-  </div>;
-}
-
 function App() {
   const [fadeClass, setFadeClass] = useState('');
   const [showIndexing, setShowIndexing] = useState(() => new URLSearchParams(window.location.search).has('indexing'));
@@ -1004,7 +514,7 @@ ReactDOM.render(<App />, document.getElementById('root'), () => {
 
 <script>
 const initMenus = () => {
-  const { computePosition, flip, shift, offset, autoUpdate } = window.FloatingUIDOM || {};
+  const { computePosition, flip, shift, offset, autoUpdate } = window.FloatingUI || {};
   const cleanups = new Map();
 
   const cleanup = (id) => {
@@ -1036,34 +546,44 @@ const initMenus = () => {
 
     const position = () => {
       if (!content || content.style.display === 'none') return;
-      const clean = autoUpdate(dropdown, content, () => {
+      const updatePosition = () => {
+        const middleware = [];
+        if (typeof offset === 'function') middleware.push(offset(8));
+        if (typeof flip === 'function') middleware.push(flip());
+        if (typeof shift === 'function') middleware.push(shift({ padding: 10 }));
+        middleware.push({
+          name: 'preventOverflow',
+          fn({ middlewareData, ...args }) {
+            const floating = args.floating;
+            if (!floating) return {};
+
+            const rect = floating.getBoundingClientRect();
+            const windowHeight = window.innerHeight;
+            const overflowBottom = rect.bottom - windowHeight;
+
+            if (overflowBottom > 0) {
+              return {
+                y: (args.y || 0) - overflowBottom - 10
+              };
+            }
+
+            return {};
+          }
+        });
         computePosition(dropdown, content, {
           placement: 'bottom-start',
-          middleware: [offset(8), flip(), shift({ padding: 10 }), {
-            name: 'preventOverflow',
-            fn({ middlewareData, ...args }) {
-              const floating = args.floating;
-              if (!floating) return {};
-
-              const rect = floating.getBoundingClientRect();
-              const windowHeight = window.innerHeight;
-              const overflowBottom = rect.bottom - windowHeight;
-
-              if (overflowBottom > 0) {
-                return {
-                  y: (args.y || 0) - overflowBottom - 10
-                };
-              }
-
-              return {};
-            }
-          }]
+          middleware
         }).then(({ x, y }) => {
           content.style.left = `${x}px`;
           content.style.top = `${y}px`;
         });
-      });
-      cleanups.set(id, clean);
+      };
+      if (typeof autoUpdate === 'function') {
+        const clean = autoUpdate(dropdown, content, updatePosition);
+        cleanups.set(id, clean);
+      } else {
+        updatePosition();
+      }
     };
 
     const hasSubmenuHover = () => Array.from(dropdown.querySelectorAll('.submenu-content')).some(s => s.style.display === 'block' && s.matches(':hover'));
