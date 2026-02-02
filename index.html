@@ -9,12 +9,30 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="css/shared.css?v=6">
 <style>
-  body{margin:0;padding:0;min-height:100vh;background:transparent;color:#fff;overflow-x:hidden;}
-  .container{transition:opacity 0.4s ease;position:absolute;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;min-height:100vh;overflow-x:hidden;}
+  body{margin:0;padding:0;min-height:100vh;background:transparent;color:#fff;overflow:hidden;}
+  .container{transition:opacity 0.4s ease;position:absolute;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;overflow-x:auto;}
   .container.fade-out{opacity:0;}
   .monaco-editor-container .view-line span { text-shadow: 0 0 2px rgba(0,0,0,0.8) !important; }
   .monaco-editor-container .monaco-editor-background { background-color: rgba(40, 42, 54, 0.85) !important; }
   .monaco-editor-container .monaco-editor { background-color: transparent !important; }
+  th { text-align: center !important; color: white !important; font-size: 1.1rem !important; background-color: rgba(255, 255, 255, 0.1) !important; user-select: none; cursor: pointer; padding: 8px 10px; white-space: nowrap; position: relative; }
+  td { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; vertical-align: middle; padding: 8px 10px; text-align: left !important; }
+  td.playercount, td:last-child { text-align: center !important; }
+  td img { width: 32px; height: 32px; vertical-align: middle; margin-right: 10px; }
+  td a { color: #40ff40; text-decoration: none; text-shadow: 2px 2px 4px rgba(0, 0, 0, 1); }
+  td a:hover { text-decoration: underline; }
+  tr:nth-child(even) { background-color: rgba(255, 255, 255, 0.05); }
+  tr:hover td { background-color: rgba(76, 156, 107, 0.3) !important; }
+  tbody tr td:first-child{border-left:1px solid rgba(255,255,255,0.1);}
+  tbody tr td:last-child{border-right:1px solid rgba(255,255,255,0.1);}
+  tbody tr:last-child td:first-child{border-bottom:1px solid rgba(255,255,255,0.1);overflow:hidden;}
+  tbody tr:last-child td:last-child{border-bottom:1px solid rgba(255,255,255,0.1);overflow:hidden;}
+  tbody tr:last-child td:not(:first-child):not(:last-child){border-bottom:1px solid rgba(255,255,255,0.1);}
+  td.servername { white-space: nowrap; min-width: 300px; }
+  td.playercount { text-align: center; padding-right: 50px; }
+  td.description { max-width: 250px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
+  td.website { max-width: 200px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
+  .chart-wrapper { margin: 10px 10px 10px 60px; max-width: 90%; width: calc(100% - 40px); height: 800px; position: relative; }
 </style>
 </head>
 <body>
@@ -29,10 +47,16 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.7/beautify.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.7/beautify-css.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.7/beautify-html.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.6.12"></script>
 <script src="js/indexing.js"></script>
 <script src="js/beautify.js"></script>
+<script src="js/logo.js"></script>
+<script>window.addEventListener('DOMContentLoaded', () => loadLogo('header-logo'));</script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="js/graph.js"></script>
+<script src="js/list.js"></script>
+<script src="js/changes.js"></script>
 <script src="js/gs2.js" onload="window.gs2Loaded = true;" onerror="console.error('Failed to load gs2.js');"></script>
 <script type="module">
   import init, { decompile_bytecode } from './js/gbf.js';
@@ -422,6 +446,19 @@ function App() {
     const params = new URLSearchParams(window.location.search);
     return params.has('byte') || window.location.hostname === 'byte.gscript.dev';
   });
+  const [isStatsDomain, setIsStatsDomain] = useState(() => window.location.hostname === 'stats.gscript.dev' || window.location.hostname === 'gstats.moreno.land');
+  const [statsView, setStatsView] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.has('graph') ? 'graph' : (params.has('changes') ? 'changes' : 'list');
+  });
+  const [servers, setServers] = React.useState([]), [allServers, setAllServers] = React.useState([]), [loading, setLoading] = React.useState(true);
+  const [columnWidths, setColumnWidths] = React.useState({server_name: 18, type: 9, player_count: 8, language: 10, description: 28, website: 16, graal_version: 11});
+  const tableWrapperRef = React.useRef(null), tableRef = React.useRef(null);
+  const [currentPage, setCurrentPage] = React.useState(1), [perPage, setPerPage] = React.useState(10);
+  const [showDevServers, setShowDevServers] = React.useState(false), [filteredServers, setFilteredServers] = React.useState([]), [sortConfig, setSortConfig] = React.useState({column: null, direction: 'asc'});
+  const [changesData, setChangesData] = React.useState({entries: []}), [changesPage, setChangesPage] = React.useState(1), [changesPerPage, setChangesPerPage] = React.useState(5), [timestamps, setTimestamps] = React.useState([]);
+  const [transitioning, setTransitioning] = React.useState(false), [filteredServer, setFilteredServer] = React.useState(null), changesCache = React.useRef({});
+  const [resizingColumn, setResizingColumn] = React.useState(null), [guidePosition, setGuidePosition] = React.useState(null);
 
   useEffect(() => {
     const handlePopState = () => {
@@ -429,10 +466,11 @@ function App() {
       setShowIndexing(params.has('indexing'));
       setShowBeautify(params.has('beautify'));
       setShowByte(params.has('byte') || window.location.hostname === 'byte.gscript.dev');
+      if (isStatsDomain) setStatsView(params.has('graph') ? 'graph' : (params.has('changes') ? 'changes' : 'list'));
     };
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
-  }, []);
+  }, [isStatsDomain]);
 
   const handleLinkClick = (e) => {
     const link = e.currentTarget;
@@ -453,20 +491,63 @@ function App() {
     };
   }, []);
 
+  useEffect(() => {
+    const fetchServerData = () => {
+      fetch('https://api.moreno.land/api/graalstats/servers').then(r => r.json()).then(data => {
+        const servers = Array.isArray(data) ? data : (data.servers || []);
+        const serverList = servers.map(server => ({server_nameugly: server.id || server.server_nameugly, server_name: server.sname || server.server_name, server_type: server.type || server.server_type || 'listed', player_count: parseInt(server.playercount || server.player_count || 0, 10), language: server.language || '', description: server.description || '', website: server.website || '', graal_version: server.graalversion || server.graal_version || ''}));
+        setAllServers(serverList);
+        setServers(serverList.slice(0, perPage));
+        setLoading(false);
+      }).catch(err => { console.error('Error fetching server data:', err); setLoading(false); });
+    };
+    fetchServerData();
+    const getNextRefreshTime = () => { const now = new Date(), currentMinute = now.getMinutes(), currentSecond = now.getSeconds(); let nextTenMinuteMark = Math.ceil((currentMinute + 1) / 10) * 10; if (nextTenMinuteMark >= 60) nextTenMinuteMark = 0; const nextRefresh = new Date(now); nextRefresh.setMinutes(nextTenMinuteMark, 40, 0); if (nextTenMinuteMark === 0) nextRefresh.setHours(nextRefresh.getHours() + 1); if (currentMinute > nextTenMinuteMark || (currentMinute === nextTenMinuteMark && currentSecond > 45)) { nextRefresh.setMinutes(nextRefresh.getMinutes() + 10); if (nextRefresh.getMinutes() >= 60) { nextRefresh.setHours(nextRefresh.getHours() + 1); nextRefresh.setMinutes(nextRefresh.getMinutes() - 60); }} return nextRefresh.getTime() - now.getTime(); };
+    const initialDelay = getNextRefreshTime();
+    const timeoutId = setTimeout(() => { fetchServerData(); const intervalId = setInterval(fetchServerData, 10 * 60 * 1000); return () => clearInterval(intervalId); }, initialDelay);
+    return () => clearTimeout(timeoutId);
+  }, []);
+
+  useEffect(() => {
+    const filtered = showDevServers ? allServers : allServers.filter(s => s.server_type !== 'Hidden');
+    setFilteredServers(filtered);
+    const sorted = [...filtered].sort((a, b) => {
+      if (!sortConfig.column) return b.player_count - a.player_count;
+      let aVal = a[sortConfig.column], bVal = b[sortConfig.column];
+      if (sortConfig.column === 'player_count') { aVal = parseInt(aVal) || 0; bVal = parseInt(bVal) || 0; } else { aVal = (aVal || '').toString().toLowerCase(); bVal = (bVal || '').toString().toLowerCase(); }
+      return sortConfig.direction === 'asc' ? (aVal > bVal ? 1 : aVal < bVal ? -1 : 0) : (aVal < bVal ? 1 : aVal > bVal ? -1 : 0);
+    });
+    const offset = (currentPage - 1) * perPage, paged = perPage === filtered.length ? sorted : sorted.slice(offset, offset + perPage);
+    setServers(paged);
+  }, [showDevServers, allServers, sortConfig, perPage, currentPage]);
+
+  const handleSort = (column) => { if (sortConfig.column === column && sortConfig.direction === 'desc') { setSortConfig({column: null, direction: null}); return; } const newDirection = sortConfig.column === column ? 'desc' : 'asc'; setSortConfig({column, direction: newDirection}); };
+  const getSortedIndicator = (column) => { if (sortConfig.column !== column) return null; return React.createElement('i', {className: sortConfig.direction === 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down', style: {marginLeft: '5px'}}); };
+  const handleMouseDown = (column, e) => { e.preventDefault(); e.stopPropagation(); const th = e.target.closest('th'); setResizingColumn({column, startX: e.clientX, startWidth: columnWidths[column], th}); };
+  useEffect(() => {
+    if (!resizingColumn) return;
+    const handleMouseMove = (e) => { if (resizingColumn.th) { const rect = resizingColumn.th.getBoundingClientRect(); setGuidePosition(rect.right); } const diff = e.clientX - resizingColumn.startX; const tableWidth = Object.values(columnWidths).reduce((a, b) => a + b, 0); const newWidth = Math.max(5, Math.min(50, resizingColumn.startWidth + (diff / tableWidth * 100))); setColumnWidths(prev => ({...prev, [resizingColumn.column]: newWidth})); };
+    const handleMouseUp = () => { setGuidePosition(null); setTimeout(() => setResizingColumn(null), 200); };
+    document.addEventListener('mousemove', handleMouseMove); document.addEventListener('mouseup', handleMouseUp); return () => { document.removeEventListener('mousemove', handleMouseMove); document.removeEventListener('mouseup', handleMouseUp); };
+  }, [resizingColumn, columnWidths]);
+
   return (
-    <div className={`container ${fadeClass}`}>
-      {showIndexing ? <div style={{ position: 'fixed', top: '20px', left: '20px', zIndex: 1000 }}><a href="/" onClick={(e) => { e.preventDefault(); setShowIndexing(false); window.history.pushState(null, '', '/'); setTimeout(() => { if (typeof initMenus === 'function') initMenus(); }, 100); }} style={{ fontSize: '16px', color: '#40ff40', cursor: 'pointer' }}><i className="fas fa-arrow-left"></i> Back</a></div> : null}
-      {showBeautify ? <div style={{ position: 'fixed', top: '20px', left: '20px', zIndex: 1000 }}><a href="/" onClick={(e) => { e.preventDefault(); setShowBeautify(false); window.history.pushState(null, '', '/'); setTimeout(() => { if (typeof initMenus === 'function') initMenus(); }, 100); }} style={{ fontSize: '16px', color: '#40ff40', cursor: 'pointer' }}><i className="fas fa-arrow-left"></i> Back</a></div> : null}
-      {showByte ? <div style={{ position: 'fixed', top: '20px', left: '20px', zIndex: 1000 }}><a href="/" onClick={(e) => { e.preventDefault(); setShowByte(false); window.history.pushState(null, '', '/'); setTimeout(() => { if (typeof initMenus === 'function') initMenus(); }, 100); }} style={{ fontSize: '16px', color: '#40ff40', cursor: 'pointer' }}><i className="fas fa-arrow-left"></i> Back</a></div> : null}
-      {showIndexing ? <IndexingTutorial /> :
-      showBeautify ? <BeautifyTool /> :
-      showByte ? <BytecodeConverter /> :
-      <React.Fragment>
-      <div className="links">
-        <div className="dropdown">
-          <span className="dropdown-btn">
-            <i className="fas fa-book"></i>
-            <span>Documentation</span>
+    <div className={`container ${fadeClass}`} style={isStatsDomain ? {justifyContent: 'flex-start', paddingTop: '40px'} : null}>
+      <div className="contain-bg2" id="background"></div>
+      {isStatsDomain ? <div id="header-logo" style={{marginBottom: '40px'}}></div> : null}
+      {isStatsDomain ? (
+        statsView === 'graph' ? <GraphApp /> :
+        statsView === 'list' ? <ServerListView servers={servers} allServers={allServers} filteredServers={filteredServers} showDevServers={showDevServers} setShowDevServers={setShowDevServers} sortConfig={sortConfig} setSortConfig={setSortConfig} columnWidths={columnWidths} setColumnWidths={setColumnWidths} currentPage={currentPage} setCurrentPage={setCurrentPage} perPage={perPage} setPerPage={setPerPage} tableWrapperRef={tableWrapperRef} tableRef={tableRef} resizingColumn={resizingColumn} setResizingColumn={setResizingColumn} guidePosition={guidePosition} setGuidePosition={setGuidePosition} handleSort={handleSort} getSortedIndicator={getSortedIndicator} handleMouseDown={handleMouseDown} /> :
+        <ChangesView allServers={allServers} changesData={changesData} setChangesData={setChangesData} timestamps={timestamps} setTimestamps={setTimestamps} filteredServer={filteredServer} setFilteredServer={setFilteredServer} changesPage={changesPage} setChangesPage={setChangesPage} changesPerPage={changesPerPage} setChangesPerPage={setChangesPerPage} changesCache={changesCache} loading={loading} setLoading={setLoading} />
+      ) : (
+          showIndexing ? <><div style={{ position: 'fixed', top: '20px', left: '20px', zIndex: 1000 }}><a href="/" onClick={(e) => { e.preventDefault(); setShowIndexing(false); window.history.pushState(null, '', '/'); setTimeout(() => { if (typeof initMenus === 'function') initMenus(); }, 100); }} style={{ fontSize: '16px', color: '#40ff40', cursor: 'pointer' }}><i className="fas fa-arrow-left"></i> Back</a></div><IndexingTutorial /></> :
+          showBeautify ? <><div style={{ position: 'fixed', top: '20px', left: '20px', zIndex: 1000 }}><a href="/" onClick={(e) => { e.preventDefault(); setShowBeautify(false); window.history.pushState(null, '', '/'); setTimeout(() => { if (typeof initMenus === 'function') initMenus(); }, 100); }} style={{ fontSize: '16px', color: '#40ff40', cursor: 'pointer' }}><i className="fas fa-arrow-left"></i> Back</a></div><BeautifyTool /></> :
+          showByte ? <><div style={{ position: 'fixed', top: '20px', left: '20px', zIndex: 1000 }}><a href="/" onClick={(e) => { e.preventDefault(); setShowByte(false); window.history.pushState(null, '', '/'); setTimeout(() => { if (typeof initMenus === 'function') initMenus(); }, 100); }} style={{ fontSize: '16px', color: '#40ff40', cursor: 'pointer' }}><i className="fas fa-arrow-left"></i> Back</a></div><BytecodeConverter /></> :
+          <><div className="links">
+              <div className="dropdown">
+                <span className="dropdown-btn">
+                  <i className="fas fa-book"></i>
+                  <span>Documentation</span>
           </span>
           <div className="dropdown-content">
             {data.documentation.map((item, idx) => (
@@ -590,8 +671,8 @@ function App() {
           <a href="https://graalonline.com" style={{ color: '#40ff40', textDecoration: 'none', textShadow: '2px 2px 4px rgba(0, 0, 0, 1)' }}>Graal Online</a> is Copyright/trademarked to <a href="https://www.toonslab.com/" style={{ color: '#40ff40', textDecoration: 'none', textShadow: '2px 2px 4px rgba(0, 0, 0, 1)' }}>Toonslab</a> and is in no way affiliated with this site.
         </p>
       </footer>
-      </React.Fragment>
-      }
+          </>
+      )}
     </div>
   );
 }

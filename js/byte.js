@@ -34,8 +34,9 @@ function initBytecodeConverter() {
   let currentBytecode = '';
   let isDecompileMode = false;
 
-  require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs' }});
-  require(['vs/editor/editor.main'], function() {
+  function loadMonaco() {
+    require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs' }});
+    require(['vs/editor/editor.main'], function() {
     monaco.languages.register({ id: 'gscript' });
 
     monaco.languages.setMonarchTokensProvider('gscript', {
@@ -192,6 +193,16 @@ function initBytecodeConverter() {
 
     window.dispatchEvent(new Event('monaco-ready'));
   });
+  }
+
+  if (typeof require === 'undefined') {
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js';
+    script.onload = loadMonaco;
+    document.head.appendChild(script);
+  } else {
+    loadMonaco();
+  }
 
   let gbfWasmLoaded = false;
   async function loadGbfWasm() {

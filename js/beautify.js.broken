@@ -120,11 +120,14 @@ function BeautifyTool() {
   const copyToClipboard = () => { if (!outputEditorRef.current) return; navigator.clipboard.writeText(outputEditorRef.current.getValue()).then(() => { setCopySuccess(true); setTimeout(() => setCopySuccess(false), 1500); }); };
 
   React.useEffect(() => {
-    const loadMonaco = () => {
-      require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs' }});
-      require(['vs/editor/editor.main'], function() {
-        monaco.languages.register({ id: 'graalscript' });
-        monaco.languages.setMonarchTokensProvider('graalscript', {
+    if (typeof require === 'undefined') {
+      const script = document.createElement('script');
+      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js';
+      script.onload = () => {
+        require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs' }});
+        require(['vs/editor/editor.main'], function() {
+      monaco.languages.register({ id: 'graalscript' });
+      monaco.languages.setMonarchTokensProvider('graalscript', {
         keywords: [
           'break', 'case', 'continue', 'default', 'do', 'else', 'elseif', 'for', 'if',
           'in', 'return', 'switch', 'while', 'with', 'join', 'leave', 'public', 'private',
@@ -259,17 +262,12 @@ function BeautifyTool() {
         });
       }
       setMonacoReady(true);
-      });
+    });
     };
-
-    if (typeof require === 'undefined') {
-      const script = document.createElement('script');
-      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js';
-      script.onload = loadMonaco;
-      document.head.appendChild(script);
+    document.head.appendChild(script);
     } else {
-      loadMonaco();
-    }
+      require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs' }});
+      require(['vs/editor/editor.main'], function() {
 
   React.useEffect(() => { if (monacoReady && inputEditorRef.current) { monaco.editor.setModelLanguage(inputEditorRef.current.getModel(), language); if (outputEditorRef.current) monaco.editor.setModelLanguage(outputEditorRef.current.getModel(), language); } }, [language, monacoReady]);
 
