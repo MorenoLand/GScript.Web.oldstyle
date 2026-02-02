@@ -91,194 +91,12 @@
 <div id="root"></div>
 <script src="js/logo.js"></script>
 <script>window.addEventListener('DOMContentLoaded', () => loadLogo('header-logo'));</script>
+<script src="js/graph.js"></script>
+<script src="js/list.js"></script>
+<script src="js/changes.js"></script>
 
 <script type="text/babel">
 const { useState, useEffect, useRef, useMemo } = React;
-
-function GraphApp() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const initialView = parseInt(urlParams.get('view') || '0');
-    const initialPeak = urlParams.get('peak') ? parseInt(urlParams.get('peak')) : null;
-    const loadingMessages = ['Gathering player data...', 'Counting servers...', 'Crunching numbers...', 'Loading statistics...', 'Fetching latest data...', 'Analyzing trends...', 'Preparing charts...', 'Almost there...'];
-    const [loadingMessage, setLoadingMessage] = useState('');
-    const [view, setView] = useState(initialView);
-    const [viewTitle, setViewTitle] = useState(initialPeak ? '' : '24 Hours');
-    const [timeFormat, setTimeFormat] = useState('%I:%M %p');
-    const [dataPoints, setDataPoints] = useState([]);
-    const [peakPlayerCount, setPeakPlayerCount] = useState(0);
-    const [alltimePeakPlayerCount, setAlltimePeakPlayerCount] = useState(0);
-    const [peakTimestamp2, setPeakTimestamp2] = useState(null);
-    const [individualPeakServer, setIndividualPeakServer] = useState('');
-    const [loading, setLoading] = useState(true);
-    const [viewLoading, setViewLoading] = useState(false);
-    const [loadingProgress, setLoadingProgress] = useState(0);
-    const [error, setError] = useState(false);
-    const chartRef = useRef(null);
-    const chartInstanceRef = useRef(null);
-    const timeFormats = ['%I:%M %p', '%m/%d %I %p', '%m/%d', '%b %d'];
-    const viewTitles = ['24 Hours', 'Week', 'Month', 'Year'];
-
-    const seriesData = useMemo(() => {
-        const seriesMap = new Map(), totalMap = new Map();
-        for (let i = 0; i < dataPoints.length; i++) {
-            const point = dataPoints[i], timestamp = point.timestamp, serverName = point.serverName, playerCount = point.playerCount;
-            if (!seriesMap.has(serverName)) seriesMap.set(serverName, []);
-            seriesMap.get(serverName).push([timestamp, playerCount]);
-            totalMap.set(timestamp, (totalMap.get(timestamp) || 0) + playerCount);
-        }
-        const series = [];
-        let colorIndex = 1;
-        const getColor = (index) => `hsl(${(index * 360 / 100) % 260}, 70%, 50%)`;
-        for (const [serverName, data] of seriesMap) {
-            data.sort((a, b) => a[0] - b[0]);
-            series.push({name: serverName, data: data, color: getColor(colorIndex++)});
-        }
-        const totalData = Array.from(totalMap.entries()).sort((a, b) => a[0] - b[0]);
-        series.unshift({name: 'All Servers', data: totalData, color: '#ffffff', lineWidth: 3});
-        return series;
-    }, [dataPoints]);
-
-    useEffect(() => {
-        let apiUrl = 'https://api.moreno.land/api/graalstats/stats/' + view + '/processed';
-        if (initialPeak) apiUrl += '?peak=' + initialPeak;
-        setLoadingProgress(0);
-        setLoadingMessage(loadingMessages[Math.floor(Math.random() * loadingMessages.length)]);
-        const messageInterval = setInterval(() => setLoadingMessage(loadingMessages[Math.floor(Math.random() * loadingMessages.length)]), 1500);
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', apiUrl, true);
-        xhr.responseType = 'json';
-        xhr.onprogress = () => setLoadingProgress(10);
-        xhr.onload = function() {
-            if (xhr.status === 200) {
-                setLoadingProgress(50);
-                var data = xhr.response;
-                setTimeout(() => {
-                    if (data.error) { setError(true); setLoading(false); setLoadingProgress(0); clearInterval(messageInterval); return; }
-                    setLoadingProgress(90);
-                    setDataPoints(data.dataPoints || []);
-                    setPeakPlayerCount(data.peakPlayerCount || 0);
-                    setAlltimePeakPlayerCount(data.alltimePeakPlayerCount || 0);
-                    setPeakTimestamp2(data.peakTimestamp || null);
-                    setIndividualPeakServer(data.individualPeakServer || '');
-                    if (initialPeak) {
-                        const date = new Date(initialPeak * 1000);
-                        setViewTitle('Around ' + date.toLocaleTimeString([], {hour: 'numeric', minute:'2-digit'}) + ' on ' + (date.getMonth()+1) + '/' + date.getDate() + '/' + date.getFullYear().toString().slice(-2));
-                    } else setViewTitle(viewTitles[view]);
-                    setTimeFormat(timeFormats[view]);
-                    setTimeout(() => { setLoadingProgress(100); setLoading(false); setLoadingProgress(0); clearInterval(messageInterval); }, 100);
-                }, 50);
-            }
-        };
-        xhr.onerror = () => { console.error('Error loading graph data'); setError(true); setLoading(false); setLoadingProgress(0); clearInterval(messageInterval); };
-        xhr.send();
-    }, []);
-
-    useEffect(() => {
-        if (loading || !chartRef.current) return;
-        if (chartInstanceRef.current) {
-            chartInstanceRef.current.update({title: { text: viewTitle }, xAxis: { labels: { formatter: function() { return Highcharts.dateFormat(timeFormat, this.value); }}}, series: seriesData}, false, false);
-            chartInstanceRef.current.redraw();
-            return;
-        }
-        chartInstanceRef.current = Highcharts.chart(chartRef.current, {
-            chart: {type: 'line', backgroundColor: 'rgba(30, 80, 40, 0)', marginTop: 50, height: 800, width: null, borderWidth: 0, plotBorderWidth: 0, borderRadius: 10, animation: false, plotOptions: {series: {animation: false, lineWidth: 2, dataGrouping: {enabled: true, approximation: 'average', groupPixelWidth: 2}}}, tooltip: {animation: false}, events: {render: function() { const titleEl = this.title.element; titleEl.style.cursor = 'pointer'; titleEl.onclick = function() { const hasHidden = chartInstanceRef.current.series.some(s => !s.visible); if (hasHidden) { chartInstanceRef.current.series.forEach(s => s.setVisible(true, false)); chartInstanceRef.current.setTitle({ text: viewTitle }); chartInstanceRef.current.redraw(); }}}}},
-            title: {text: null, style: {display: 'none'}},
-            xAxis: {type: 'datetime', title: { text: 'Timestamp (' + (new Date().getTimezoneOffset() === 240 ? 'EDT' : 'EST') + ')', style: { color: '#ffffff', fontFamily: 'Tempus Sans ITC', fontWeight: 'bold' }}, labels: {style: { color: '#ffffff', fontFamily: 'Tempus Sans ITC', fontWeight: 'bold' }, formatter: function() { return Highcharts.dateFormat(timeFormat, this.value - 5 * 3600 * 1000); }}},
-            yAxis: {title: { text: '', style: { color: '#ffffff', fontFamily: 'Tempus Sans ITC', fontWeight: 'bold' }}, min: 0, labels: { style: { color: '#ffffff', fontFamily: 'Tempus Sans ITC', fontWeight: 'bold' }}},
-            series: seriesData,
-            tooltip: {shared: false, crosshairs: true, useHTML: true, style: { color: '#ffffff', fontFamily: 'Tempus Sans ITC', fontWeight: 'bold' }, backgroundColor: '#333333', borderColor: '#444444', formatter: function() { return `<b>${Highcharts.dateFormat('%m-%d-%Y at %I:%M %p', this.x - 5 * 3600 * 1000)}</b><br/><span style="display:inline-block;width:10px;height:10px;background-color:${this.series.color};border-radius:50%;margin-right:5px;"></span>${this.series.name}: ${this.y}`; }},
-            plotOptions: {series: {marker: { enabled: false }, animation: false, events: {legendItemClick: function() { const chart = chartInstanceRef.current, series = chart.series, visibleCount = series.filter(s => s.visible).length; if (visibleCount === 1 && this.visible) { series.forEach(s => s.setVisible(true, false)); chart.setTitle({ text: viewTitle }); } else { const isVisible = this.visible; if (!isVisible) { series.forEach(s => s.setVisible(false, false)); this.setVisible(true, false); chart.setTitle({ text: this.name }); } else { series.forEach(s => s.setVisible(true, false)); chart.setTitle({ text: viewTitle }); }} chart.redraw(); return false; }}}},
-            credits: { enabled: false },
-            legend: { enabled: true, itemStyle: { color: '#ffffff', fontWeight: 'bold', fontFamily: 'Tempus Sans ITC' }},
-            accessibility: { enabled: true },
-            exporting: {buttons: {contextButton: {menuItems: ['downloadCSV', 'downloadXLS', 'downloadPDF', 'downloadPNG'], style: { color: '#ffffff', backgroundColor: 'transparent', border: 'none', borderRadius: '0', padding: '5px 10px', cursor: 'pointer' }, align: 'right', verticalAlign: 'bottom', y: -10, x: -10}}, scale: 2, sourceWidth: undefined, sourceHeight: undefined}
-        });
-        chartInstanceRef.current.reflow();
-        return () => { if (chartInstanceRef.current) { chartInstanceRef.current.destroy(); chartInstanceRef.current = null; }};
-    }, [seriesData, viewTitle, timeFormat, loading, viewLoading]);
-
-    function loadView(newView) {
-        if (newView === view) return;
-        setViewLoading(true);
-        setLoadingProgress(0);
-        setLoadingMessage(loadingMessages[Math.floor(Math.random() * loadingMessages.length)]);
-        const messageInterval = setInterval(() => setLoadingMessage(loadingMessages[Math.floor(Math.random() * loadingMessages.length)]), 1500);
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', 'https://api.moreno.land/api/graalstats/stats/' + newView + '/processed', true);
-        xhr.responseType = 'json';
-        xhr.onprogress = () => setLoadingProgress(10);
-        xhr.onload = function() {
-            if (xhr.status === 200) {
-                setLoadingProgress(50);
-                var data = xhr.response;
-                setTimeout(() => {
-                    setLoadingProgress(90);
-                    setView(newView);
-                    setViewTitle(viewTitles[newView]);
-                    setTimeFormat(timeFormats[newView]);
-                    setDataPoints(data.dataPoints || []);
-                    setPeakPlayerCount(data.peakPlayerCount || 0);
-                    setAlltimePeakPlayerCount(data.alltimePeakPlayerCount || 0);
-                    setPeakTimestamp2(data.peakTimestamp || null);
-                    setIndividualPeakServer(data.individualPeakServer || '');
-                    setTimeout(() => { setLoadingProgress(100); setViewLoading(false); setLoadingProgress(0); clearInterval(messageInterval); }, 100);
-                    var url = new URL(window.location);
-                    url.searchParams.set('view', newView);
-                    url.searchParams.delete('peak');
-                    window.history.pushState(null, '', url);
-                }, 50);
-            }
-        };
-        xhr.onerror = () => { console.error('Error loading graph data'); setViewLoading(false); setLoadingProgress(0); clearInterval(messageInterval); };
-        xhr.send();
-    }
-
-    if (error) return React.createElement('div', { className: 'error-message' }, React.createElement('p', null, '🔌 Database temporarily unavailable'), React.createElement('p', null, 'Please try again in a few minutes'));
-
-    const peakUrl = "/?graph&peak=" + (peakTimestamp2 ? peakTimestamp2 : Date.now());
-    const peakTime = peakTimestamp2 ? new Date(peakTimestamp2 - 4 * 3600 * 1000) : null;
-    const timezone = new Date().getTimezoneOffset() === 240 ? 'EDT' : 'EST';
-
-    return React.createElement(React.Fragment, null,
-        React.createElement('div', { style: { display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '25px' } },
-            React.createElement('p', null, 'There was a ', React.createElement('a', { href: peakUrl, style: { color: '#40ff40', textDecoration: 'none', textShadow: '2px 2px 4px rgba(0, 0, 0, 1)', fontWeight: 'bold' } }, 'peak'), ' of ', React.createElement('font', { style: { textShadow: '2px 2px 4px rgba(0, 0, 0, 1)', fontWeight: 'bold' }, color: 'yellow' }, alltimePeakPlayerCount.toLocaleString()), ' player(s) online during the last ', React.createElement('font', { style: { fontWeight: 'bold' } }, viewTitle.toLowerCase()), peakTime ? '. (Peaked at ' + new Date(peakTime).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true, month: 'numeric', day: 'numeric', year: '2-digit' }) + ' ' + timezone + ')' : ''),
-            React.createElement('p', null, 'The top server ', React.createElement('font', { style: { textShadow: '2px 2px 4px rgba(0, 0, 0, 1)', color: '#40ff40', fontWeight: 'bold' } }, individualPeakServer), ' had a peak of ', React.createElement('font', { style: { textShadow: '2px 2px 4px rgba(0, 0, 0, 1)', fontWeight: 'bold' }, color: 'yellow' }, peakPlayerCount.toLocaleString()), ' player(s) during this time.'),
-            React.createElement('p', { style: { marginTop: '1px' } }, React.createElement('a', { href: '/?list', onClick: (e) => { e.preventDefault(); window.location.href = '/?list'; }, style: { color: '#40ff40', textDecoration: 'none', textShadow: '2px 2px 4px rgba(0, 0, 0, 1)', fontWeight: 'bold' } }, 'View List'), React.createElement('br'), React.createElement('a', { href: '/?changes', onClick: (e) => { e.preventDefault(); window.location.href = '/?changes'; }, style: { color: '#40ff40', textDecoration: 'none', textShadow: '2px 2px 4px rgba(0, 0, 0, 1)', fontWeight: 'bold' } }, 'View Changes'), React.createElement('br'), React.createElement('br'), React.createElement('a', { onClick: () => loadView(0), style: { color: view === 0 ? 'yellow' : '#40ff40', textDecoration: 'none', cursor: 'pointer', textShadow: '2px 2px 4px rgba(0, 0, 0, 1)', fontWeight: 'bold' } }, '24 Hours'), ' | ', React.createElement('a', { onClick: () => loadView(1), style: { color: view === 1 ? 'yellow' : '#40ff40', textDecoration: 'none', cursor: 'pointer', textShadow: '2px 2px 4px rgba(0, 0, 0, 1)', fontWeight: 'bold' } }, 'Week'), ' | ', React.createElement('a', { onClick: () => loadView(2), style: { color: view === 2 ? 'yellow' : '#40ff40', textDecoration: 'none', cursor: 'pointer', textShadow: '2px 2px 4px rgba(0, 0, 0, 1)', fontWeight: 'bold' } }, 'Month'), ' | ', React.createElement('a', { onClick: () => loadView(3), style: { color: view === 3 ? 'yellow' : '#40ff40', textDecoration: 'none', cursor: 'pointer', textShadow: '2px 2px 4px rgba(0, 0, 0, 1)', fontWeight: 'bold' } }, 'Year'))
-        ),
-        React.createElement('div', { className: 'container' }, React.createElement('div', { className: 'chart-wrapper', style: { position: 'relative' } }, viewLoading && React.createElement('div', { style: { position: 'absolute', top: '5px', left: '50%', transform: 'translateX(-50%)', zIndex: 10, textAlign: 'center' } }, React.createElement('div', { style: { fontSize: '12px', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '5px' } }, loadingMessage), React.createElement('div', { style: { width: '300px', height: '6px', backgroundColor: 'rgba(255, 255, 255, 0.2)', borderRadius: '3px', overflow: 'hidden' } }, React.createElement('div', { style: { width: loadingProgress + '%', height: '100%', backgroundColor: '#40ff40', transition: 'width 0.1s ease' } }))), React.createElement('div', { ref: chartRef, className: 'chart' }))),
-        React.createElement('footer', { style: { textAlign: 'center', marginTop: '-20px', color: '#ffffff' } }, React.createElement('p', null, 'This data is updated every 10 minutes.'), React.createElement('p', null, React.createElement('a', { href: 'https://graalonline.com', style: { color: '#40ff40', textShadow: '2px 2px 4px rgba(0, 0, 0, 1)' } }, 'Graal Online'), ' is Copyright/trademarked to ', React.createElement('a', { href: 'https://www.toonslab.com/', style: { color: '#40ff40', textShadow: '2px 2px 4px rgba(0, 0, 0, 1)' } }, 'Toonslab'), ' and is in no way affiliated with this site.'), React.createElement('p', { style: { fontSize: '0.7em', marginTop: '10px' } }, '* Some servers are not shown as they are not playable/joinable.'))
-    );
-}
-
-function useMapTooltip() {
-    const tooltipRef = useRef(null), imageCache = useRef(new Map()), loadingImages = useRef(new Set()), hideTimeoutRef = useRef(null), showTimeoutRef = useRef(null);
-    useEffect(() => {
-        if (!tooltipRef.current) { tooltipRef.current = document.createElement('div'); tooltipRef.current.id = 'map-tooltip'; document.body.appendChild(tooltipRef.current); }
-        return () => { if (tooltipRef.current && tooltipRef.current.parentNode) tooltipRef.current.parentNode.removeChild(tooltipRef.current); };
-    }, []);
-    function preloadImage(src) { if (imageCache.current.has(src) || loadingImages.current.has(src)) return; loadingImages.current.add(src); const img = new Image(); img.onload = () => { imageCache.current.set(src, true); loadingImages.current.delete(src); }; img.onerror = () => { imageCache.current.set(src, false); loadingImages.current.delete(src); }; img.src = src; }
-    function positionTooltip(mouseX, mouseY) { if (!tooltipRef.current) return; const buffer = 20, rect = tooltipRef.current.getBoundingClientRect(); let x = mouseX + buffer, y = mouseY + buffer; if (x + rect.width > window.innerWidth) x = mouseX - rect.width - buffer; if (y + rect.height > window.innerHeight) y = mouseY - rect.height - buffer; if (x < 0) x = buffer; if (y < 0) y = buffer; tooltipRef.current.style.left = x + 'px'; tooltipRef.current.style.top = y + 'px'; }
-    function showMapTooltip(event, serverNameUgly) { if (!tooltipRef.current) return; clearTimeout(hideTimeoutRef.current); clearTimeout(showTimeoutRef.current); const mapSrc = 'gfx/login_servermap_' + serverNameUgly + '.png'; if (imageCache.current.has(mapSrc) && !imageCache.current.get(mapSrc)) { if (tooltipRef.current.classList.contains('show')) tooltipRef.current.classList.remove('show'); return; } showTimeoutRef.current = setTimeout(() => { const img = new Image(); img.onload = () => { tooltipRef.current.innerHTML = '<img src="' + mapSrc + '" alt="Server Map">'; positionTooltip(event.clientX + window.scrollX, event.clientY + window.scrollY); tooltipRef.current.classList.add('show'); imageCache.current.set(mapSrc, true); }; img.onerror = () => { imageCache.current.set(mapSrc, false); if (tooltipRef.current.classList.contains('show')) tooltipRef.current.classList.remove('show'); }; img.src = mapSrc; }, 50); }
-    function hideMapTooltip() { if (!tooltipRef.current) return; clearTimeout(showTimeoutRef.current); hideTimeoutRef.current = setTimeout(() => { if (tooltipRef.current) tooltipRef.current.classList.remove('show'); }, 50); }
-    function updateTooltipPosition(event) { if (tooltipRef.current && tooltipRef.current.classList.contains('show')) positionTooltip(event.clientX + window.scrollX, event.clientY + window.scrollY); }
-    return { preloadImage, showMapTooltip, hideMapTooltip, updateTooltipPosition };
-}
-
-const truncate = (text, limit) => text.length > limit ? text.substring(0, limit) + '..' : text;
-
-function ServerRow({ server, idx, preloadImage, showMapTooltip, hideMapTooltip, updateTooltipPosition }) {
-    const serverNameUgly = server.server_nameugly || 'N/A', serverName = server.server_name || 'N/A', serverType = server.server_type || 'Classic', imageName = 'gfx/login_icon_' + serverNameUgly + '.png', mapName = 'gfx/login_servermap_' + serverNameUgly + '.png';
-    React.useEffect(() => preloadImage(mapName), [mapName, preloadImage]);
-    return React.createElement('tr', {key: idx, 'data-server': serverNameUgly, 'data-map': serverNameUgly, onMouseEnter: (e) => showMapTooltip(e, serverNameUgly), onMouseLeave: hideMapTooltip, onMouseMove: updateTooltipPosition},
-        React.createElement('td', {className: 'servername'}, React.createElement('img', {src: imageName, alt: serverName, loading: 'lazy', onError: (e) => e.target.src = 'gfx/login_icon_developer4.png', style: {width: 32, height: 32, verticalAlign: 'middle', marginRight: 10}}), serverName),
-        React.createElement('td', {className: 'type'}, serverType),
-        React.createElement('td', {className: 'playercount'}, server.player_count || '0'),
-        React.createElement('td', {className: 'language'}, server.language || 'N/A'),
-        React.createElement('td', {className: 'description'}, truncate(server.description || 'No description available.', 30)),
-        React.createElement('td', {className: 'website'}, server.website ? React.createElement('a', {href: server.website}, truncate(server.website, 25)) : 'None.'),
-        React.createElement('td', {className: 'version'}, server.graal_version || 'Worlds')
-    );
-}
 
 function App() {
     const [view, setView] = useState('list'), [servers, setServers] = useState([]), [allServers, setAllServers] = useState([]), [loading, setLoading] = useState(true);
@@ -295,47 +113,9 @@ function App() {
         setView(initialView);
         const pageParam = urlParams.get('page');
         if (pageParam) setCurrentPage(parseInt(pageParam));
-        if (initialView === 'changes') loadTimestamps();
     }, []);
 
-    useEffect(() => { if (view === 'changes' && timestamps.length === 0) loadTimestamps(); }, [view]);
-
-    function loadTimestamps() {
-        const cached = Object.keys(changesCache.current).length > 0;
-        if (!cached) setLoading(true);
-        fetch('https://api.moreno.land/api/graalstats/changes/timestamps').then(r => r.json()).then(data => { setTimestamps(data.timestamps); loadChangesData(data.timestamps.slice(0, 5), cached); }).catch(err => { console.error('Error loading timestamps:', err); setLoading(false); });
-    }
-
-    function loadChangesData(pageTimestamps, skipLoading) {
-        const cacheKey = JSON.stringify(pageTimestamps);
-        if (changesCache.current[cacheKey]) { setChangesData({entries: changesCache.current[cacheKey]}); if (skipLoading) setLoading(false); return; }
-        if (!skipLoading) setLoading(true);
-        fetch('https://api.moreno.land/api/graalstats/changes/data', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({timestamps: pageTimestamps})}).then(r => r.json()).then(result => {
-            const entries = result.results || [], data = [];
-            entries.forEach(entry => {
-                const timestamp = entry.timestamp, date = new Date(timestamp * 1000), dateStr = (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear().toString().slice(-2) + ' ' + date.toLocaleTimeString();
-                const addedArray = [], removedArray = [], renamedArray = [];
-                if (entry.changes) {
-                    entry.changes.forEach(change => {
-                        const serverId = change.server_id, changeType = change.change_type;
-                        if (changeType === 'Added') { const name = change.server_name || serverId, iconPath = 'gfx/login_icon_' + serverId + '.png', imgTag = '<img src="' + iconPath + '" style="width: 40px; height: 40px; vertical-align: middle; margin-right: 5px;" onerror="this.src=\'gfx/login_icon_developer4.png\'">'; addedArray.push('<a href="#' + serverId + '" style="color: #40ff40;">' + imgTag + '</a><a href="#' + serverId + '" style="color: #40ff40;">' + name + '</a>'); }
-                        else if (changeType === 'Removed') { const name = change.old_name, imgTag = '<img src="gfx/login_icon_graal classic.png" style="width: 32px; height: 32px; vertical-align: middle; margin-right: 5px;">'; removedArray.push('<a href="#' + serverId + '" style="color: #40ff40;">' + imgTag + '</a><a href="#' + serverId + '" style="color: #40ff40;">' + name + '</a>'); }
-                        else if (changeType === 'Renamed') { const oldName = change.old_name, newName = change.new_name, imgTag = '<img src="gfx/login_icon_login3.png" style="width: 32px; height: 32px; vertical-align: middle; margin-right: 5px;">'; renamedArray.push('<a href="#' + serverId + '" style="color: #40ff40;">' + imgTag + '</a><a href="#' + serverId + '" style="color: #40ff40;">' + oldName + '</a> to <a href="#' + serverId + '" style="color: #40ff40;">' + imgTag + '</a><a href="#' + serverId + '" style="color: #40ff40;">' + newName + '</a>'); }
-                    });
-                }
-                const listings = [];
-                if (addedArray.length > 0) listings.push('Added ' + addedArray.join(', '));
-                if (removedArray.length > 0) listings.push('Removed ' + removedArray.join(', '));
-                if (renamedArray.length > 0) listings.push('Renamed ' + renamedArray.join(', '));
-                if (listings.length > 0) data.push({header: 'Changes on ' + dateStr, content: '<div class="server-listing">' + listings.join('<br>') + '</div>'});
-            });
-            changesCache.current[cacheKey] = data;
-            setChangesData({entries: data});
-            setLoading(false);
-        });
-    }
-
-    const setViewAndTrack = (newView) => { setView(newView); const url = new URL(window.location); if (newView === 'changes') { url.searchParams.set('changes', ''); url.searchParams.delete('graph'); loadTimestamps(); } else if (newView === 'graph') { url.searchParams.set('graph', ''); url.searchParams.delete('changes'); } else { url.searchParams.delete('changes'); url.searchParams.delete('graph'); } window.history.pushState(null, '', url); };
+    const setViewAndTrack = (newView) => { setView(newView); const url = new URL(window.location); if (newView === 'changes') { url.searchParams.set('changes', ''); url.searchParams.delete('graph'); } else if (newView === 'graph') { url.searchParams.set('graph', ''); url.searchParams.delete('changes'); } else { url.searchParams.delete('changes'); url.searchParams.delete('graph'); } window.history.pushState(null, '', url); };
 
     useEffect(() => {
         const fetchServerData = () => {
@@ -382,48 +162,7 @@ function App() {
     const totalPages = Math.ceil(filteredServers.length / perPage);
     const totalPlayerCount = allServers.reduce((sum, s) => sum + (s.player_count || 0), 0);
 
-    const renderListView = () => React.createElement(React.Fragment, null,
-        React.createElement('div', {style: {display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '25px'}},
-            React.createElement('p', null, 'There are currently ', React.createElement('font', {color: 'yellow', style: {textShadow: '2px 2px 4px rgba(0, 0, 0, 1)'}}, totalPlayerCount.toLocaleString(), ' player(s)'), ' online across ', React.createElement('font', {color: 'yellow', style: {textShadow: '2px 2px 4px rgba(0, 0, 0, 1)'}}, allServers.length, ' server(s)'), '.'),
-            React.createElement('p', {style: {marginTop: '10px'}}, React.createElement('a', {onClick: () => setViewAndTrack('graph'), style: {color: '#40ff40', textDecoration: 'none', cursor: 'pointer', textShadow: '2px 2px 4px rgba(0, 0, 0, 1)'}}, 'View Graph'), React.createElement('br'), React.createElement('a', {onClick: () => setViewAndTrack('changes'), style: {color: '#40ff40', textDecoration: 'none', cursor: 'pointer', textShadow: '2px 2px 4px rgba(0, 0, 0, 1)'}}, 'View Changes'))
-        ),
-        React.createElement('div', {ref: tableWrapperRef, className: 'table-wrapper', style: {display: 'flex', flexDirection: 'column', gap: '0', width: '100%', maxWidth: '1420px', margin: '0 auto', position: 'relative'}},
-            React.createElement('div', {style: {display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px'}},
-                React.createElement('div'),
-                React.createElement('label', {style: {display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.875rem', color: '#ffffff'}}, React.createElement('span', {style: {position: 'relative', display: 'inline-block', width: '36px', height: '20px', borderRadius: '20px', backgroundColor: showDevServers ? 'rgba(25, 118, 210, 1)' : 'rgba(255, 255, 255, 0.3)', transition: 'background-color 0.2s', cursor: 'pointer'}}, React.createElement('input', {type: 'checkbox', checked: showDevServers, onChange: (e) => setShowDevServers(e.target.checked), style: {position: 'absolute', opacity: 0, width: 0, height: 0}}), React.createElement('span', {style: {position: 'absolute', content: '""', height: '16px', width: '16px', left: showDevServers ? '18px' : '2px', bottom: '2px', backgroundColor: '#ffffff', transition: 'left 0.2s', borderRadius: '50%'}})), 'Show Hidden servers')
-            ),
-            React.createElement('div', {className: 'resize-guide', style: {position: 'absolute', top: tableWrapperRef.current ? (tableWrapperRef.current.querySelector('table')?.getBoundingClientRect().top - tableWrapperRef.current.getBoundingClientRect().top) + 'px' : '40px', height: tableRef.current?.offsetHeight + 'px' || 'auto', width: '5px', backgroundColor: 'rgba(255, 255, 255, 0.3)', pointerEvents: 'none', zIndex: 10, display: resizingColumn && guidePosition !== null && tableWrapperRef.current ? 'block' : 'none', left: resizingColumn && guidePosition !== null && tableWrapperRef.current ? (guidePosition - tableWrapperRef.current.getBoundingClientRect().left - 2.5) + 'px' : 'auto'}}),
-            React.createElement('div', {style: {backgroundColor: 'rgba(0, 0, 0, 0.5)', borderRadius: '8px', overflow: 'hidden'}},
-                React.createElement('table', {ref: tableRef, style: {borderCollapse: 'collapse', tableLayout: 'fixed', margin: '0', width: '100%'}},
-                    React.createElement('thead', {style: {textShadow: '2px 2px 4px rgba(0, 0, 0, 1)'}},
-                        React.createElement('tr', null, React.createElement('th', {onClick: () => handleSort('server_name'), style: {position: 'relative', paddingLeft: '45px', width: columnWidths.server_name + '%', cursor: 'pointer'}}, React.createElement('button', {onClick: (e) => { e.stopPropagation(); window.location.reload(); }, className: 'rbutton', style: {position: 'absolute', left: '15px', top: '50%', transform: 'translateY(-50%)', backgroundColor: 'transparent', border: 'none', cursor: 'pointer'}}, React.createElement('i', {className: 'fas fa-sync-alt fa-lg', style: {color: '#FFFF00'}})), 'Server Name', getSortedIndicator('server_name'), React.createElement('div', {className: 'resizer', onMouseDown: (e) => handleMouseDown('server_name', e)})), React.createElement('th', {onClick: () => handleSort('type'), style: {width: columnWidths.type + '%', position: 'relative'}}, 'Type', getSortedIndicator('type'), React.createElement('div', {className: 'resizer', onMouseDown: (e) => handleMouseDown('type', e)})), React.createElement('th', {onClick: () => handleSort('player_count'), style: {width: columnWidths.player_count + '%', textAlign: 'center', paddingRight: '60px', position: 'relative'}}, 'Player Count', getSortedIndicator('player_count'), React.createElement('div', {className: 'resizer', onMouseDown: (e) => handleMouseDown('player_count', e)})), React.createElement('th', {onClick: () => handleSort('language'), style: {width: columnWidths.language + '%', position: 'relative'}}, 'Language', getSortedIndicator('language'), React.createElement('div', {className: 'resizer', onMouseDown: (e) => handleMouseDown('language', e)})), React.createElement('th', {onClick: () => handleSort('description'), style: {width: columnWidths.description + '%', position: 'relative'}}, 'Description', getSortedIndicator('description'), React.createElement('div', {className: 'resizer', onMouseDown: (e) => handleMouseDown('description', e)})), React.createElement('th', {onClick: () => handleSort('website'), style: {width: columnWidths.website + '%', position: 'relative'}}, 'Website', getSortedIndicator('website'), React.createElement('div', {className: 'resizer', onMouseDown: (e) => handleMouseDown('website', e)})), React.createElement('th', {onClick: () => handleSort('graal_version'), style: {textAlign: 'center', paddingRight: '20px', width: columnWidths.graal_version + '%', position: 'relative'}}, 'Game Version', getSortedIndicator('graal_version')))
-                    ),
-                    React.createElement('tbody', null, servers.map((server, idx) => React.createElement(ServerRow, {key: idx, idx, server, preloadImage, showMapTooltip, hideMapTooltip, updateTooltipPosition})))
-                ),
-                React.createElement('div', {style: {display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 16px', borderTop: '1px solid rgba(255, 255, 255, 0.12)', backgroundColor: 'rgba(0, 0, 0, 0.5)', gap: '20px', fontSize: '0.875rem', color: '#ffffff'}},
-                    React.createElement('span', null, 'Page Total: ', servers.reduce((sum, s) => sum + (s.player_count || 0), 0)),
-                    React.createElement('div', {style: {display: 'flex', alignItems: 'center', gap: '8px'}}, React.createElement('span', null, 'Rows per page:'), React.createElement('select', {value: perPage, onChange: (e) => { setPerPage(parseInt(e.target.value)); setCurrentPageWithUrl(1); }, style: {padding: '4px', backgroundColor: 'rgba(0, 0, 0, 0.3)', border: '1px solid rgba(255, 255, 255, 0.23)', color: '#ffffff', borderRadius: '4px', cursor: 'pointer', fontSize: '0.875rem'}}, React.createElement('option', {value: 10}, '10'), React.createElement('option', {value: 25}, '25'), React.createElement('option', {value: 50}, '50'), React.createElement('option', {value: 100}, '100'))),
-                    React.createElement(React.Fragment, null, React.createElement('span', null, (currentPage - 1) * perPage + 1, '-', Math.min(currentPage * perPage, filteredServers.length), ' of ', filteredServers.length), React.createElement('div', {style: {display: 'flex', gap: '4px', alignItems: 'center'}}, React.createElement('button', {onClick: () => setCurrentPageWithUrl(Math.max(1, currentPage - 1)), disabled: currentPage === 1, style: {padding: '1px 8px 5px 8px', backgroundColor: 'transparent', border: 'none', color: currentPage === 1 ? 'rgba(255, 255, 255, 0.26)' : 'rgba(255, 255, 255, 0.74)', cursor: currentPage === 1 ? 'default' : 'pointer', borderRadius: '4px', fontSize: '1.25rem', lineHeight: '1'}}, '<'), (() => { const totalPages = Math.ceil(filteredServers.length / perPage), pages = []; for (let i = 1; i <= totalPages; i++) pages.push(i); return pages.map(page => React.createElement('button', {key: page, onClick: () => setCurrentPageWithUrl(page), style: {padding: '4px 8px', backgroundColor: currentPage === page ? 'rgba(25, 118, 210, 1)' : 'transparent', border: 'none', color: currentPage === page ? '#ffffff' : 'rgba(255, 255, 255, 0.74)', cursor: 'pointer', borderRadius: '4px', fontSize: '0.875rem'}}, page.toString())); })(), React.createElement('button', {onClick: () => setCurrentPageWithUrl(Math.min(Math.ceil(filteredServers.length / perPage), currentPage + 1)), disabled: currentPage === Math.ceil(filteredServers.length / perPage), style: {padding: '1px 8px 5px 8px', backgroundColor: 'transparent', border: 'none', color: currentPage === Math.ceil(filteredServers.length / perPage) ? 'rgba(255, 255, 255, 0.26)' : 'rgba(255, 255, 255, 0.74)', cursor: currentPage === Math.ceil(filteredServers.length / perPage) ? 'default' : 'pointer', borderRadius: '4px', fontSize: '1.25rem', lineHeight: '1'}}, '>')))
-                )
-            )
-        )
-    );
-
-    const renderChangesView = () => {
-        const filteredEntries = filteredServer ? changesData.entries.filter(entry => entry.content && entry.content.toLowerCase().includes(filteredServer.toLowerCase())) : changesData.entries;
-        return React.createElement(React.Fragment, null,
-            React.createElement('div', {style: {display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '25px'}}, React.createElement('p', null, 'There are currently ', React.createElement('font', {color: 'yellow', style: {textShadow: '2px 2px 4px rgba(0, 0, 0, 1)'}}, allServers.reduce((sum, s) => sum + (s.player_count || 0), 0).toLocaleString(), ' player(s)'), ' online across ', React.createElement('font', {color: 'yellow', style: {textShadow: '2px 2px 4px rgba(0, 0, 0, 1)'}}, allServers.length, ' server(s)'), '.'), React.createElement('p', {style: {marginTop: '1px'}}, React.createElement('a', {onClick: () => setViewAndTrack('graph'), style: {color: '#40ff40', textDecoration: 'none', cursor: 'pointer', textShadow: '2px 2px 4px rgba(0, 0, 0, 1)'}}, 'View Graph'), React.createElement('br'), React.createElement('a', {onClick: () => setViewAndTrack('list'), style: {color: '#40ff40', textDecoration: 'none', cursor: 'pointer', textShadow: '2px 2px 4px rgba(0, 0, 0, 1)'}}, 'View List'))),
-            React.createElement('div', {className: 'table-wrapper', style: {display: 'flex', flexDirection: 'column', gap: '0', width: '100%', maxWidth: '900px', margin: '0 auto'}}, React.createElement('div', {style: {backgroundColor: 'rgba(0, 0, 0, 0.5)', borderRadius: '8px 8px 0 0', overflow: 'hidden'}}, React.createElement('table', {style: {borderCollapse: 'collapse', tableLayout: 'auto', margin: '0', width: '100%', borderRadius: '0'}}, React.createElement('tbody', null, filteredEntries && filteredEntries.length > 0 ? filteredEntries.map((entry, index) => React.createElement('tr', {key: index}, React.createElement('td', {style: {padding: '12px 10px', borderBottom: index < filteredEntries.length - 1 ? '1px solid rgba(255, 255, 255, 0.1)' : 'none', borderLeft: '1px solid rgba(255,255,255,0.1)', borderRight: '1px solid rgba(255,255,255,0.1)', borderRadius: '0 !important'}}, React.createElement('div', {dangerouslySetInnerHTML: {__html: entry.header}, style: {fontSize: '16px', color: 'white', marginBottom: '8px', textShadow: '2px 2px 4px rgba(0, 0, 0, 1)'}}), React.createElement('div', {dangerouslySetInnerHTML: {__html: entry.content}, style: {wordWrap: 'break-word', overflowWrap: 'break-word', whiteSpace: 'normal'}, onClick: (e) => { const target = e.target; if (target.tagName === 'A' && target.getAttribute('href').startsWith('#')) { e.preventDefault(); const serverName = target.getAttribute('href').substring(1); setFilteredServer(filteredServer === serverName ? null : serverName); setChangesPage(1); }}})))) : React.createElement('tr', null, React.createElement('td', {style: {textAlign: 'center', padding: '20px'}}, filteredServer ? 'No changes found for this server.' : 'No changes found.'))))), React.createElement('div', {style: {display: 'flex', justifyContent: 'flex-end', alignItems: 'center', padding: '4px 16px', borderTop: '1px solid rgba(255, 255, 255, 0.12)', backgroundColor: 'rgba(0, 0, 0, 0.5)', borderRadius: '0 0 8px 8px', gap: '20px', fontSize: '0.875rem', color: '#ffffff'}}, filteredServer ? React.createElement('div', {style: {display: 'flex', alignItems: 'center', gap: '8px', marginRight: 'auto'}}, React.createElement('span', null, 'Filtering by: ', React.createElement('strong', {style: {color: '#FFFF00'}}, filteredServer)), React.createElement('button', {onClick: () => { setFilteredServer(null); setChangesPage(1); }, style: {padding: '4px 12px', backgroundColor: 'rgba(255, 100, 100, 0.3)', border: '1px solid rgba(255, 100, 100, 0.5)', color: '#ffffff', borderRadius: '4px', cursor: 'pointer', fontSize: '0.875rem'}}, 'Clear Filter')) : null, React.createElement('div', {style: {display: 'flex', alignItems: 'center', gap: '8px'}}, React.createElement('span', null, 'Rows per page:'), React.createElement('select', {value: changesPerPage, onChange: (e) => { setChangesPerPage(parseInt(e.target.value)); setChangesPage(1); }, style: {padding: '4px', backgroundColor: 'rgba(0, 0, 0, 0.3)', border: '1px solid rgba(255, 255, 255, 0.23)', color: '#ffffff', borderRadius: '4px', cursor: 'pointer', fontSize: '0.875rem'}}, React.createElement('option', {value: 5}, '5'), React.createElement('option', {value: 10}, '10'), React.createElement('option', {value: 25}, '25'), React.createElement('option', {value: 50}, '50'))), React.createElement(React.Fragment, null, React.createElement('span', null, (changesPage - 1) * changesPerPage + 1, '-', Math.min(changesPage * changesPerPage, timestamps.length), ' of ', timestamps.length), React.createElement('div', {style: {display: 'flex', gap: '4px', alignItems: 'center'}}, React.createElement('button', {onClick: () => handleChangesPageChange(Math.max(1, changesPage - 1)), disabled: changesPage === 1, style: {padding: '1px 8px 5px 8px', backgroundColor: 'transparent', border: 'none', color: changesPage === 1 ? 'rgba(255, 255, 255, 0.26)' : 'rgba(255, 255, 255, 0.74)', cursor: changesPage === 1 ? 'default' : 'pointer', borderRadius: '4px', fontSize: '1.25rem', lineHeight: '1'}}, '<'), (() => { const totalPages = Math.ceil(timestamps.length / changesPerPage), pages = []; for (let i = 1; i <= totalPages; i++) pages.push(i); return pages.map(page => React.createElement('button', {key: page, onClick: () => handleChangesPageChange(page), style: {padding: '4px 8px', backgroundColor: changesPage === page ? 'rgba(25, 118, 210, 1)' : 'transparent', border: 'none', color: changesPage === page ? '#ffffff' : 'rgba(255, 255, 255, 0.74)', cursor: 'pointer', borderRadius: '4px', fontSize: '0.875rem'}}, page.toString())); })(), React.createElement('button', {onClick: () => handleChangesPageChange(Math.min(Math.ceil(timestamps.length / changesPerPage), changesPage + 1)), disabled: changesPage === Math.ceil(timestamps.length / changesPerPage), style: {padding: '1px 8px 5px 8px', backgroundColor: 'transparent', border: 'none', color: changesPage === Math.ceil(timestamps.length / changesPerPage) ? 'rgba(255, 255, 255, 0.26)' : 'rgba(255, 255, 255, 0.74)', cursor: changesPage === Math.ceil(timestamps.length / changesPerPage) ? 'default' : 'pointer', borderRadius: '4px', fontSize: '1.25rem', lineHeight: '1'}}, '>'))))),
-            React.createElement('footer', {style: {textAlign: 'center', marginTop: '20px', color: '#ffffff'}}, React.createElement('p', null, 'This data is updated every 10 minutes.'), React.createElement('p', null, React.createElement('a', {href: 'https://graalonline.com', style: {color: '#40ff40', textShadow: '2px 2px 4px rgba(0, 0, 0, 1)'}}, 'Graal Online'), ' is Copyright/trademarked to ', React.createElement('a', {href: 'https://www.toonslab.com/', style: {color: '#40ff40', textShadow: '2px 2px 4px rgba(0, 0, 0, 1)'}}, 'Toonslab'), ' and is in no way affiliated with this site.'))
-        );
-    };
-
-    const handleChangesPageChange = (page) => { setChangesPage(page); const offset = (page - 1) * changesPerPage, pageTimestamps = timestamps.slice(offset, offset + changesPerPage); loadChangesData(pageTimestamps); };
-    useEffect(() => { if (view === 'changes' && timestamps.length > 0) { const currentPageStart = (changesPage - 1) * changesPerPage, currentPageTimestamps = timestamps.slice(currentPageStart, currentPageStart + changesPerPage); loadChangesData(currentPageTimestamps, true); }}, [changesPerPage]);
-
-    const renderListViewFooter = () => React.createElement('footer', {style: {textAlign: 'center', marginTop: '20px', color: '#ffffff'}}, React.createElement('p', null, 'This data is live and updates dynamically every 15 seconds.'), React.createElement('p', null, React.createElement('a', {href: 'https://graalonline.com', style: {color: '#40ff40', textShadow: '2px 2px 4px rgba(0, 0, 0, 1)'}}, 'Graal Online'), ' is Copyright/trademarked to ', React.createElement('a', {href: 'https://www.toonslab.com/', style: {color: '#40ff40', textShadow: '2px 2px 4px rgba(0, 0, 0, 1)'}}, 'Toonslab'), ' and is in no way affiliated with this site.'), React.createElement('p', {style: {fontSize: '0.7em', marginTop: '10px'}}, '* Some servers are not shown as they are not playable/joinable.'));
-
-    return React.createElement('div', null, React.createElement('div', {className: 'contain-bg2', id: 'background'}), React.createElement('div', {id: 'header-logo', style: {marginBottom: '40px', marginTop: '40px'}}), view === 'graph' ? React.createElement(GraphApp) : (view === 'list' ? React.createElement(React.Fragment, null, renderListView(), renderListViewFooter()) : renderChangesView()));
+    return React.createElement('div', null, React.createElement('div', {className: 'contain-bg2', id: 'background'}), React.createElement('div', {id: 'header-logo', style: {marginBottom: '40px', marginTop: '40px'}}), view === 'graph' ? React.createElement(GraphApp) : (view === 'list' ? React.createElement(ServerListView, {servers, allServers, filteredServers, showDevServers, setShowDevServers, sortConfig, setSortConfig, columnWidths, setColumnWidths, currentPage, setCurrentPage, perPage, setPerPage, tableWrapperRef, tableRef, resizingColumn, setResizingColumn, guidePosition, setGuidePosition, handleSort, getSortedIndicator, handleMouseDown}) : React.createElement(ChangesView, {allServers, changesData, setChangesData, timestamps, setTimestamps, filteredServer, setFilteredServer, changesPage, setChangesPage, changesPerPage, setChangesPerPage, changesCache, loading, setLoading})));
 }
 
 ReactDOM.render(React.createElement(App), document.getElementById('root'));
