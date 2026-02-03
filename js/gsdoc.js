@@ -6,6 +6,7 @@ function GSDoc() {
   const [expandedGroups, setExpandedGroups] = React.useState(new Set());
   const [copiedShare, setCopiedShare] = React.useState(null);
   const [copiedCode, setCopiedCode] = React.useState(null);
+  const [activeSection, setActiveSection] = React.useState(null);
   const sidebarRef = React.useRef(null);
   const contentRef = React.useRef(null);
   const isMobile = window.innerWidth <= 768;
@@ -197,7 +198,8 @@ function GSDoc() {
       keys.push(key);
     });
     Object.keys(grouped).sort().forEach(groupName => {
-      grouped[groupName].forEach(key => keys.push(key));
+      const groupKeys = grouped[groupName];
+      groupKeys.forEach(key => keys.push(key));
     });
     return keys;
   }, [apiData, groups]);
@@ -209,7 +211,21 @@ function GSDoc() {
         if (entry.isIntersecting) {
           const key = entry.target.id;
           setCurrentHash(key);
+          setActiveSection(key);
           window.history.replaceState(null, '', `#${key}`);
+          const { grouped, ungrouped } = groups;
+          for (const groupName in grouped) {
+            if (grouped[groupName].includes(key)) {
+              setExpandedGroups(prev => new Set([...prev, groupName]));
+              break;
+            }
+          }
+          setTimeout(() => {
+            const activeLink = document.querySelector(`#sidebar a[href="#${key}"]`);
+            if (activeLink) {
+              activeLink.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+          }, 100);
         }
       });
     }, { rootMargin: '-10% 0px -60% 0px', threshold: 0 });
@@ -218,7 +234,14 @@ function GSDoc() {
       if (el) observer.observe(el);
     });
     return () => observer.disconnect();
-  }, [orderedKeys]);
+  }, [orderedKeys, groups]);
+
+  React.useEffect(() => {
+    document.body.classList.add('docs-active');
+    return () => {
+      document.body.classList.remove('docs-active');
+    };
+  }, []);
 
   return React.createElement(React.Fragment, null,
     React.createElement('meta', { charSet: 'UTF-8' }),
@@ -246,6 +269,17 @@ function GSDoc() {
         React.createElement('input', { type: 'text', id: 'search', placeholder: 'Search...', value: searchQuery, onChange: handleSearch })
       ),
       React.createElement('div', { id: 'sidebar-links' },
+        groups.ungrouped.map(key => {
+          const item = apiData[key];
+          const name = item.name || key;
+          return React.createElement('a', {
+            href: `#${key}`,
+            key: key,
+            className: activeSection === key ? 'active' : '',
+            style: { display: searchQuery && !key.toLowerCase().includes(searchQuery) && !name.toLowerCase().includes(searchQuery) ? 'none' : 'flex' },
+            onClick: (e) => handleSectionClick(key, e)
+          }, name);
+        }),
         Object.keys(groups.grouped).sort().map(groupName =>
           React.createElement(React.Fragment, { key: groupName },
             React.createElement('div', { className: 'tree-parent' + (expandedGroups.has(groupName) ? ' expanded' : ''), onClick: (e) => toggleGroup(groupName, e) },
@@ -257,23 +291,14 @@ function GSDoc() {
                 React.createElement('a', {
                   href: `#${key}`,
                   key: key,
+                  className: activeSection === key ? 'active' : '',
                   style: { display: searchQuery && !key.toLowerCase().includes(searchQuery) && (!apiData[key]?.name || !apiData[key].name.toLowerCase().includes(searchQuery)) ? 'none' : 'flex' },
                   onClick: (e) => handleSectionClick(key, e)
                 }, apiData[key]?.name || key)
               )
             )
           )
-        ),
-        groups.ungrouped.map(key => {
-          const item = apiData[key];
-          const name = item.name || key;
-          return React.createElement('a', {
-            href: `#${key}`,
-            key: key,
-            style: { display: searchQuery && !key.toLowerCase().includes(searchQuery) && !name.toLowerCase().includes(searchQuery) ? 'none' : 'flex' },
-            onClick: (e) => handleSectionClick(key, e)
-          }, name);
-        })
+        )
       )
     ),
     React.createElement('div', { id: 'content', ref: contentRef, className: sidebarOpen ? '' : 'expanded' },
