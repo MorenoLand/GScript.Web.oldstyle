@@ -167,7 +167,7 @@ span { text-shadow: 1px 1px 1px rgba(0, 0, 255, 1); }
 #sidebar .tree-parent.expanded .arrow{transform:rotate(90deg);}
 #sidebar .tree-children{display:none;}
 #sidebar .tree-children.show{display:block;}
-#sidebar-toggle{position:fixed;top:50%;left:300px;transform:translateY(-50%);width:24px;height:60px;background:rgba(37,37,37,0.9);border:1px solid rgba(74,158,255,0.3);border-left:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:left 0.3s ease;z-index:101;border-radius:0 6px 6px 0;color:#5ba5ff;font-size:16px;}
+#sidebar-toggle{position:fixed;top:50%;left:300px;transform:translateY(-50%);width:24px;height:60px;background:rgba(37,37,37,0.9);border:1px solid rgba(74,158,255,0.3);border-left:none;cursor:pointer;display:flex!important;align-items:center;justify-content:center;transition:left 0.3s ease;z-index:1000!important;border-radius:0 6px 6px 0;color:#5ba5ff;font-size:16px;-webkit-tap-highlight-color:transparent;opacity:1!important;visibility:visible!important;}
 #sidebar-toggle.collapsed{left:0;border-radius:0 6px 6px 0;}
 #sidebar-toggle:hover{background:rgba(74,158,255,0.2);color:#7bb5ff;}
 #menu-toggle{position:fixed;top:20px;left:240px;width:44px;height:44px;background:rgba(37,37,37,0.7);border:1px solid rgba(74,158,255,0.3);cursor:pointer;display:none;flex-direction:column;align-items:center;justify-content:center;gap:5px;transition:all 0.3s ease;z-index:102;border-radius:6px;}
@@ -186,10 +186,9 @@ span { text-shadow: 1px 1px 1px rgba(0, 0, 255, 1); }
 @media (max-width:768px){
   #sidebar{transform:translateX(-100%);}
   #sidebar.show{transform:translateX(0);}
-  #sidebar-toggle{display:none;}
-  #menu-toggle{display:flex;left:auto;right:20px;}
-  #menu-toggle.active{left:auto;right:20px;}
-  #content{margin-left:0;padding:20px;}
+  #sidebar-toggle{width:44px;height:60px;}
+  #sidebar-toggle.collapsed{left:0;}
+  #content{margin-left:0;padding:20px;width:95vw;}
 }
 .section-wrapper{margin-bottom:2rem;}
 .section-wrapper h2{color:#fff;border-bottom:1px solid rgba(122,181,255,0.2);padding-bottom:0.5rem;margin:3rem 0 1.5rem 0;font-weight:500;display:flex;align-items:center;gap:10px;font-size:1.8rem;}

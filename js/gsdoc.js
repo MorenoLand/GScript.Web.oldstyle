@@ -302,7 +302,7 @@ function GSDoc() {
       )
     ),
     React.createElement('div', { id: 'content', ref: contentRef, className: sidebarOpen ? '' : 'expanded' },
-      orderedKeys.length === 0 ? React.createElement('p', { style: { color: '#fff', position: 'relative', zIndex: 1, fontSize: '18px' } }, 'Loading documentation...') :
+      orderedKeys.length === 0 ? React.createElement('p', { style: { color: '#fff', position: 'relative', zIndex: 1, fontSize: '18px', textAlign: 'center' } }, 'Loading documentation...') :
       orderedKeys.map(key => renderSection(key))
     )
   );
