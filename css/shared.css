@@ -137,6 +137,13 @@ span { text-shadow: 1px 1px 1px rgba(0, 0, 255, 1); }
 .byte-mode-toggle input{width:18px;height:18px;cursor:pointer;appearance:auto;-webkit-appearance:checkbox}
 .byte-mode-toggle label{cursor:pointer;user-select:none}
 .byte-editor-container{position:relative;width:100%;height:100%;overflow:hidden}
+.monaco-editor *,.monaco-editor{text-shadow:1px 1px 1px rgba(0,0,0,0.3) !important}
+#sourceEditor,#outputEditor{box-shadow:none !important;outline:none !important;border:none !important}
+#sourceEditor:focus,#outputEditor:focus{box-shadow:none !important;outline:none !important}
+.monaco-editor,.monaco-editor-background,.monaco-editor .overflow-guard{box-shadow:none !important;outline:none !important}
+.monaco-editor:focus-within,.monaco-editor .focused{box-shadow:none !important;outline:none !important}
+.monaco-editor .view-lines,.monaco-editor .margin{box-shadow:none !important}
+.monaco-scrollable-element>.shadow{box-shadow:none !important;display:none !important}
 .byte-modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);display:none;align-items:center;justify-content:center;z-index:10000}
 .byte-modal-overlay.show{display:flex}
 .byte-modal-dialog{background:#1e1f29;border:1px solid #44475a;border-radius:5px;padding:20px;min-width:300px;max-width:500px;box-shadow:0 4px 20px rgba(0,0,0,0.8)}

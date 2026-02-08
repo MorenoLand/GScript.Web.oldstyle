@@ -496,7 +496,7 @@ function App() {
     const fetchServerData = () => {
       fetch('https://api.moreno.land/api/graalstats/servers').then(r => r.json()).then(data => {
         const servers = Array.isArray(data) ? data : (data.servers || []);
-        const serverList = servers.map(server => ({server_nameugly: server.id || server.server_nameugly, server_name: server.sname || server.server_name, server_type: server.type || server.server_type || 'listed', player_count: parseInt(server.playercount || server.player_count || 0, 10), language: server.language || '', description: server.description || '', website: server.website || '', graal_version: server.graalversion || server.graal_version || ''}));
+        const serverList = servers.map(server => ({server_nameugly: server.id || server.server_nameugly, server_name: server.sanitizedname || server.server_name, server_type: server.type || server.server_type || 'listed', player_count: parseInt(server.playercount || server.player_count || 0, 10), language: server.language || '', description: server.description || '', website: server.website || '', graal_version: server.graalversion || server.graal_version || ''}));
         setAllServers(serverList);
         setServers(serverList.slice(0, perPage));
         setLoading(false);
