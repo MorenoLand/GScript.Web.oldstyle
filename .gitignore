@@ -1,6 +1,7 @@
 .git/
 *.bak
 *.log
+ruandoc/
 suite/
 gbible/
 gs2emu/
