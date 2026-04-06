@@ -118,6 +118,9 @@ function BeautifyTool() {
   };
 
   const copyToClipboard = () => { if (!outputEditorRef.current) return; navigator.clipboard.writeText(outputEditorRef.current.getValue()).then(() => { setCopySuccess(true); setTimeout(() => setCopySuccess(false), 1500); }); };
+  const clearInput = () => { if (inputEditorRef.current) inputEditorRef.current.setValue(''); };
+  const clearOutput = () => { if (outputEditorRef.current) outputEditorRef.current.setValue(''); };
+  const clearBoth = () => { clearInput(); clearOutput(); };
 
   React.useEffect(() => {
     const loadMonaco = () => {
@@ -277,11 +280,11 @@ function BeautifyTool() {
   return React.createElement('div', { style: { width: '100%', maxWidth: '95%', margin: '40px auto', display: 'flex', flexDirection: 'column', alignItems: 'center' } },
     React.createElement('div', { style: { display: 'flex', gap: '25px', width: '100%', height: '75vh' } },
       React.createElement('div', { style: { flex: 1, background: 'rgba(30, 30, 46, 0.85)', borderRadius: '8px', border: '1px solid #44475a', display: 'flex', flexDirection: 'column', overflow: 'hidden' } },
-        React.createElement('div', { style: { padding: '10px 15px', borderBottom: '1px solid #44475a', color: '#bd93f9', fontSize: '14px' } }, 'Input'),
+        React.createElement('div', { style: { position: 'relative', padding: '10px 15px', borderBottom: '1px solid #44475a', color: '#bd93f9', fontSize: '14px' } }, 'Input ', React.createElement('button', { onClick: clearInput, style: { position: 'absolute', right: '10px', top: '7px', fontSize: '14px', padding: '2px 4px', backgroundColor: 'transparent', color: '#ff79c6', border: 'none', cursor: 'pointer' } }, '✕')),
         React.createElement('div', { ref: inputContainerRef, style: { flex: 1, overflow: 'hidden' }, className: 'monaco-editor-container' })
       ),
       React.createElement('div', { style: { flex: 1, background: 'rgba(30, 30, 46, 0.85)', borderRadius: '8px', border: '1px solid #44475a', display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'relative' } },
-        React.createElement('div', { style: { position: 'relative', padding: '10px 15px', borderBottom: '1px solid #44475a', color: '#bd93f9', fontSize: '14px' } }, 'Output ', React.createElement('button', { onClick: copyToClipboard, style: { position: 'absolute', right: '10px', top: '7px', fontSize: '16px', padding: '2px 4px', backgroundColor: 'transparent', color: copySuccess ? '#50fa7b' : '#bd93f9', border: 'none', cursor: 'pointer' } }, copySuccess ? '✓' : '📋')),
+        React.createElement('div', { style: { position: 'relative', padding: '10px 15px', borderBottom: '1px solid #44475a', color: '#bd93f9', fontSize: '14px' } }, 'Output ', React.createElement('button', { onClick: clearOutput, style: { position: 'absolute', right: '10px', top: '7px', fontSize: '14px', padding: '2px 4px', backgroundColor: 'transparent', color: '#ff79c6', border: 'none', cursor: 'pointer' } }, '✕'), React.createElement('button', { onClick: copyToClipboard, style: { position: 'absolute', right: '35px', top: '7px', fontSize: '16px', padding: '2px 4px', backgroundColor: 'transparent', color: copySuccess ? '#50fa7b' : '#bd93f9', border: 'none', cursor: 'pointer' } }, copySuccess ? '✓' : '📋')),
         React.createElement('div', { ref: outputContainerRef, style: { flex: 1, overflow: 'hidden' }, className: 'monaco-editor-container' })
       )
     ),
@@ -300,7 +303,8 @@ function BeautifyTool() {
           React.createElement('option', { value: 'tab', style: { fontFamily: '"Tempus Sans ITC", sans-serif' } }, 'Tab')
         )
       ),
-      React.createElement('button', { onClick: processCode, style: { backgroundColor: 'rgba(64, 255, 64, 0.3)', color: '#40ff40', border: '1px solid rgba(64, 255, 64, 0.3)', borderRadius: '4px', padding: '10px 20px', cursor: 'pointer', fontWeight: '500', fontFamily: '"Tempus Sans ITC", sans-serif', fontSize: '18px' } }, 'Process Code')
+      React.createElement('button', { onClick: processCode, style: { backgroundColor: 'rgba(64, 255, 64, 0.3)', color: '#40ff40', border: '1px solid rgba(64, 255, 64, 0.3)', borderRadius: '4px', padding: '10px 20px', cursor: 'pointer', fontWeight: '500', fontFamily: '"Tempus Sans ITC", sans-serif', fontSize: '18px' } }, 'Process Code'),
+      React.createElement('button', { onClick: clearBoth, style: { backgroundColor: 'rgba(255, 121, 198, 0.2)', color: '#ff79c6', border: '1px solid rgba(255, 121, 198, 0.3)', borderRadius: '4px', padding: '10px 20px', cursor: 'pointer', fontWeight: '500', fontFamily: '"Tempus Sans ITC", sans-serif', fontSize: '18px' } }, 'Clear Both')
     )
   );
 }

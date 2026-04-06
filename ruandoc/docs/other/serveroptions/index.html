@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en" dir="ltr" class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-other/serveroptions" data-has-hydrated="false">
+<head>
+<meta charset="UTF-8">
+<meta name="generator" content="Docusaurus v3.8.1">
+<title data-rh="true">Server Options | Graal Development Guide</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:image" content="https://gsdocs.ruanfernandes.com.br/ruandoc/img/docusaurus-social-card.jpg"><meta data-rh="true" name="twitter:image" content="https://gsdocs.ruanfernandes.com.br/ruandoc/img/docusaurus-social-card.jpg"><meta data-rh="true" property="og:url" content="https://gsdocs.ruanfernandes.com.br/ruandoc/docs/other/serveroptions"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="Server Options | Graal Development Guide"><meta data-rh="true" name="description" content="The Server Options file controls core behavior and global settings of a Graal server."><meta data-rh="true" property="og:description" content="The Server Options file controls core behavior and global settings of a Graal server."><link data-rh="true" rel="icon" href="/ruandoc/img/rcicon.png"><link data-rh="true" rel="canonical" href="https://gsdocs.ruanfernandes.com.br/ruandoc/docs/other/serveroptions"><link data-rh="true" rel="alternate" href="https://gsdocs.ruanfernandes.com.br/ruandoc/docs/other/serveroptions" hreflang="en"><link data-rh="true" rel="alternate" href="https://gsdocs.ruanfernandes.com.br/ruandoc/docs/other/serveroptions" hreflang="x-default"><script data-rh="true" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Other Topics","item":"https://gsdocs.ruanfernandes.com.br/ruandoc/docs/category/other-topics"},{"@type":"ListItem","position":2,"name":"Server Options","item":"https://gsdocs.ruanfernandes.com.br/ruandoc/docs/other/serveroptions"}]}</script><link rel="stylesheet" href="/ruandoc/assets/css/styles.5c92f266.css">
+<script src="/ruandoc/assets/js/runtime~main.995f17e9.js" defer="defer"></script>
+<script src="/ruandoc/assets/js/main.8db137d8.js" defer="defer"></script>
+</head>
+<body class="navigation-with-keyboard">
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;"><defs>
+<symbol id="theme-svg-external-link" viewBox="0 0 24 24"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></symbol>
+</defs></svg>
+<script>!function(){var t="light";var e=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme")}catch(t){}}();document.documentElement.setAttribute("data-theme",e||t),document.documentElement.setAttribute("data-theme-choice",e||t)}(),function(){try{const c=new URLSearchParams(window.location.search).entries();for(var[t,e]of c)if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id="__docusaurus"><link rel="preload" as="image" href="/ruandoc/img/rcicon.png"><div role="region" aria-label="Skip to main content"><a class="skipToContent_fXgn" href="#__docusaurus_skipToContent_fallback">Skip to main content</a></div><nav aria-label="Main" class="theme-layout-navbar navbar navbar--fixed-top"><div class="navbar__inner"><div class="theme-layout-navbar-left navbar__items"><button aria-label="Toggle navigation bar" aria-expanded="false" class="navbar__toggle clean-btn" type="button"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/ruandoc/"><div class="navbar__logo"><img src="/ruandoc/img/rcicon.png" alt="GraalScript2 Logo" class="themedComponent_mlkZ themedComponent--light_NVdE"><img src="/ruandoc/img/rcicon.png" alt="GraalScript2 Logo" class="themedComponent_mlkZ themedComponent--dark_xIcU"></div><b class="navbar__title text--truncate">Graal Development</b></a><a aria-current="page" class="navbar__item navbar__link navbar__link--active" href="/ruandoc/docs/intro">Introduction</a></div><div class="theme-layout-navbar-right navbar__items navbar__items--right"><div class="toggle_vylO colorModeToggle_DEke"><button class="clean-btn toggleButton_gllP toggleButtonDisabled_aARS" type="button" disabled="" title="system mode" aria-label="Switch between dark and light mode (currently system mode)"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP lightToggleIcon_pyhR"><path fill="currentColor" d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP darkToggleIcon_wfgR"><path fill="currentColor" d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP systemToggleIcon_QzmC"><path fill="currentColor" d="m12 21c4.971 0 9-4.029 9-9s-4.029-9-9-9-9 4.029-9 9 4.029 9 9 9zm4.95-13.95c1.313 1.313 2.05 3.093 2.05 4.95s-0.738 3.637-2.05 4.95c-1.313 1.313-3.093 2.05-4.95 2.05v-14c1.857 0 3.637 0.737 4.95 2.05z"></path></svg></button></div><div class="navbarSearchContainer_Bca1"></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div id="__docusaurus_skipToContent_fallback" class="theme-layout-main main-wrapper mainWrapper_z2l0"><div class="docsWrapper_hBAB"><button aria-label="Scroll back to top" class="clean-btn theme-back-to-top-button backToTopButton_sjWU" type="button"></button><div class="docRoot_UBD9"><aside class="theme-doc-sidebar-container docSidebarContainer_YfHR"><div class="sidebarViewport_aRkj"><div class="sidebar_njMd"><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_SIkG"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/ruandoc/docs/intro">Graal Development - Introduction</a></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" href="/ruandoc/docs/category/graal-development---basics">Graal Development - Basics</a><button aria-label="Expand sidebar category &#x27;Graal Development - Basics&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" href="/ruandoc/docs/category/scripting">Scripting</a><button aria-label="Expand sidebar category &#x27;Scripting&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--active" href="/ruandoc/docs/category/other-topics">Other Topics</a><button aria-label="Collapse sidebar category &#x27;Other Topics&#x27;" aria-expanded="true" type="button" class="clean-btn menu__caret"></button></div><ul class="menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link menu__link--active" aria-current="page" tabindex="0" href="/ruandoc/docs/other/serveroptions">Server Options</a></li></ul></li></ul></nav></div></div></aside><main class="docMainContainer_TBSr"><div class="container padding-top--md padding-bottom--lg"><div class="row"><div class="col docItemCol_VOVn"><div class="docItemContainer_Djhp"><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Z_bl" aria-label="Breadcrumbs"><ul class="breadcrumbs"><li class="breadcrumbs__item"><a aria-label="Home page" class="breadcrumbs__link" href="/ruandoc/"><svg viewBox="0 0 24 24" class="breadcrumbHomeIcon_YNFT"><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill="currentColor"></path></svg></a></li><li class="breadcrumbs__item"><a class="breadcrumbs__link" href="/ruandoc/docs/category/other-topics"><span>Other Topics</span></a></li><li class="breadcrumbs__item breadcrumbs__item--active"><span class="breadcrumbs__link">Server Options</span></li></ul></nav><div class="tocCollapsible_ETCw theme-doc-toc-mobile tocMobile_ITEo"><button type="button" class="clean-btn tocCollapsibleButton_TO0P">On this page</button></div><div class="theme-doc-markdown markdown"><header><h1>Server Options</h1></header>
+<p>The <strong>Server Options</strong> file controls core behavior and global settings of a Graal server.<br>
+<!-- -->These options define everything from spawn points to gameplay rules, asset handling, and system limits.</p>
+<hr>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="syntax">Syntax<a href="#syntax" class="hash-link" aria-label="Direct link to Syntax" title="Direct link to Syntax">​</a></h2>
+<p>Each option follows the format:</p>
+<p><code>optionname=value</code></p>
+<ul>
+<li><code>optionname</code> → the name of the configuration variable.</li>
+<li><code>value</code> → the setting to apply (can be a number, string, <code>true/false</code>, or a list, depending on the option).</li>
+</ul>
+<p>Example:</p>
+<p><code>startlevel=onlinestartlocal.graal</code></p>
+<hr>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="how-to-access-the-list">How to Access the List<a href="#how-to-access-the-list" class="hash-link" aria-label="Direct link to How to Access the List" title="Direct link to How to Access the List">​</a></h2>
+<p>You can see all available server option variables directly in your server by using:</p>
+<p><code>/optionshelp</code></p>
+<hr>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="available-server-option-variables">Available Server Option Variables<a href="#available-server-option-variables" class="hash-link" aria-label="Direct link to Available Server Option Variables" title="Direct link to Available Server Option Variables">​</a></h2>
+<p>Below is the complete list of documented options, their purpose, and usage.</p>
+<hr>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="player-start--respawn">Player Start &amp; Respawn<a href="#player-start--respawn" class="hash-link" aria-label="Direct link to Player Start &amp; Respawn" title="Direct link to Player Start &amp; Respawn">​</a></h2>
+<ul>
+<li><strong>startlevel</strong> – Level where new players spawn. Default: <code>onlinestartlocal.graal</code>.</li>
+<li><strong>startx</strong>, <strong>starty</strong> – Coordinates in the start level. Defaults: <code>35, 30</code>.</li>
+<li><strong>unstickmelevel</strong> – Level used when players type <code>unstick me</code>.</li>
+<li><strong>unstickmex</strong>, <strong>unstickmey</strong> – Coordinates for the unstick-me location.</li>
+<li><strong>unstickmetime</strong> – Cooldown time before using <code>unstick me</code> again. Default: <code>30</code>.</li>
+<li><strong>respawntime</strong> – Respawn time for bushes.</li>
+<li><strong>horselifetime</strong> – Respawn time for classic horses.</li>
+<li><strong>baddyrespawntime</strong> – Respawn time for baddies.</li>
+</ul>
+<hr>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="player-customization">Player Customization<a href="#player-customization" class="hash-link" aria-label="Direct link to Player Customization" title="Direct link to Player Customization">​</a></h2>
+<ul>
+<li><strong>setbodyallowed</strong> – Allow players to change body via chat. Default: <code>true</code>.</li>
+<li><strong>setheadallowed</strong> – Allow players to change head via chat. Default: <code>true</code>.</li>
+<li><strong>setswordallowed</strong> – Allow sword changes via chat. Default: <code>true</code>.</li>
+<li><strong>setshieldallowed</strong> – Allow shield changes via chat. Default: <code>true</code>.</li>
+<li><strong>heartlimit</strong> – Maximum number of hearts a player can have.</li>
+<li><strong>swordlimit</strong> – Maximum sword power for a player.</li>
+</ul>
+<hr>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="items--drops">Items &amp; Drops<a href="#items--drops" class="hash-link" aria-label="Direct link to Items &amp; Drops" title="Direct link to Items &amp; Drops">​</a></h2>
+<ul>
+<li><strong>bushitems</strong> – Enable bushes dropping items.</li>
+<li><strong>baddyitems</strong> – Enable baddies dropping items.</li>
+<li><strong>bushitemtypes</strong> – Which items bushes can drop (<code>greenrupee, bluerupee, bombs, heart</code>).</li>
+<li><strong>deathitemtypes</strong> – Items dropped on death (<code>rupees, darts, bombs</code>).</li>
+<li><strong>spawnrate[ item ]</strong> – Defines drop rates (<code>greenrupee, bluerupee, heart, bombs</code>).</li>
+</ul>
+<hr>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="weapons--combat">Weapons &amp; Combat<a href="#weapons--combat" class="hash-link" aria-label="Direct link to Weapons &amp; Combat" title="Direct link to Weapons &amp; Combat">​</a></h2>
+<ul>
+<li><strong>protectedweapons</strong> – Comma-separated list of weapons that cannot be deleted by clients.</li>
+<li><strong>healswords</strong> – Allow negative swordpower values that heal instead of damage.</li>
+<li><strong>putbombenabled</strong> – Allow bombs to be placed.</li>
+<li><strong>bomballowedtypes</strong> – Allowed bomb powers (<code>all</code> or list: <code>1,2,3</code>).</li>
+<li><strong>bombfilterlog</strong> – Log attempts to send non-allowed bombs.</li>
+<li><strong>arrowallowedtypes</strong> – Allowed arrow powers.</li>
+<li><strong>arrowfilterlog</strong> – Log attempts with invalid arrows.</li>
+<li><strong>projectile*</strong> – Multiple options for controlling projectile limits, distance, speed, filters, and logging.</li>
+<li><strong>explosion*</strong> – Multiple options for controlling explosion limits, radius, distance, allowed levels, and logging.</li>
+</ul>
+<hr>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="server-flags--global-settings">Server Flags &amp; Global Settings<a href="#server-flags--global-settings" class="hash-link" aria-label="Direct link to Server Flags &amp; Global Settings" title="Direct link to Server Flags &amp; Global Settings">​</a></h2>
+<ul>
+<li><strong>serverflags</strong> – Stores global server variables.</li>
+<li><strong>dontaddserverflags</strong> – Prevents adding new server flags beyond the default 1000.</li>
+<li><strong>nickname</strong> – NPC-Server’s nickname shown in playerlist.</li>
+<li><strong>sleepwhennoplayers</strong> – Pauses NPC-Server when no players are online.</li>
+<li><strong>savelevels</strong> – Allows server-side scripts to save level modifications.</li>
+<li><strong>levelsautosave</strong> – Auto-save levels when tile changes occur. Requires <code>savelevels=true</code>.</li>
+<li><strong>savelevelsmessage</strong> – Logs when a level is saved.</li>
+</ul>
+<hr>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="admin--staff">Admin &amp; Staff<a href="#admin--staff" class="hash-link" aria-label="Direct link to Admin &amp; Staff" title="Direct link to Admin &amp; Staff">​</a></h2>
+<ul>
+<li><strong>staff</strong> – List of accounts/community names with RC access and admin rights.</li>
+<li><strong>staffguilds</strong> – Guilds shown under “Staff” in the player list.</li>
+<li><strong>onlystaff</strong> – Allow logins only from staff accounts.</li>
+<li><strong>normaladminscanchangegralats</strong> – Allow non-changerights staff to modify player gralats.</li>
+<li><strong>warpto</strong> – Enable/disable the <code>/warpto</code> command.</li>
+<li><strong>warptoforall</strong> – Allow all players to use <code>/warpto</code>.</li>
+<li><strong>warptoforlowadmins</strong> – Allow level 1 global admins to use <code>/warpto</code>.</li>
+<li><strong>ignorewarpto</strong> – Ignores <code>/warpto</code> command completely (useful for scripted warpto).</li>
+</ul>
+<hr>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="guilds">Guilds<a href="#guilds" class="hash-link" aria-label="Direct link to Guilds" title="Direct link to Guilds">​</a></h2>
+<ul>
+<li><strong>globalguilds</strong> – Enable global guilds (default: true).</li>
+<li><strong>allowedglobalguilds</strong> – Whitelist of allowed global guilds.</li>
+<li><strong>disallowedglobalguilds</strong> – Blacklist of disallowed global guilds.</li>
+</ul>
+<hr>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="anti-cheat--security">Anti-Cheat &amp; Security<a href="#anti-cheat--security" class="hash-link" aria-label="Direct link to Anti-Cheat &amp; Security" title="Direct link to Anti-Cheat &amp; Security">​</a></h2>
+<ul>
+<li><strong>speedhacktolerance</strong> – Threshold (10–100%) for detecting excessive packet sending.</li>
+<li><strong>disconnectifnotmoved</strong> – Disconnect players who are idle (useful for GUI-only games).</li>
+<li><strong>arrowcountserverside</strong> – Verify arrow counts on server-side.</li>
+<li><strong>bombcountserverside</strong> – Verify bomb counts on server-side.</li>
+<li><strong>disablegralatlog</strong> – Disable logging of gralat activity.</li>
+<li><strong>lockplayerz</strong> – Prevent modifications of <code>player.z</code>.</li>
+<li><strong>nohidewithoutbush</strong> – Only allow hiding under bushes (disables <code>hideplayer()</code>).</li>
+</ul>
+<hr>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="miscellaneous">Miscellaneous<a href="#miscellaneous" class="hash-link" aria-label="Direct link to Miscellaneous" title="Direct link to Miscellaneous">​</a></h2>
+<ul>
+<li><strong>gmaps</strong> – List of gmaps used (without <code>.gmap</code> extension).</li>
+<li><strong>minimap</strong> – Classic minimap config (<code>levellistfile, mapimage, x, y</code>).</li>
+<li><strong>playerlisticons</strong> – List of status icons (<code>plisticonNAME.png</code>).</li>
+<li><strong>profilevars</strong> – Controls what shows in player profiles (<code>Kills:=playerkills,...</code>).</li>
+<li><strong>translatedlanguages</strong> – Languages with <code>.po</code> translations loaded.</li>
+<li><strong>serverlanguage</strong> – Default language of the server.</li>
+<li><strong>defaultlanguage</strong> – Fallback language for players.</li>
+<li><strong>scriptlogfunctions</strong> – Logs specific function calls to <code>logs/scriptfunctionslog.txt</code>.</li>
+<li><strong>logscripterrorstofile</strong> – Log script errors to <code>logs/scripterrors.txt</code>.</li>
+<li><strong>scriptstyle</strong> – Configures <code>/style</code> script formatting (spaces, padding, brackets).</li>
+<li><strong>enablegs3</strong> – Enable <code>//#GS3</code> code execution.</li>
+</ul>
+<hr>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="notes">Notes<a href="#notes" class="hash-link" aria-label="Direct link to Notes" title="Direct link to Notes">​</a></h2>
+<ul>
+<li>Some options accept <strong>lists</strong> separated by commas.</li>
+<li>Some options define <strong>min/max numeric ranges</strong> (e.g., AP timers, spawn rates).</li>
+<li>Certain options are <strong>legacy</strong> and may not work in GS2/GS3-only servers.</li>
+<li>Use with caution: misconfigured options can cause crashes or unexpected server behavior.</li>
+</ul>
+<hr>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="credits">Credits<a href="#credits" class="hash-link" aria-label="Direct link to Credits" title="Direct link to Credits">​</a></h2>
+<p>The original list of server options was compiled and shared by <strong>Carlito</strong> on the Graal forums.<br>
+<!-- -->This documentation expands upon it for easier reference and structured learning.</p>
+<hr></div></article><nav class="docusaurus-mt-lg pagination-nav" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href="/ruandoc/docs/category/other-topics"><div class="pagination-nav__sublabel">Previous</div><div class="pagination-nav__label">Other Topics</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#syntax" class="table-of-contents__link toc-highlight">Syntax</a></li><li><a href="#how-to-access-the-list" class="table-of-contents__link toc-highlight">How to Access the List</a></li><li><a href="#available-server-option-variables" class="table-of-contents__link toc-highlight">Available Server Option Variables</a></li><li><a href="#player-start--respawn" class="table-of-contents__link toc-highlight">Player Start &amp; Respawn</a></li><li><a href="#player-customization" class="table-of-contents__link toc-highlight">Player Customization</a></li><li><a href="#items--drops" class="table-of-contents__link toc-highlight">Items &amp; Drops</a></li><li><a href="#weapons--combat" class="table-of-contents__link toc-highlight">Weapons &amp; Combat</a></li><li><a href="#server-flags--global-settings" class="table-of-contents__link toc-highlight">Server Flags &amp; Global Settings</a></li><li><a href="#admin--staff" class="table-of-contents__link toc-highlight">Admin &amp; Staff</a></li><li><a href="#guilds" class="table-of-contents__link toc-highlight">Guilds</a></li><li><a href="#anti-cheat--security" class="table-of-contents__link toc-highlight">Anti-Cheat &amp; Security</a></li><li><a href="#miscellaneous" class="table-of-contents__link toc-highlight">Miscellaneous</a></li><li><a href="#notes" class="table-of-contents__link toc-highlight">Notes</a></li><li><a href="#credits" class="table-of-contents__link toc-highlight">Credits</a></li></ul></div></div></div></div></main></div></div></div><footer class="theme-layout-footer footer footer--dark"><div class="container container-fluid"><div class="footer__bottom text--center"><div class="footer__copyright">Copyright © 2026 Ruan Fernandes Guimaraes.</div></div></div></footer></div>
+</body>
+</html>

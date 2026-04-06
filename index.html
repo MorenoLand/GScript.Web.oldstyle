@@ -247,7 +247,7 @@ const data = {
     { icon: 'fas fa-book', text: 'GScript Docs (Wiki)', href: 'https://graalonline.net/Creation/Dev/GScript' },
     { icon: 'fas fa-book-open', text: 'Graal Bible Mirror', href: 'https://wiki.gscript.dev/Creation/Dev/GScript' },
     { icon: 'fas fa-file-code', text: 'GScript Definitions', href: 'https://docs.gscript.dev' },
-    { icon: 'fas fa-file-code', text: 'GS2 Docs (Ruan)', href: 'https://gsdocs.ruanfergui.com.br/' },
+    { icon: 'fas fa-file-code', text: 'GS2 Docs (Ruan)', href: 'https://gscript.dev/ruandoc' },
     { icon: 'fas fa-cube', text: 'Unity/Quattro3D', href: 'https://unity.gscript.dev/' },
     { icon: 'fas fa-chart-line', text: 'Server Statistics', href: 'https://stats.gscript.dev/' }
   ],
@@ -295,11 +295,20 @@ const data = {
     },
     {
       icon: 'fas fa-edit',
+      text: 'Web Level Editor',
+      submenu: [
+        { icon: 'fas fa-globe', text: 'Main', href: 'https://level.gscript.dev' },
+        { icon: 'fab fa-github', text: 'Git Mirror', href: 'https://morenoland.github.io/GScript.GraalSuite' },
+        { icon: 'fas fa-code', text: 'Source', href: 'https://github.com/MorenoLand/GScript.GraalSuite' }
+      ]
+    },
+    {
+      icon: 'fas fa-edit',
       text: 'Web Gani Editor',
       submenu: [
         { icon: 'fas fa-globe', text: 'Main', href: 'https://gani.gscript.dev' },
-        { icon: 'fab fa-github', text: 'Git Mirror', href: 'https://morenoland.github.io/GaniEditorWeb' },
-        { icon: 'fas fa-code', text: 'Source', href: 'https://github.com/MorenoLand/GScript.GaniEditor' }
+        { icon: 'fab fa-github', text: 'Git Mirror', href: 'https://morenoland.github.io/GScript.GraalSuite/?app=gani' },
+        { icon: 'fas fa-code', text: 'Source', href: 'https://github.com/MorenoLand/GScript.GraalSuite' }
       ]
     },
     {
@@ -309,6 +318,20 @@ const data = {
         { icon: 'fab fa-github', text: 'Source', href: 'https://github.com/lukegrahamSydney/TilesEditor' },
         { icon: 'fab fa-windows', text: 'Win (x64)', href: 'https://gscript.dev/TilesEditorRelease_win_x64.zip' },
         { icon: 'fab fa-linux', text: 'Linux (x64)', href: 'https://gscript.dev/TilesEditorRelease_linux_x64.zip' }
+      ]
+    },
+    {
+      icon: 'fas fa-desktop',
+      text: 'GraalSuite',
+      submenu: [
+        { icon: 'fab fa-windows', text: 'Win (Portable)', href: '/?dl=exe' },
+        { icon: 'fab fa-windows', text: 'Win (Installer)', href: '/?dl=setup' },
+        { icon: 'fab fa-windows', text: 'Win (MSI)', href: '/?dl=msi' },
+        { icon: 'fab fa-linux', text: 'Linux (deb)', href: '/?dl=deb' },
+        { icon: 'fab fa-linux', text: 'Linux (AppImage)', href: '/?dl=appimage' },
+        { icon: 'fab fa-linux', text: 'Linux (RPM)', href: '/?dl=rpm' },
+        { icon: 'fab fa-apple', text: 'Mac (ARM dmg)', href: '/?dl=dmg' },
+        { icon: 'fab fa-apple', text: 'Mac (ARM tar.gz)', href: '/?dl=tar' }
       ]
     },
     { icon: 'fas fa-shapes', text: 'setshape2/setimgpart', href: 'https://setshape.gscript.dev' },
@@ -440,6 +463,29 @@ const BytecodeConverter = () => {
 
 function App() {
   const [fadeClass, setFadeClass] = useState('');
+  useEffect(() => {
+    const dlType = new URLSearchParams(window.location.search).get('dl');
+    if (!dlType) return;
+    const files = {
+      exe:      v => `GraalSuite.exe`,
+      setup:    v => `GraalSuite_${v}_x64-setup.exe`,
+      msi:      v => `GraalSuite_${v}_x64_en-US.msi`,
+      deb:      v => `GraalSuite_${v}_amd64.deb`,
+      appimage: v => `GraalSuite_${v}_amd64.AppImage`,
+      dmg:      v => `GraalSuite_${v}_aarch64.dmg`,
+      tar:      v => `GraalSuite_${v}_aarch64.app.tar.gz`,
+      rpm:      v => `GraalSuite-${v}-1.x86_64.rpm`,
+    };
+    fetch('/graalsuite-latest.json')
+      .then(r => r.json())
+      .then(j => {
+        const ver = j.tag_name;
+        const fn = (files[dlType] || files.exe)(ver);
+        const asset = j.assets && j.assets.find(a => a.name === fn);
+        window.location.href = asset ? asset.browser_download_url : `https://github.com/MorenoLand/GScript.GraalSuite/releases/download/${ver}/${fn}`;
+      })
+      .catch(() => { window.location.href = 'https://github.com/MorenoLand/GScript.GraalSuite/releases/latest'; });
+  }, []);
   const [showIndexing, setShowIndexing] = useState(() => new URLSearchParams(window.location.search).has('indexing'));
   const [showBeautify, setShowBeautify] = useState(() => new URLSearchParams(window.location.search).has('beautify'));
   const [showByte, setShowByte] = useState(() => {
