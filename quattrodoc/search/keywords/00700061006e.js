@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("pan",["Variable"],[["panstereo",,[["AudioSource",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:AudioSource.panstereo","CClass:AudioSource:panstereo"]]]]);

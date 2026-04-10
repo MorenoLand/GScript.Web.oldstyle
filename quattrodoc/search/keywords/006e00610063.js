@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("nac",["Variable"],[["nacl",,[["RuntimePlatform::runtimeplatform",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:RuntimePlatform.runtimeplatform.nacl","CClass:RuntimePlatform:runtimeplatform.nacl"]]]]);

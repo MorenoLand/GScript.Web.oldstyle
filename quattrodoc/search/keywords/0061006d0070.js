@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("amp",["Variable"],[["ampersand",,[["KeyCode::keycode",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:KeyCode.keycode.ampersand","CClass:KeyCode:keycode.ampersand"]]]]);

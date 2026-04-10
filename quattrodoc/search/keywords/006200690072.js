@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("bir",["Variable"],[["birth",,[["ParticleSystemSubEmitterType::particlesystemsubemittertype",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:ParticleSystemSubEmitterType.particlesystemsubemittertype.birth","CClass:ParticleSystemSubEmitterType:particlesystemsubemittertype.birth"]]]]);

@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("rer",["Function"],[["reregisterforfinalize",,[["system::gc",,,,0,"File:scriptfunctions_client_System_doc.cpp:system.gc.reregisterforfinalize"],["System::GC::system::gc",,,,0,"File:scriptfunctions_client_System_doc.cpp:System.GC.system.gc.reregisterforfinalize","CClass:System.GC:system.gc.reregisterforfinalize"]]]]);

@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("cri",["Variable"],[["critical",,[["Quattro_Android::MemoryState::quattro_android::memorystate",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:Quattro_Android.MemoryState.quattro_android.memorystate.critical","CClass:Quattro_Android.MemoryState:quattro_android.memorystate.critical"]]]]);

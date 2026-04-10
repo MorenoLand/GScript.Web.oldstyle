@@ -1,1 +1,0 @@
-﻿NDFramePage.OnPageTitleLoaded("CClass:CombineInstance","CombineInstance");NDSummary.OnSummaryLoaded("CClass:CombineInstance",[["C/C++","C"]],[["Classes","Class"],["Functions","Function"],["Groups","Group"]],[[22987,0,0,"CombineInstance"],[6264,0,2,"Functions","Functions"],[6265,0,1,"<span class=\"Qualifier\">combineinstance::</span>&#8203;create","combineinstance.create"]]);

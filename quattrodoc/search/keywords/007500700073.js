@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("ups",["Variable"],[["upsampletolerance",,[["Rendering_PostProcessing::AmbientOcclusion",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:Rendering_PostProcessing.AmbientOcclusion.upsampletolerance","CClass:Rendering_PostProcessing.AmbientOcclusion:upsampletolerance"]]]]);

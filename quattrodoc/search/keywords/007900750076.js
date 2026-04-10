@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("yuv",["Variable"],[["yuv2",,[["Experimental_Rendering::GraphicsFormat::experimental_rendering::graphicsformat",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:Experimental_Rendering.GraphicsFormat.experimental_rendering.graphicsformat.yuv2","CClass:Experimental_Rendering.GraphicsFormat:experimental_rendering.graphicsformat.yuv2"]]]]);

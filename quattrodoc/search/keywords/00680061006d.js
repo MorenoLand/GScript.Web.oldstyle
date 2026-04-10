@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("ham",["Variable"],[["hamming",,[["FFTWindow::fftwindow",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:FFTWindow.fftwindow.hamming","CClass:FFTWindow:fftwindow.hamming"]]]]);

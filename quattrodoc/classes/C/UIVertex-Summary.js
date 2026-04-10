@@ -1,1 +1,0 @@
-﻿NDFramePage.OnPageTitleLoaded("CClass:UIVertex","UIVertex");NDSummary.OnSummaryLoaded("CClass:UIVertex",[["C/C++","C"]],[["Classes","Class"],["Functions","Function"],["Groups","Group"]],[[35232,0,0,"UIVertex"],[16603,0,2,"Functions","Functions"],[16604,0,1,"<span class=\"Qualifier\">uivertex::</span>&#8203;create","uivertex.create"]]);

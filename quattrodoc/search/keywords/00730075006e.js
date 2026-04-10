@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("sun",["Variable"],[["sun",,[["RenderSettings::rendersettings",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:RenderSettings.rendersettings.sun","CClass:RenderSettings:rendersettings.sun"]]]]);

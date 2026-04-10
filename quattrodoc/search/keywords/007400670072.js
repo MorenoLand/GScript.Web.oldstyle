@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("tgr",["Class"],[["TGraalVar",,[[,,,,0,"File:scriptfunctions_client_misceallenous.cpp:TGraalVar","CClass:TGraalVar"]]]]);

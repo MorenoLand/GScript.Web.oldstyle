@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("ube",["Variable"],[["uber",,[["Rendering_PostProcessing_PostProcessResources::Shaders",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:Rendering_PostProcessing_PostProcessResources.Shaders.uber","CClass:Rendering_PostProcessing_PostProcessResources.Shaders:uber"]]]]);

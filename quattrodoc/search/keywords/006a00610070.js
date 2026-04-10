@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("jap",["Variable"],[["japanese",,[["SystemLanguage::systemlanguage",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:SystemLanguage.systemlanguage.japanese","CClass:SystemLanguage:systemlanguage.japanese"]]]]);

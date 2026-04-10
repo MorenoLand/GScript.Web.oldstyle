@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("yel",["Variable"],[["yellow",,[["Color::color",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:Color.color.yellow","CClass:Color:color.yellow"]]]]);

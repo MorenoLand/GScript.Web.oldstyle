@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("pit",["Variable"],[["pitch",,[["AudioSource",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:AudioSource.pitch","CClass:AudioSource:pitch"]]]]);

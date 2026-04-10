@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("rgi",["Variable"],[["rgint",,[["RenderTextureFormat::rendertextureformat",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:RenderTextureFormat.rendertextureformat.rgint","CClass:RenderTextureFormat:rendertextureformat.rgint"]]]]);

@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("_",["Variable"],[["_",,[["Rendering_PostProcessing::DebugOverlay::rendering_postprocessing::debugoverlay",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:Rendering_PostProcessing.DebugOverlay.rendering_postprocessing.debugoverlay._","CClass:Rendering_PostProcessing.DebugOverlay:rendering_postprocessing.debugoverlay._"]]]]);

@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("pyr",["Variable"],[["pyramid",,[["LightShape::lightshape",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:LightShape.lightshape.pyramid","CClass:LightShape:lightshape.pyramid"]]]]);

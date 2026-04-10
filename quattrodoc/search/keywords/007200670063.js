@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("rgc",["Variable"],[["rgchuri",,[["Steamworks::OverlayBrowserProtocolNavigation_t",,,,0,"File:scriptfunctions_client_Steamworks_doc.cpp:Steamworks.OverlayBrowserProtocolNavigation_t.rgchuri","CClass:Steamworks.OverlayBrowserProtocolNavigation_t:rgchuri"]]]]);

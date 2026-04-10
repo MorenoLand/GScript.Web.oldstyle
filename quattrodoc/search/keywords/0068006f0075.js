@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("hou",["Variable"],[["hour",,[["System::DateTime",,,,0,"File:scriptfunctions_client_System_doc.cpp:System.DateTime.hour","CClass:System.DateTime:hour"]]],["hours",,[["System::TimeSpan",,,,0,"File:scriptfunctions_client_System_doc.cpp:System.TimeSpan.hours","CClass:System.TimeSpan:hours"]]]]);

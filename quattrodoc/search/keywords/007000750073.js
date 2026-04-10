@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("pus",["Variable"],[["pushdistance",,[["TestNameSpace::Decal",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:TestNameSpace.Decal.pushdistance","CClass:TestNameSpace.Decal:pushdistance"]]]]);

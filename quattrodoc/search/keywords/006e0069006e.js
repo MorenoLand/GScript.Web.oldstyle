@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("nin",["Variable"],[["nintendonetworkaccount",,[["TouchScreenKeyboardType::touchscreenkeyboardtype",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:TouchScreenKeyboardType.touchscreenkeyboardtype.nintendonetworkaccount","CClass:TouchScreenKeyboardType:touchscreenkeyboardtype.nintendonetworkaccount"]]]]);

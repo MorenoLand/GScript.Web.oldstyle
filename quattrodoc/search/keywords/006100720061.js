@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("ara",["Variable"],[["arabic",,[["SystemLanguage::systemlanguage",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:SystemLanguage.systemlanguage.arabic","CClass:SystemLanguage:systemlanguage.arabic"]]]]);

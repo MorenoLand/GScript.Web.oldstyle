@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("xma",["Variable"],[["xmax",,[["Rect",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:Rect.xmax","CClass:Rect:xmax"]]]]);

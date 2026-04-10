@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("n3d",["Variable"],[["n3ds",,[["Rendering::GraphicsDeviceType::rendering::graphicsdevicetype",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:Rendering.GraphicsDeviceType.rendering.graphicsdevicetype.n3ds","CClass:Rendering.GraphicsDeviceType:rendering.graphicsdevicetype.n3ds"]]]]);

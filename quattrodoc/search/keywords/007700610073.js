@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("was",["Variable"],[["wascanceled",,[["UI::InputField",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:UI.InputField.wascanceled","CClass:UI.InputField:wascanceled"]]]]);

@@ -1,1 +1,0 @@
-﻿NDFramePage.OnPageTitleLoaded("CClass:ILogHandler","ILogHandler");NDSummary.OnSummaryLoaded("CClass:ILogHandler",[["C/C++","C"]],[["Classes","Class"],["Functions","Function"],["Groups","Group"]],[[24838,0,0,"ILogHandler"],[7487,0,2,"Functions","Functions"],[7488,0,1,"<span class=\"Qualifier\">iloghandler::</span>&#8203;fromassetbundle","iloghandler.fromassetbundle"]]);

@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("hip",["Variable"],[["hips",,[["HumanBodyBones::humanbodybones",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:HumanBodyBones.humanbodybones.hips","CClass:HumanBodyBones:humanbodybones.hips"]]]]);

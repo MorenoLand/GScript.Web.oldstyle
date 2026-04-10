@@ -2,6 +2,8 @@
 *.bak
 *.log
 ruandoc/
+quattrodoc/
 suite/
 gbible/
 gs2emu/
+server.js

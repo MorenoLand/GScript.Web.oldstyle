@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("azi",["Variable"],[["azimuthangle",,[["EventSystems::PointerEventData",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:EventSystems.PointerEventData.azimuthangle","CClass:EventSystems.PointerEventData:azimuthangle"],["Touch",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:Touch.azimuthangle","CClass:Touch:azimuthangle"]]]]);

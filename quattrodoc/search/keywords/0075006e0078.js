@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("unx",["Variable"],[["unx",,[["Steamworks::HTML_NewWindow_t",,,,0,"File:scriptfunctions_client_Steamworks_doc.cpp:Steamworks.HTML_NewWindow_t.unx","CClass:Steamworks.HTML_NewWindow_t:unx"]]]]);

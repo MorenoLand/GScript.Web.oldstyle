@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("nod",["Variable"],[["nodistancesort",,[["Rendering::OpaqueSortMode::rendering::opaquesortmode",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:Rendering.OpaqueSortMode.rendering.opaquesortmode.nodistancesort","CClass:Rendering.OpaqueSortMode:rendering.opaquesortmode.nodistancesort"]]]]);

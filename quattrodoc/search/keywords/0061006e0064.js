@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("and",["Variable"],[["android",,[["RuntimePlatform::runtimeplatform",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:RuntimePlatform.runtimeplatform.android","CClass:RuntimePlatform:runtimeplatform.android"]]]]);

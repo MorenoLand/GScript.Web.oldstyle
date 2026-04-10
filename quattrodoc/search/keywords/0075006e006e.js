@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("unn",["Variable"],[["unnewwindow_browserhandle_ignore",,[["Steamworks::HTML_NewWindow_t",,,,0,"File:scriptfunctions_client_Steamworks_doc.cpp:Steamworks.HTML_NewWindow_t.unnewwindow_browserhandle_ignore","CClass:Steamworks.HTML_NewWindow_t:unnewwindow_browserhandle_ignore"]]]]);

@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("udp",["Variable"],[["udpsocketreceivebuffermaxsize",,[["Networking::ConnectionConfig",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:Networking.ConnectionConfig.udpsocketreceivebuffermaxsize","CClass:Networking.ConnectionConfig:udpsocketreceivebuffermaxsize"]]]]);

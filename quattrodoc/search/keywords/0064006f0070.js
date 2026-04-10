@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("dop",["Variable"],[["dopplerlevel",,[["AudioSource",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:AudioSource.dopplerlevel","CClass:AudioSource:dopplerlevel"]]]]);

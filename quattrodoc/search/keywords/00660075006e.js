@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("fun",["Variable"],[["functionkey",,[["Event",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:Event.functionkey","CClass:Event:functionkey"],["EventModifiers::eventmodifiers",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:EventModifiers.eventmodifiers.functionkey","CClass:EventModifiers:eventmodifiers.functionkey"]]]]);

@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("arc",["Variable"],[["archive",,[["System_IO::FileAttributes::system_io::fileattributes",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:System_IO.FileAttributes.system_io.fileattributes.archive","CClass:System_IO.FileAttributes:system_io.fileattributes.archive"]]]]);

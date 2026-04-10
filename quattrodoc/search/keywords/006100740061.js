@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("ata",["Function"],[["atan",,[["Mathf::mathf",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:Mathf.mathf.atan","CClass:Mathf:mathf.atan"]]],["atan2",,[["Mathf::mathf",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:Mathf.mathf.atan2","CClass:Mathf:mathf.atan2"]]]]);

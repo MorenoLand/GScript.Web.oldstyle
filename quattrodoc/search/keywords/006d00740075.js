@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("mtu",["Variable"],[["mtu",,[["LiteNetLib::NetPeer",,,,0,"File:scriptfunctions_client_LiteNetLib_doc.cpp:LiteNetLib.NetPeer.mtu","CClass:LiteNetLib.NetPeer:mtu"]]],["mtuoverride",,[["LiteNetLib::NetManager",,,,0,"File:scriptfunctions_client_LiteNetLib_doc.cpp:LiteNetLib.NetManager.mtuoverride","CClass:LiteNetLib.NetManager:mtuoverride"]]]]);

@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("m__",["Variable"],[["m__pad1",,[["Steamworks::SteamNetConnectionInfo_t",,,,0,"File:scriptfunctions_client_Steamworks_doc.cpp:Steamworks.SteamNetConnectionInfo_t.m__pad1","CClass:Steamworks.SteamNetConnectionInfo_t:m__pad1"]]]]);

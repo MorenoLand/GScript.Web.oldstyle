@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("vr",["Variable"],[["vr",,[["CameraType::cameratype",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:CameraType.cameratype.vr","CClass:CameraType:cameratype.vr"]]]]);

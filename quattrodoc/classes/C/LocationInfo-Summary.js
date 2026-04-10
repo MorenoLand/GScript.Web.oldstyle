@@ -1,1 +1,0 @@
-﻿NDFramePage.OnPageTitleLoaded("CClass:LocationInfo","LocationInfo");NDSummary.OnSummaryLoaded("CClass:LocationInfo",[["C/C++","C"]],[["Classes","Class"],["Functions","Function"],["Groups","Group"]],[[25529,0,0,"LocationInfo"],[8066,0,2,"Functions","Functions"],[8067,0,1,"<span class=\"Qualifier\">locationinfo::</span>&#8203;create","locationinfo.create"]]);

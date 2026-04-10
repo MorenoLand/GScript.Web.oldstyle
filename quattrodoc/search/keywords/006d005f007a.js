@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("m_z",["Variable"],[["m_zdamping",,[["Cinemachine::CinemachineTransposer",,,,0,"File:scriptfunctions_client_Cinemachine_doc.cpp:Cinemachine.CinemachineTransposer.m_zdamping","CClass:Cinemachine.CinemachineTransposer:m_zdamping"]]]]);

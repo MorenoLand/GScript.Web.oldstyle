@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("hom",["Variable"],[["home",,[["KeyCode::keycode",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:KeyCode.keycode.home","CClass:KeyCode:keycode.home"]]]]);

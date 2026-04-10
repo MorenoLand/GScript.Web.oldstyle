@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("urg",["Variable"],[["urgent",,[["Rendering::ComputeQueueType::rendering::computequeuetype",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:Rendering.ComputeQueueType.rendering.computequeuetype.urgent","CClass:Rendering.ComputeQueueType:rendering.computequeuetype.urgent"]]]]);

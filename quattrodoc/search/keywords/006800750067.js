@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("hug",["Variable"],[["hugarian",,[["SystemLanguage::systemlanguage",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:SystemLanguage.systemlanguage.hugarian","CClass:SystemLanguage:systemlanguage.hugarian"]]]]);

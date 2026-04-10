@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("sum",["Information"],[["SUMMARY",,[[,,,,0,"File:scriptfunctions_client_READMEFIRST.cpp:SUMMARY"]]]]);

@@ -1,1 +1,0 @@
-﻿NDFramePage.OnPageTitleLoaded("CClass:RangeInt","RangeInt");NDSummary.OnSummaryLoaded("CClass:RangeInt",[["C/C++","C"]],[["Classes","Class"],["Functions","Function"],["Groups","Group"]],[[29765,0,0,"RangeInt"],[12791,0,2,"Functions","Functions"],[12792,0,1,"<span class=\"Qualifier\">rangeint::</span>&#8203;create","rangeint.create"]]);

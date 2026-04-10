@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("ps3",["Variable"],[["ps3",,[["RuntimePlatform::runtimeplatform",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:RuntimePlatform.runtimeplatform.ps3","CClass:RuntimePlatform:runtimeplatform.ps3"]]]]);

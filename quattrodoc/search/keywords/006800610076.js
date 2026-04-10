@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("hav",["Variable"],[["havebundlesbeeninited",,[["Rendering_PostProcessing::PostProcessLayer",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:Rendering_PostProcessing.PostProcessLayer.havebundlesbeeninited","CClass:Rendering_PostProcessing.PostProcessLayer:havebundlesbeeninited"]]]]);

@@ -1,1 +1,0 @@
-﻿NDFramePage.OnPageTitleLoaded("CClass:UILineInfo","UILineInfo");NDSummary.OnSummaryLoaded("CClass:UILineInfo",[["C/C++","C"]],[["Classes","Class"],["Functions","Function"],["Groups","Group"]],[[35231,0,0,"UILineInfo"],[16599,0,2,"Functions","Functions"],[16600,0,1,"<span class=\"Qualifier\">uilineinfo::</span>&#8203;create","uilineinfo.create"]]);

@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("bar",["Variable"],[["barycentriccoordinate",,[["RaycastHit",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:RaycastHit.barycentriccoordinate","CClass:RaycastHit:barycentriccoordinate"]]]]);

@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("gpu",["Variable"],[["gpumemory",,[["ComputeBufferType::computebuffertype",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:ComputeBufferType.computebuffertype.gpumemory","CClass:ComputeBufferType:computebuffertype.gpumemory"]]]]);

@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("tod",["Variable"],[["today",,[["system::datetime",,,,0,"File:scriptfunctions_client_System_doc.cpp:system.datetime.today"],["System::DateTime::system::datetime",,,,0,"File:scriptfunctions_client_System_doc.cpp:System.DateTime.system.datetime.today","CClass:System.DateTime:system.datetime.today"]]]]);

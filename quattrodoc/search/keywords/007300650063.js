@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("sec",["Variable"],[["second",,[["System::DateTime",,,,0,"File:scriptfunctions_client_System_doc.cpp:System.DateTime.second","CClass:System.DateTime:second"]]],["seconds",,[["System::TimeSpan",,,,0,"File:scriptfunctions_client_System_doc.cpp:System.TimeSpan.seconds","CClass:System.TimeSpan:seconds"]]]]);

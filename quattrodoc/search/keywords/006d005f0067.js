@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("m_g",["Variable"],[["m_gameid",,[["Steamworks::CGameID",,,,0,"File:scriptfunctions_client_Steamworks_doc.cpp:Steamworks.CGameID.m_gameid","CClass:Steamworks.CGameID:m_gameid"],["Steamworks::FriendGameInfo_t",,,,0,"File:scriptfunctions_client_Steamworks_doc.cpp:Steamworks.FriendGameInfo_t.m_gameid","CClass:Steamworks.FriendGameInfo_t:m_gameid"]]]]);

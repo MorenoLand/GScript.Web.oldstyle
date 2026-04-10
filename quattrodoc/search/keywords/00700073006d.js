@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("psm",["Variable"],[["psm",,[["RuntimePlatform::runtimeplatform",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:RuntimePlatform.runtimeplatform.psm","CClass:RuntimePlatform:runtimeplatform.psm"]]]]);

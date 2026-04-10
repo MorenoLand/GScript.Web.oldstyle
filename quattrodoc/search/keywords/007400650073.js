@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("tes",["Function"],[["testfunc",,[["quattro",,,,0,"File:scriptfunctions_client_Quattro_doc.cpp:quattro.testfunc"]]]]);

@@ -1,1 +1,0 @@
-﻿NDFramePage.OnPageTitleLoaded("CClass:GuiTextureCtrl","GuiTextureCtrl");NDSummary.OnSummaryLoaded("CClass:GuiTextureCtrl",[["C/C++","C"]],[["Classes","Class"],["Groups","Group"],["Variables","Variable"]],[[2674,0,0,"GuiTextureCtrl"],[2675,0,1,"Variables","Variables"],[2676,0,2,"texture","texture"],[2678,0,1,"Variables","Variables(2)"],[2679,0,2,"texture","texture(2)"]]);

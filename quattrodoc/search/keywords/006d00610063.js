@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("mac",["Variable"],[["macosx",,[["OperatingSystemFamily::operatingsystemfamily",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:OperatingSystemFamily.operatingsystemfamily.macosx","CClass:OperatingSystemFamily:operatingsystemfamily.macosx"]]]]);

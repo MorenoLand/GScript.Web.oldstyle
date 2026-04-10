@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("dol",["Variable"],[["dolbyhdr",,[["ColorGamut::colorgamut",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:ColorGamut.colorgamut.dolbyhdr","CClass:ColorGamut:colorgamut.dolbyhdr"]]],["dollar",,[["KeyCode::keycode",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:KeyCode.keycode.dollar","CClass:KeyCode:keycode.dollar"]]]]);

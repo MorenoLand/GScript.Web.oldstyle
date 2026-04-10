@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("dri",["Variable"],[["drivenbyobject",,[["RectTransform",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:RectTransform.drivenbyobject","CClass:RectTransform:drivenbyobject"]]]]);

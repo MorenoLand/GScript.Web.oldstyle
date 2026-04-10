@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("ace",["Variable"],[["aces",,[["Rendering_PostProcessing::Tonemapper::rendering_postprocessing::tonemapper",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:Rendering_PostProcessing.Tonemapper.rendering_postprocessing.tonemapper.aces","CClass:Rendering_PostProcessing.Tonemapper:rendering_postprocessing.tonemapper.aces"]]]]);

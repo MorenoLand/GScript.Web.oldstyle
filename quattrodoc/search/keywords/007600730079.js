@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("vsy",["Variable"],[["vsynccount",,[["QualitySettings::qualitysettings",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:QualitySettings.qualitysettings.vsynccount","CClass:QualitySettings:qualitysettings.vsynccount"]]]]);

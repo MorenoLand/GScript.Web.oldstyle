@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("cos",["Function"],[["cos",,[["Mathf::mathf",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:Mathf.mathf.cos","CClass:Mathf:mathf.cos"]]]]);

@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("nec",["Variable"],[["neck",,[["HumanBodyBones::humanbodybones",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:HumanBodyBones.humanbodybones.neck","CClass:HumanBodyBones:humanbodybones.neck"]]]]);

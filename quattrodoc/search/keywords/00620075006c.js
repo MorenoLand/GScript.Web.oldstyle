@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("bul",["Variable"],[["bulgarian",,[["SystemLanguage::systemlanguage",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:SystemLanguage.systemlanguage.bulgarian","CClass:SystemLanguage:systemlanguage.bulgarian"]]]]);

@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("eye",["Variable"],[["eyetexture",,[["RenderTextureCreationFlags::rendertexturecreationflags",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:RenderTextureCreationFlags.rendertexturecreationflags.eyetexture","CClass:RenderTextureCreationFlags:rendertexturecreationflags.eyetexture"]]]]);

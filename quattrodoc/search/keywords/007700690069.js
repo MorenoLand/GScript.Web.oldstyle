@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("wii",["Variable"],[["wiiu",,[["RuntimePlatform::runtimeplatform",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:RuntimePlatform.runtimeplatform.wiiu","CClass:RuntimePlatform:runtimeplatform.wiiu"]]]]);

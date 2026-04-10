@@ -1,1 +1,0 @@
-﻿NDSearch.OnPrefixDataLoaded("ala",["Variable"],[["alarmcondition",,[["LiteNetLib_Utils::NtpLeapIndicator::litenetlib_utils::ntpleapindicator",,,,0,"File:scriptfunctions_client_unityScripting_doc.cpp:LiteNetLib_Utils.NtpLeapIndicator.litenetlib_utils.ntpleapindicator.alarmcondition","CClass:LiteNetLib_Utils.NtpLeapIndicator:litenetlib_utils.ntpleapindicator.alarmcondition"]]]]);
