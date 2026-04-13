@@ -719,6 +719,14 @@ function App() {
               e.preventDefault();
               setShowByte(true);
               window.history.pushState(null, '', '/?byte');
+            } else if (e.shiftKey) {
+              e.preventDefault();
+              setShowBeautify(true);
+              window.history.pushState(null, '', '/?beautify');
+            } else if (e.altKey) {
+              e.preventDefault();
+              setShowDocs(true);
+              window.history.pushState(null, '', '/?docs');
             }
           }}></div>
         </div>
