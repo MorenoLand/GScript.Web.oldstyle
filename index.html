@@ -547,24 +547,24 @@ function App() {
     const dlType = new URLSearchParams(window.location.search).get('dl');
     if (!dlType) return;
     const files = {
-      exe:      v => `GraalSuite.exe`,
-      setup:    v => `GraalSuite_${v}_x64-setup.exe`,
-      msi:      v => `GraalSuite_${v}_x64_en-US.msi`,
-      deb:      v => `GraalSuite_${v}_amd64.deb`,
-      appimage: v => `GraalSuite_${v}_amd64.AppImage`,
-      dmg:      v => `GraalSuite_${v}_aarch64.dmg`,
-      tar:      v => `GraalSuite_${v}_aarch64.app.tar.gz`,
-      rpm:      v => `GraalSuite-${v}-1.x86_64.rpm`,
+      exe:      v => `GSuite.exe`,
+      setup:    v => `GSuite_${v}_x64-setup.exe`,
+      msi:      v => `GSuite_${v}_x64_en-US.msi`,
+      deb:      v => `GSuite_${v}_amd64.deb`,
+      appimage: v => `GSuite_${v}_amd64.AppImage`,
+      dmg:      v => `GSuite_${v}_aarch64.dmg`,
+      tar:      v => `GSuite_${v}_aarch64.app.tar.gz`,
+      rpm:      v => `GSuite-${v}-1.x86_64.rpm`,
     };
-    fetch('/graalsuite-latest.json')
+    fetch('/latest.json')
       .then(r => r.json())
       .then(j => {
         const ver = j.tag_name;
         const fn = (files[dlType] || files.exe)(ver);
         const asset = j.assets && j.assets.find(a => a.name === fn);
-        window.location.href = asset ? asset.browser_download_url : `https://github.com/MorenoLand/GScript.GraalSuite/releases/download/${ver}/${fn}`;
+        window.location.href = asset ? asset.browser_download_url : `https://github.com/MorenoLand/GScript.GSuite/releases/download/${ver}/${fn}`;
       })
-      .catch(() => { window.location.href = 'https://github.com/MorenoLand/GScript.GraalSuite/releases/latest'; });
+      .catch(() => { window.location.href = 'https://github.com/MorenoLand/GScript.GSuite/releases/latest'; });
   }, []);
   const [showIndexing, setShowIndexing] = useState(() => new URLSearchParams(window.location.search).has('indexing'));
   const [showBeautify, setShowBeautify] = useState(() => new URLSearchParams(window.location.search).has('beautify'));
