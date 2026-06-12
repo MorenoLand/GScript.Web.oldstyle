@@ -177,12 +177,13 @@ function IndexingTutorial() {
   const toggleViewAll = () => { setViewAll(!viewAll); };
   const switchTutorial = (tut) => { setTutorial(tut); setCurrentSlide(0); setViewAll(false); };
 
-  return React.createElement('div', { className: 'container', style: { position: 'relative', marginTop: '20px', minHeight: 'auto', padding: '0' } },
-    React.createElement('div', { className: 'content-wrapper' },
-      React.createElement('div', { className: 'header' },
-        React.createElement('div', { className: 'tutorial-toggle', style: { display: 'flex', gap: '15px', justifyContent: 'center', marginBottom: '20px' } },
-          React.createElement('button', { className: `toggle-btn ${tutorial === 'photoshop' ? 'active' : ''}`, onClick: () => switchTutorial('photoshop'), style: { padding: '10px 20px', background: 'rgba(64,255,64,0.2)', color: '#40ff40', border: '1px solid rgba(64,255,64,0.3)', borderRadius: '8px', cursor: 'pointer', fontSize: '14px', fontWeight: '600', transition: 'all 0.2s' } }, 'Photoshop Tutorial'),
-          React.createElement('button', { className: `toggle-btn ${tutorial === 'gimp' ? 'active' : ''}`, onClick: () => switchTutorial('gimp'), style: { padding: '10px 20px', background: 'rgba(64,255,64,0.2)', color: '#40ff40', border: '1px solid rgba(64,255,64,0.3)', borderRadius: '8px', cursor: 'pointer', fontSize: '14px', fontWeight: '600', transition: 'all 0.2s' } }, 'GIMP Tutorial')
+  return React.createElement('main', { className: 'indexing-guide' },
+    React.createElement('div', { className: 'content-wrapper indexing-wrapper' },
+      React.createElement('div', { className: 'header indexing-header' },
+        React.createElement('p', { className: 'formats-lede indexing-lede' }, 'Indexed body and image setup notes for palettes, transparency, and upload-safe color tables.'),
+        React.createElement('div', { className: 'tutorial-toggle formats-tabs' },
+          React.createElement('button', { className: `toggle-btn ${tutorial === 'photoshop' ? 'active' : ''}`, onClick: () => switchTutorial('photoshop') }, React.createElement('i', { className: 'fas fa-image' }), React.createElement('span', null, 'Photoshop')),
+          React.createElement('button', { className: `toggle-btn ${tutorial === 'gimp' ? 'active' : ''}`, onClick: () => switchTutorial('gimp') }, React.createElement('i', { className: 'fas fa-palette' }), React.createElement('span', null, 'GIMP'))
         ),
         React.createElement('p', { className: 'page-indicator' }, viewAll ? 'Viewing all pages' : `Page ${currentSlide + 1} of ${sections.length}`)
       ),

@@ -7,7 +7,7 @@
 <title>GScript.dev</title>
 <link rel="icon" type="image/x-icon" href="favicon.ico">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="stylesheet" href="css/shared.css?v=10">
+<link rel="stylesheet" href="css/shared.css?v=11">
 <style>
   html{height:100%;}
   body{margin:0;padding:0;min-height:100vh;background:transparent;color:#fff;overflow-x:hidden;}
@@ -55,6 +55,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.7/beautify-html.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.6.12"></script>
 <script src="js/indexing.js"></script>
+<script src="js/formats.js"></script>
 <script src="js/beautify.js"></script>
 <script src="js/logo.js"></script>
 <script>window.addEventListener('DOMContentLoaded', () => loadLogo('header-logo'));</script>
@@ -246,6 +247,7 @@ const data = {
   documentation: [
     { icon: 'fas fa-book', text: 'GScript Docs (Wiki)', href: 'https://graalonline.net/Creation/Dev/GScript' },
     { icon: 'fas fa-book-open', text: 'Wiki', href: 'https://wiki.gscript.dev/Creation/Dev/GScript' },
+    { icon: 'fas fa-file-lines', text: 'File Formats', href: '/?formats' },
     { icon: 'fas fa-file-code', text: 'GScript Documentation', href: 'https://docs.gscript.dev' },
     { icon: 'fas fa-file-code', text: 'GS2 Docs (Ruan)', href: 'https://gscript.dev/ruandoc' },
     { icon: 'fas fa-cube', text: 'Unity/Quattro3D', href: 'https://unity.gscript.dev/' },
@@ -314,6 +316,7 @@ const data = {
         { icon: 'fab fa-github', text: 'Source', href: 'https://github.com/MorenoLand/GScript.GraalSuite' }
       ]
     },
+    { icon: 'fas fa-map', text: 'Gmap Generator', href: 'https://gmap.gscript.dev/' },
     {
       icon: 'fas fa-tools',
       text: 'Gonstruct',
@@ -326,6 +329,7 @@ const data = {
   ],
   webtools: [
     { icon: 'fas fa-server', text: 'GS2 Emulator', href: 'https://gs2.gscript.dev/' },
+    { icon: 'fas fa-map', text: 'Gmap Generator', href: 'https://gmap.gscript.dev/' },
     { icon: 'fas fa-magic', text: 'Beautifier', href: '/?beautify' },
     { icon: 'fas fa-edit', text: 'Graal Suite', href: 'https://suite.gscript.dev' },
     { icon: 'fas fa-paste', text: 'Gscript Pastebin', href: 'https://paste.gscript.dev' },
@@ -554,13 +558,14 @@ const NavSection = ({ label, icon, defaultOpen, children }) => {
   );
 };
 
-const NavItem = ({ item, handleLinkClick, setShowIndexing, setShowBeautify }) => {
+const NavItem = ({ item, handleLinkClick, setShowIndexing, setShowBeautify, setShowFormats }) => {
   const [expanded, setExpanded] = useState(false);
   const subRef = useRef(null);
   const onClick = (e) => {
     if (item.submenu) { e.preventDefault(); const next = !expanded; setExpanded(next); if (next && subRef.current) scrollIntoNav(subRef.current); return; }
     if (item.href === '/?indexing') { e.preventDefault(); setShowIndexing(true); window.history.pushState(null, '', '/?indexing'); return; }
     if (item.href === '/?beautify') { e.preventDefault(); setShowBeautify(true); window.history.pushState(null, '', '/?beautify'); return; }
+    if (item.href === '/?formats') { e.preventDefault(); setShowFormats(true); window.history.pushState(null, '', '/?formats'); return; }
     handleLinkClick(e);
   };
   return (
@@ -610,6 +615,7 @@ function App() {
       .catch(() => { window.location.href = 'https://github.com/MorenoLand/GScript.GSuite/releases/latest'; });
   }, []);
   const [showIndexing, setShowIndexing] = useState(() => new URLSearchParams(window.location.search).has('indexing'));
+  const [showFormats, setShowFormats] = useState(() => new URLSearchParams(window.location.search).has('formats'));
   const [showBeautify, setShowBeautify] = useState(() => new URLSearchParams(window.location.search).has('beautify'));
   const [showByte, setShowByte] = useState(() => {
     const params = new URLSearchParams(window.location.search);
@@ -635,6 +641,7 @@ function App() {
     const handlePopState = () => {
       const params = new URLSearchParams(window.location.search);
       setShowIndexing(params.has('indexing'));
+      setShowFormats(params.has('formats'));
       setShowBeautify(params.has('beautify'));
       setShowByte(params.has('byte') || window.location.hostname === 'byte.gscript.dev');
       if (isStatsDomain) setStatsView(params.has('graph') ? 'graph' : (params.has('changes') ? 'changes' : 'list'));
@@ -703,7 +710,7 @@ function App() {
   }, [resizingColumn, columnWidths]);
 
   return (
-    <div className={`container ${fadeClass} ${!isStatsDomain && !showIndexing && !showBeautify && !showByte && !showDocs ? 'sidebar-active' : ''}`} style={isStatsDomain ? {justifyContent: 'flex-start', paddingTop: '40px'} : null}>
+    <div className={`container ${fadeClass} ${showFormats || showIndexing ? 'formats-page' : ''} ${!isStatsDomain && !showIndexing && !showFormats && !showBeautify && !showByte && !showDocs ? 'sidebar-active' : ''}`} style={isStatsDomain ? {justifyContent: 'flex-start', paddingTop: '40px'} : null}>
       <div className="contain-bg2" id="background"></div>
       {isStatsDomain ? <div id="header-logo" style={{marginBottom: '40px'}}></div> : null}
       {isStatsDomain ? (
@@ -712,6 +719,7 @@ function App() {
         <ChangesView allServers={allServers} changesData={changesData} setChangesData={setChangesData} timestamps={timestamps} setTimestamps={setTimestamps} filteredServer={filteredServer} setFilteredServer={setFilteredServer} changesPage={changesPage} setChangesPage={setChangesPage} changesPerPage={changesPerPage} setChangesPerPage={setChangesPerPage} changesCache={changesCache} loading={loading} setLoading={setLoading} />
       ) : (
           showIndexing ? React.createElement(React.Fragment, null, React.createElement('div', { style: { position: 'fixed', top: '20px', left: '20px', zIndex: 1000 } }, React.createElement('a', { href: '/', onClick: (e) => { e.preventDefault(); setShowIndexing(false); window.history.pushState(null, '', '/'); setTimeout(() => { if (typeof initMenus === 'function') initMenus(); }, 100); }, style: { fontSize: '16px', color: '#40ff40', cursor: 'pointer' } }, React.createElement('i', { className: 'fas fa-arrow-left' }), ' Back')), typeof IndexingTutorial !== 'undefined' ? React.createElement(IndexingTutorial) : null) :
+          showFormats ? React.createElement(React.Fragment, null, React.createElement('div', { style: { position: 'fixed', top: '20px', left: '20px', zIndex: 1000 } }, React.createElement('a', { href: '/', onClick: (e) => { e.preventDefault(); setShowFormats(false); window.history.pushState(null, '', '/'); setTimeout(() => { if (typeof initMenus === 'function') initMenus(); }, 100); }, style: { fontSize: '16px', color: '#40ff40', cursor: 'pointer' } }, React.createElement('i', { className: 'fas fa-arrow-left' }), ' Back')), typeof FileFormatsGuide !== 'undefined' ? React.createElement(FileFormatsGuide) : null) :
           showBeautify ? React.createElement(React.Fragment, null, React.createElement('div', { style: { position: 'fixed', top: '20px', left: '20px', zIndex: 1000 } }, React.createElement('a', { href: '/', onClick: (e) => { e.preventDefault(); setShowBeautify(false); window.history.pushState(null, '', '/'); setTimeout(() => { if (typeof initMenus === 'function') initMenus(); }, 100); }, style: { fontSize: '16px', color: '#40ff40', cursor: 'pointer' } }, React.createElement('i', { className: 'fas fa-arrow-left' }), ' Back')), typeof BeautifyTool !== 'undefined' ? React.createElement(BeautifyTool) : null) :
           showByte ? React.createElement(React.Fragment, null, React.createElement('div', { style: { position: 'fixed', top: '20px', left: '20px', zIndex: 1000 } }, React.createElement('a', { href: '/', onClick: (e) => { e.preventDefault(); setShowByte(false); window.history.pushState(null, '', '/'); setTimeout(() => { if (typeof initMenus === 'function') initMenus(); }, 100); }, style: { fontSize: '16px', color: '#40ff40', cursor: 'pointer' } }, React.createElement('i', { className: 'fas fa-arrow-left' }), ' Back')), React.createElement(BytecodeConverter)) :
           showDocs ? React.createElement(React.Fragment, null, typeof GSDoc !== 'undefined' ? React.createElement(GSDoc) : null) :
@@ -759,6 +767,7 @@ function App() {
           <div className="home-board-group">
             <h2><i className="fas fa-book-open"></i> References / Docs</h2>
             <a href="https://wiki.gscript.dev/Creation/Dev/GScript" target="_blank"><i className="fas fa-book-open"></i><span>Wiki</span></a>
+            <a href="/?formats"><i className="fas fa-file-lines"></i><span>File Formats</span></a>
             <a href="https://docs.gscript.dev" target="_blank"><i className="fas fa-file-code"></i><span>GScript Documentation</span></a>
             <a href="https://gscript.dev/ruandoc" target="_blank"><i className="fas fa-scroll"></i><span>GS2 Docs</span></a>
             <a href="https://morenoland.github.io/GScript.RCDocs/" target="_blank"><i className="fas fa-network-wired"></i><span>RC Protocol</span></a>
@@ -769,6 +778,7 @@ function App() {
           <div className="home-board-group">
             <h2><i className="fas fa-tools"></i> Tools</h2>
             <a href="https://suite.gscript.dev" target="_blank"><i className="fas fa-edit"></i><span>Graal Suite</span></a>
+            <a href="https://gmap.gscript.dev/" target="_blank"><i className="fas fa-map"></i><span>Gmap Generator</span></a>
             <a href="https://gs2.gscript.dev/" target="_blank"><i className="fas fa-server"></i><span>GS2 Emulator</span></a>
             <a href="/?beautify"><i className="fas fa-magic"></i><span>Beautifier</span></a>
             <a href="https://paste.gscript.dev" target="_blank"><i className="fas fa-paste"></i><span>Pastebin</span></a>
