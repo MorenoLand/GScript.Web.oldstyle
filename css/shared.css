@@ -204,6 +204,7 @@ span { text-shadow: 1px 1px 1px rgba(0, 0, 255, 1); }
 .home-avatar-wrap{position:relative;display:grid;place-items:center;min-height:255px;animation:homeRise 0.85s 0.08s ease-out both;}
 .home-character{margin:0 0 76px;width:190px;height:260px;z-index:1;transform:translateX(10px);filter:drop-shadow(0 28px 24px rgba(0,0,0,0.48));}
 .home-discord-float{width:330px;padding:0 4px 4px;position:absolute;right:18%;top:52%;transform:translateY(-50%);isolation:isolate;z-index:2;}
+.home-discord-float.is-hidden{display:none;}
 .home-discord-title{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:4px;color:#eef7f1;text-shadow:0 2px 8px rgba(0,0,0,0.9);opacity:0;transform:translateY(4px);pointer-events:none;transition:opacity 0.18s ease,transform 0.18s ease;}
 .home-discord-float:hover .home-discord-title,.home-discord-float:focus-within .home-discord-title{opacity:1;transform:translateY(0);}
 .home-discord-title span{display:flex;align-items:center;gap:8px;font-size:18px;text-align:left;}

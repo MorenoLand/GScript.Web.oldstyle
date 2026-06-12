@@ -354,7 +354,7 @@ const data = {
   ]
 };
 
-function DiscordWidget({ compact = false, onStats = null } = {}) {
+function DiscordWidget({ compact = false, onStats = null, onUnavailable = null } = {}) {
   const [stats, setStats] = useState(null);
   const [widget, setWidget] = useState(null);
   const [error, setError] = useState(false);
@@ -365,18 +365,31 @@ function DiscordWidget({ compact = false, onStats = null } = {}) {
   const scrollPosRef = useRef(0);
 
   useEffect(() => {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 5000);
     Promise.all([
-      fetch('https://api.moreno.land/api/discord/stats'),
-      fetch('https://api.moreno.land/api/discord/users')
+      fetch('https://api.moreno.land/api/discord/stats', { signal: controller.signal }),
+      fetch('https://api.moreno.land/api/discord/users', { signal: controller.signal })
     ])
     .then(async ([statsRes, widgetRes]) => {
+      if (!statsRes.ok || !widgetRes.ok) throw new Error('Discord API unavailable');
       const statsData = await statsRes.json();
       const widgetData = await widgetRes.json();
+      if (!widgetData || !Array.isArray(widgetData.members) || widgetData.members.length === 0) throw new Error('Discord user list unavailable');
       setStats(statsData);
       setWidget(widgetData);
       if (onStats) onStats(statsData, widgetData);
+      if (onUnavailable) onUnavailable(false);
     })
-    .catch(() => setError(true));
+    .catch(() => {
+      setError(true);
+      if (onUnavailable) onUnavailable(true);
+    })
+    .finally(() => clearTimeout(timeout));
+    return () => {
+      clearTimeout(timeout);
+      controller.abort();
+    };
   }, []);
 
   const [hoverMember, setHoverMember] = useState(null);
@@ -428,7 +441,8 @@ function DiscordWidget({ compact = false, onStats = null } = {}) {
     };
   }, [widget, updateParticles]);
 
-  if (error) return <div className="discord-loading">Failed to load Discord data</div>;
+  if (error) return null;
+  if (compact && (!widget || !stats)) return null;
   if (!widget || !stats) return <div className="discord-loading">Loading...</div>;
 
   const membersHtml = widget.members ? widget.members.map(member =>
@@ -636,6 +650,7 @@ function App() {
   const [changesData, setChangesData] = React.useState({entries: []}), [changesPage, setChangesPage] = React.useState(1), [changesPerPage, setChangesPerPage] = React.useState(5), [timestamps, setTimestamps] = React.useState([]);
   const [transitioning, setTransitioning] = React.useState(false), [filteredServer, setFilteredServer] = React.useState(null), changesCache = React.useRef({});
   const [resizingColumn, setResizingColumn] = React.useState(null), [guidePosition, setGuidePosition] = React.useState(null);
+  const [discordHidden, setDiscordHidden] = React.useState(true);
 
   useEffect(() => {
     const handlePopState = () => {
@@ -754,12 +769,12 @@ function App() {
             </div>
           </div>
           </aside>
-          <div className="home-discord-float">
+          <div className={`home-discord-float${discordHidden ? ' is-hidden' : ''}`}>
             <div className="home-discord-title">
               <span><i className="fab fa-discord"></i> #gscript</span>
               <small>{discordSummary.online ?? '?'} online / {discordSummary.total ?? '?'} total</small>
             </div>
-            <DiscordWidget compact={true} onStats={(stats, widget) => setDiscordSummary({online: stats.online || widget.presence_count || 0, total: stats.total || '?'})} />
+            <DiscordWidget compact={true} onUnavailable={setDiscordHidden} onStats={(stats, widget) => setDiscordSummary({online: stats.online || widget.presence_count || 0, total: stats.total || '?'})} />
           </div>
         </section>
 
