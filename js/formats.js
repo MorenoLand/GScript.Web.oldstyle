@@ -11,6 +11,8 @@ const fileFormatTabs = [
         title: 'What the formats carry',
         points: [
           'Levels are 64 by 64 tiles. Tiles are 16x16 pixels from a packed tileset atlas, usually pics1.png.',
+          'Older atlas layouts can be 116x32 tiles; later tooling usually treats the atlas as 128x32 tiles.',
+          'Tile collision is not stored per level in these formats. The old notes point to hard-coded behavior or arrays.dat.',
           'Level data can include links, baddies, signs, treasure boxes, and programmable NPCs.',
           '.nw is the modern text level format: tile board rows plus links, signs, chests, baddies, NPCs, and tileset metadata.',
           '.gmap stitches many 64x64 .nw levels into one larger map by listing a grid of level filenames.',
@@ -21,11 +23,18 @@ const fileFormatTabs = [
       {
         title: 'Level object basics',
         rows: [
-          ['Links', 'Rectangles that move the player to another level and destination coordinate.'],
-          ['Baddies', 'Enemy entries with x, y, type, and three optional verse strings.'],
+          ['Links', 'Integer rectangles that move the player to another level and destination coordinate. NewX/NewY can be decimal values or playerx/playery in old data.'],
+          ['Baddies', 'Enemy entries with x, y, type, and three optional verse strings: on notice, on hit, and when hurt.'],
           ['Signs', 'Indexed text strings used for signs, dialog, and other message boxes.'],
-          ['Treasure boxes', '2x2 chests with an item type and optional sign/message index.'],
-          ['NPCs', 'Self-contained scripted objects with x/y, optional image, and source code.']
+          ['Treasure boxes', '2x2 chests with an item type and optional sign/message index. They hold built-in items, not NPCs.'],
+          ['NPCs', 'Self-contained scripted objects with x/y, optional image, and source code. NPC weapons can persist with the player, but a level file entry is just coordinates, image, and code.']
+        ]
+      },
+      {
+        title: 'Link parameter order',
+        rows: [
+          ['Old document order', 'LevelName Width Height X Y NewX NewY. This is the ordering stated for the historical file formats.'],
+          ['Suite .nw export', 'nextLevel X Y Width Height nextX nextY. The current level editor reads/writes this order for its .nw files.']
         ]
       },
       {
@@ -48,7 +57,7 @@ const fileFormatTabs = [
         note: 'The editor writes one BOARD line per row for layer 0. Extra layers are written only where tiles exist.'
       },
       {
-        title: 'Why .nw is larger but easier',
+        title: 'Plain text notes',
         points: [
           'The old binary formats use run-length encoded tile packets, so tiny/simple levels can be very small.',
           '.nw writes text. A normal 64x64 base layer alone is 64 BOARD lines and about 9.3 KB before objects.',
@@ -61,10 +70,10 @@ const fileFormatTabs = [
         note: 'A BOARD row with width 64 has 128 characters because every tile is exactly two base64 characters.'
       },
       {
-        title: 'Commands',
+        title: 'Level entries',
         rows: [
           ['BOARD x y width layer data', 'Tile run. Each tile is two base64 characters. The default board is usually 64 rows of width 64 on layer 0.'],
-          ['LINK nextLevel x y width height nextX nextY [nextLayer layer]', 'Warp rectangle. Suite also accepts destination names with spaces by reading until the first numeric field.'],
+          ['LINK nextLevel x y width height nextX nextY [nextLayer layer]', 'Warp rectangle in Suite .nw files. Older docs describe LevelName Width Height X Y NewX NewY, so importers should be prepared for legacy ordering.'],
           ['SIGN x y [layer]', 'Text block ending at SIGNEND.'],
           ['CHEST x y item signIndex [layer]', 'Treasure chest. Item names use the editor item table.'],
           ['BADDY x y type [layer]', 'Baddy block with up to three verse lines, ending at BADDYEND.'],
@@ -116,8 +125,8 @@ const fileFormatTabs = [
       },
       {
         title: 'Tile stream',
-        code: 'bits = header is GR-V1.02 or GR-V1.03 ? 13 : 12\ncontrolBit = bits == 13 ? 0x1000 : 0x800\n\nwhile board has fewer than 4096 tiles:\n  packet = read next 12 or 13 bits, little-endian from the byte stream\n\n  if packet has controlBit:\n    repeatCount = packet & 0xFF\n    doubleRepeat = packet has bit 0x100\n    continue\n\n  if repeatCount == 1:\n    append decodeTile(packet)\n  else if doubleRepeat:\n    read two tile packets A and B\n    append A, B, A, B... repeatCount times\n  else:\n    append decodeTile(packet) repeatCount times',
-        note: 'The packed stream starts immediately after the 8-byte header and stops once the 64x64 board is filled.'
+        code: 'bits = header is GR-V1.02 or GR-V1.03 ? 13 : 12\ncontrolBit = bits == 13 ? 0x1000 : 0x800\n\nwhile board has fewer than 4096 tiles:\n  packet = read next 12 or 13 bits, little-endian from the byte stream\n\n  if packet has controlBit:\n    repeatCount = packet & 0xFF\n    doubleRepeat = packet has bit 0x100\n    continue\n\n  if repeatCount == 1:\n    append decodeTile(packet)\n  else if doubleRepeat:\n    read two tile packets A and B\n    append A, B, A, B... repeatCount times\n  else:\n    append decodeTile(packet) repeatCount times\n\ndecodeTile(index):\n  atlasX = floor(index / 512) * 16 + index % 16\n  atlasY = floor(index / 16) % 32',
+        note: 'The packed stream starts immediately after the 8-byte header. There is no tile count; stop only after producing 4096 tiles. Everything after the tile block is byte-aligned, so ignore leftover bits from the last packet.'
       },
       {
         title: 'Binary object sections',
@@ -136,13 +145,34 @@ const fileFormatTabs = [
       {
         title: 'Sign character table',
         rows: [
-          ['32-57', 'A-Z'],
-          ['58-83', 'a-z'],
-          ['84-93', '0-9'],
-          ['94-102', '! ? - . , ... > ( )'],
-          ['103-106', 'Ancient 1, Ancient 2, Ancient 3, Head'],
-          ['107-117', '" arrows, apostrophe, colon, slash, tilde, ampersand, #'],
-          ['118-126', 'Yinyang, space, <, bold A/B/X/Y, semicolon, newline']
+          ['32-57', 'ASCII 65-90: A-Z'],
+          ['58-83', 'ASCII 97-122: a-z'],
+          ['84-93', 'ASCII 48-57: 0-9'],
+          ['94', 'ASCII 33: !'],
+          ['95', 'ASCII 63: ?'],
+          ['96', 'ASCII 45: -'],
+          ['97', 'ASCII 46: .'],
+          ['98', 'ASCII 44: ,'],
+          ['99', 'Ellipsis glyph'],
+          ['100', 'ASCII 62: >'],
+          ['101', 'ASCII 40: ('],
+          ['102', 'ASCII 41: )'],
+          ['103-105', 'Ancient 1, Ancient 2, Ancient 3'],
+          ['106', 'Head glyph'],
+          ['107', 'ASCII 34: double quote'],
+          ['108-111', 'Up, Down, Left, Right arrow glyphs'],
+          ['112', 'ASCII 39: apostrophe'],
+          ['113', 'ASCII 58: colon'],
+          ['114', 'ASCII 47: slash'],
+          ['115', 'ASCII 126: tilde'],
+          ['116', 'ASCII 38: ampersand'],
+          ['117', 'ASCII 35: #'],
+          ['118', 'Yinyang glyph'],
+          ['119', 'ASCII 32: space'],
+          ['120', 'ASCII 60: <'],
+          ['121-124', 'Bold A, Bold B, Bold X, Bold Y'],
+          ['125', 'ASCII 59: semicolon'],
+          ['126', 'ASCII 10: newline']
         ]
       },
       {
