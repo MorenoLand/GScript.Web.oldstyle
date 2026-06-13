@@ -204,25 +204,14 @@ function initBytecodeConverter() {
     loadMonaco();
   }
 
-  let gbfWasmLoaded = false;
-  async function loadGbfWasm() {
-    if (gbfWasmLoaded) return;
-    try {
-      await window.gbfWasmInit('js/gbf.wasm');
-      gbfWasmLoaded = true;
-    } catch (e) {
-      console.error('Failed to load GBF WASM:', e);
-      throw e;
+  async function loadGoByte() {
+    if (typeof window.GoByteReady !== 'function') {
+      throw new Error('GoByte loader is not available.');
     }
-  }
-
-  function hexToUint8Array(hex) {
-    hex = hex.replace(/\s+/g, '');
-    const bytes = new Uint8Array(hex.length / 2);
-    for (let i = 0; i < bytes.length; i++) {
-      bytes[i] = parseInt(hex.substr(i * 2, 2), 16);
+    await window.GoByteReady();
+    if (typeof window.GByteDecompileText !== 'function') {
+      throw new Error('GoByte decompiler did not initialize.');
     }
-    return bytes;
   }
 
   function cleanupDecompiled(code) {
@@ -279,16 +268,6 @@ function initBytecodeConverter() {
     }
   }
 
-  let compilerInstance = null;
-  async function getCompiler() {
-    if (compilerInstance) return compilerInstance;
-    if (typeof window.GS2Compiler === 'function') {
-      compilerInstance = await window.GS2Compiler();
-      return compilerInstance;
-    }
-    return null;
-  }
-
   function downloadFile(content, filename) {
     const blob = new Blob([content], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
@@ -337,11 +316,8 @@ function initBytecodeConverter() {
     if (currentBytecode) flipInputOutput();
   });
 
-  const waitForGS2 = () => new Promise(r => { const check = () => window.GS2Compiler ? r() : setTimeout(check, 100); check(); });
-
   convertBtn.addEventListener('click', async () => {
     const code = sourceEditor.getValue().trim();
-    console.log('Convert clicked, isDecompileMode:', isDecompileMode, 'decompileMode.checked:', decompileMode.checked);
     if (!code) {
       updateStatus(isDecompileMode ? 'Please enter bytecode to decompile' : 'Please enter GS2 code to convert', true);
       return;
@@ -350,9 +326,12 @@ function initBytecodeConverter() {
       updateStatus('Decompiling...');
       convertBtn.disabled = true;
       try {
-        await loadGbfWasm();
-        const bytecode = hexToUint8Array(code);
-        let decompiled = window.gbfDecompileBytecode(bytecode);
+        await loadGoByte();
+        const result = window.GByteDecompileText(code);
+        if (!result || !result.ok) {
+          throw new Error((result && result.error) || 'GoByte decompile failed.');
+        }
+        let decompiled = result.output || '';
         decompiled = cleanupDecompiled(decompiled);
         currentBytecode = decompiled;
         outputEditor.setValue(decompiled);
@@ -361,43 +340,14 @@ function initBytecodeConverter() {
         currentBytecode = '';
         const errorMsg = error.message || String(error);
         outputEditor.setValue(`Error: ${errorMsg}`);
+        updateStatus('Decompilation failed.', true);
       } finally {
         convertBtn.disabled = false;
       }
     } else {
-      updateStatus('Compiling...');
-      convertBtn.disabled = true;
-      try {
-        await waitForGS2();
-        const compiler = await getCompiler();
-        if (!compiler) {
-          updateStatus('Error: Could not load compiler. Check console.', true);
-          convertBtn.disabled = false;
-          return;
-        }
-        const ctx = new compiler.GS2Context();
-        const response = ctx.compile(code);
-        if (!response.success) {
-          const errVec = response.getErrors();
-          const errors = [];
-          for (let i = 0; i < errVec.size(); i++) errors.push(errVec.get(i));
-          const errorMsg = errors.join('\n');
-          currentBytecode = '';
-          outputEditor.setValue(`Compilation failed:\n${errorMsg}`);
-        } else {
-          const bytecode = response.getBytecode();
-          const hex = Array.from(bytecode).map(b => b.toString(16).padStart(2, '0')).join(' ');
-          currentBytecode = hex;
-          outputEditor.setValue(hex);
-          updateStatus('Compilation successful! (' + bytecode.length + ' bytes)');
-        }
-      } catch (error) {
-        currentBytecode = '';
-        const errorMsg = error.message || String(error);
-        outputEditor.setValue(`Error: ${errorMsg}\n\nStack:\n${error.stack || 'No stack trace'}`);
-      } finally {
-        convertBtn.disabled = false;
-      }
+      currentBytecode = '';
+      outputEditor.setValue('GoByte only decompiles GS2 bytecode. Compile mode is unavailable in this build.');
+      updateStatus('Compile mode unavailable with GoByte.', true);
     }
   });
 
@@ -633,7 +583,7 @@ if result.Success:
 
   window.addEventListener('monaco-ready', async () => {
     updateUIForMode();
-    updateStatus('Loading GS2 compiler...');
+    updateStatus('Loading GoByte decompiler...');
     clearBtn.addEventListener('click', () => {
       sourceEditor.setValue('');
       outputEditor.setValue(isDecompileMode ? 'GS2 code will appear here...' : 'Bytecode will appear here...');
@@ -672,17 +622,11 @@ if result.Success:
         document.body.removeChild(textArea);
       }
     });
-    await waitForGS2();
     try {
-      const compiler = await getCompiler();
-      if (compiler) {
-        const mode = isDecompileMode ? 'decompiler' : 'compiler';
-        updateStatus('Ready - GS2 ' + mode + ' loaded');
-      } else {
-        updateStatus('Warning: Could not load compiler. Check console.', true);
-      }
+      await loadGoByte();
+      updateStatus('Ready - GoByte decompiler loaded');
     } catch (e) {
-      updateStatus('Error loading compiler: ' + e.message, true);
+      updateStatus('Error loading GoByte: ' + e.message, true);
     }
   });
 }
