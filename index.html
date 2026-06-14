@@ -66,6 +66,11 @@
 <script src="js/changes.js"></script>
 <script src="js/gsdoc.js"></script>
 <script src="js/gs2.js" onload="window.gs2Loaded = true;" onerror="console.error('Failed to load gs2.js');"></script>
+<script type="module">
+  import init, { decompile_bytecode } from './js/gbf.js';
+  window.gbfWasmInit = init;
+  window.gbfDecompileBytecode = decompile_bytecode;
+</script>
 <script src="js/byte.js"></script>
 
 <script type="text/babel">
@@ -522,7 +527,7 @@ const BytecodeConverter = () => {
     ),
     React.createElement('div', { className: 'byte-controls' },
       React.createElement('div', { className: 'byte-mode-toggle' },
-        React.createElement('input', { type: 'checkbox', id: 'decompileMode', defaultChecked: true }),
+        React.createElement('input', { type: 'checkbox', id: 'decompileMode' }),
         React.createElement('label', { htmlFor: 'decompileMode' }, 'Decompile')
       ),
       React.createElement('button', { id: 'convertBtn' }, 'Convert to Bytecode'),
