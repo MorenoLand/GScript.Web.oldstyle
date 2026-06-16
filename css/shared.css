@@ -205,18 +205,18 @@ span { text-shadow: 1px 1px 1px rgba(0, 0, 255, 1); }
 .home-character{margin:0 0 76px;width:190px;height:260px;z-index:1;transform:translateX(10px);filter:drop-shadow(0 28px 24px rgba(0,0,0,0.48));}
 .home-discord-float{width:330px;padding:0 4px 4px;position:absolute;right:18%;top:52%;transform:translateY(-50%);isolation:isolate;z-index:2;}
 .home-discord-float.is-hidden{display:none;}
-.home-discord-title{display:flex;align-items:baseline;justify-content:center;gap:14px;margin-bottom:4px;color:#eef7f1;text-align:center;text-shadow:0 2px 8px rgba(0,0,0,0.9);opacity:0;transform:translateY(4px);pointer-events:none;transition:opacity 0.18s ease,transform 0.18s ease;}
+.home-discord-title{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;width:100%;margin-bottom:4px;color:#eef7f1;text-align:center;text-shadow:0 2px 8px rgba(0,0,0,0.9);opacity:0;transform:translateY(4px);pointer-events:none;transition:opacity 0.18s ease,transform 0.18s ease;}
 .home-discord-float:hover .home-discord-title,.home-discord-float:focus-within .home-discord-title{opacity:1;transform:translateY(0);}
 .home-discord-title span{display:flex;align-items:center;justify-content:center;gap:8px;font-size:18px;text-align:center;}
 .home-discord-title i{color:inherit;text-shadow:inherit;}
 .home-discord-title small{color:#dce8ff;font-size:12px;text-align:center;white-space:nowrap;}
-.home-discord-float .discord-custom{padding:0;}
+.home-discord-float .discord-custom{padding:0;text-align:center;}
 .home-discord-float .discord-members{height:204px;max-height:204px;margin:0;overflow-y:auto;scrollbar-width:none;scroll-behavior:auto;mask-image:linear-gradient(to bottom,transparent 0,#000 18px,#000 calc(100% - 22px),transparent 100%);-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 18px,#000 calc(100% - 22px),transparent 100%);}
 .home-discord-float .discord-members::-webkit-scrollbar{display:none;}
 .home-discord-float .discord-member{width:max-content;max-width:100%;font-size:17px;padding:5px 8px;border-radius:999px;margin:0 0 6px 50%;background:transparent!important;will-change:transform,opacity,filter;transform-origin:center center;}
 .home-discord-float .discord-member span{white-space:nowrap;text-shadow:0 2px 8px rgba(0,0,0,1),0 0 12px rgba(110,154,255,0.2);}
 .home-discord-float .discord-avatar{width:24px;height:24px;box-shadow:0 0 0 1px rgba(255,255,255,0.22),0 0 12px rgba(110,154,255,0.18),0 5px 10px rgba(0,0,0,0.45);}
-.home-discord-float .discord-custom a{width:max-content;min-height:28px;margin:2px auto 0;padding:0 4px;justify-content:center;border:none;border-left:none;background:transparent;opacity:0;transform:translateY(-4px);pointer-events:none;transition:opacity 0.18s ease,transform 0.18s ease,color 0.18s ease;}
+.home-discord-float .discord-custom a{display:inline-flex;width:max-content;min-height:28px;margin:2px auto 0;padding:0 4px;justify-content:center;border:none;border-left:none;background:transparent;opacity:0;transform:translateY(-4px);pointer-events:none;transition:opacity 0.18s ease,transform 0.18s ease,color 0.18s ease;}
 .home-discord-float:hover .discord-custom a,.home-discord-float:focus-within .discord-custom a,.home-discord-float .discord-members:hover + a{opacity:0.85;transform:translateY(0);pointer-events:auto;}
 .home-discord-float .discord-custom a:hover{background:transparent;border-left:none;color:#fff!important;opacity:1;}
 .home-board{width:min(1180px,100%);display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;position:relative;z-index:1;margin-top:0;}
