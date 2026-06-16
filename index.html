@@ -771,7 +771,7 @@ function App() {
           </aside>
           <div className={`home-discord-float${discordHidden ? ' is-hidden' : ''}`}>
             <div className="home-discord-title">
-              <span><i className="fab fa-discord"></i> #gscript</span>
+              <span>#gscript</span>
               <small>{discordSummary.online ?? '?'} online / {discordSummary.total ?? '?'} total</small>
             </div>
             <DiscordWidget compact={true} onUnavailable={setDiscordHidden} onStats={(stats, widget) => setDiscordSummary({online: stats.online || widget.presence_count || 0, total: stats.total || '?'})} />
@@ -802,7 +802,7 @@ function App() {
             <a href="https://setshape.gscript.dev" target="_blank"><i className="fas fa-shapes"></i><span>setshape2 / setimgpart</span></a>
           </div>
           <div className="home-board-group">
-            <h2><i className="fas fa-palette"></i> Assets</h2>
+            <h2><i className="fas fa-palette"></i> Assets / Links</h2>
             <a href="https://gscript.dev/PlayerSubmissionTemplates.zip"><i className="fas fa-file-image"></i><span>Player Templates</span></a>
             <a href="https://github.com/fungsiyan/assets/tree/main/templates/player-param1" target="_blank"><i className="fab fa-github"></i><span>player-param1 Templates</span></a>
             <a href="https://gscript.dev/CocoTemplates.zip"><i className="fas fa-file-archive"></i><span>Coco Templates</span></a>
