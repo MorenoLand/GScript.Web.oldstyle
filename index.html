@@ -7,7 +7,7 @@
 <title>GScript.dev</title>
 <link rel="icon" type="image/x-icon" href="favicon.ico">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="stylesheet" href="css/shared.css?v=12">
+<link rel="stylesheet" href="css/shared.css?v=15">
 <style>
   html{height:100%;}
   body{margin:0;padding:0;min-height:100vh;background:transparent;color:#fff;overflow-x:hidden;}
@@ -445,19 +445,28 @@ function DiscordWidget({ compact = false, onStats = null, onUnavailable = null }
   if (compact && (!widget || !stats)) return null;
   if (!widget || !stats) return <div className="discord-loading">Loading...</div>;
 
-  const membersHtml = widget.members ? widget.members.map(member =>
-    <div key={member.username} className="discord-member"
-      onMouseMove={(e) => { if (!hoverMember || hoverMember.username !== member.username) setHoverMember(member); setHoverPos({x: e.clientX + 12, y: e.clientY - 10}); }}
+  const getDiscordName = (member) => {
+    const nickname = member.nickname && member.nickname.trim();
+    const username = member.username && member.username.trim();
+    return nickname || username || 'unknown';
+  };
+
+  const membersHtml = widget.members ? widget.members.map((member, index) => {
+    const displayName = getDiscordName(member);
+    const identity = member.username || displayName;
+    const title = member.nickname && member.username ? `${member.nickname} (${member.username})` : displayName;
+    return <div key={identity || index} className="discord-member" title={title}
+      onMouseMove={(e) => { if (!hoverMember || hoverMember.username !== member.username || hoverMember.nickname !== member.nickname) setHoverMember(member); setHoverPos({x: e.clientX + 12, y: e.clientY - 10}); }}
       onMouseLeave={() => setHoverMember(null)}>
-      <img src={member.avatar_url || 'https://cdn.discordapp.com/embed/avatars/0.png'} alt={member.username} className="discord-avatar" />
-      <span>{member.username}</span>
-    </div>
-  ) : null;
+      <img src={member.avatar_url || 'https://cdn.discordapp.com/embed/avatars/0.png'} alt={displayName} className="discord-avatar" />
+      <span>{displayName}</span>
+    </div>;
+  }) : null;
 
   const hoverCard = hoverMember ? (
     <div className="discord-hover" style={{top: hoverPos.y}}>
-      <img src={hoverMember.avatar_url || 'https://cdn.discordapp.com/embed/avatars/0.png'} alt={hoverMember.username} className="discord-hover-avatar" />
-      <span className="discord-hover-name">{hoverMember.username}</span>
+      <img src={hoverMember.avatar_url || 'https://cdn.discordapp.com/embed/avatars/0.png'} alt={getDiscordName(hoverMember)} className="discord-hover-avatar" />
+      <span className="discord-hover-name">{getDiscordName(hoverMember)}</span>
     </div>
   ) : null;
 
@@ -465,8 +474,8 @@ function DiscordWidget({ compact = false, onStats = null, onUnavailable = null }
     <div className="discord-custom">
       {hoverMember && ReactDOM.createPortal(
         <div className="discord-hover" style={{top: hoverPos.y, left: hoverPos.x}}>
-          <img src={hoverMember.avatar_url || 'https://cdn.discordapp.com/embed/avatars/0.png'} alt={hoverMember.username} className="discord-hover-avatar" />
-          <span className="discord-hover-name">{hoverMember.username}</span>
+          <img src={hoverMember.avatar_url || 'https://cdn.discordapp.com/embed/avatars/0.png'} alt={getDiscordName(hoverMember)} className="discord-hover-avatar" />
+          <span className="discord-hover-name">{getDiscordName(hoverMember)}</span>
         </div>,
         document.body
       )}
@@ -742,7 +751,7 @@ function App() {
       <main className="nav-main home-shell">
         <section className="home-hero" aria-label="GScript developer hub">
           <div className="home-copy">
-            <h1><img className="home-title-logo" src="gfx/graalicon_big.png" alt="" />Developer resources.</h1>
+            <h1><img className="home-title-logo" src="gfx/graalicon_big.png" alt="" />#gscript resources</h1>
             <p className="home-lede">
               Documentation, editors, server statistics, graphics templates, and archived tools in one place.
             </p>
@@ -794,7 +803,7 @@ function App() {
             <h2><i className="fas fa-tools"></i> Web Tools</h2>
             <a href="https://suite.gscript.dev" target="_blank"><i className="fas fa-edit"></i><span>Graal Suite</span></a>
             <a href="https://gmap.gscript.dev/" target="_blank"><i className="fas fa-map"></i><span>Gmap Generator</span></a>
-            <a href="https://fungsiyan.github.io/previewer/" target="_blank"><i className="fas fa-image"></i><span>GFX Previewer</span></a>
+            <a href="https://sleepyeepy.cloud/tiles-editor/" target="_blank"><i className="fas fa-image"></i><span>Mem's Level Editor</span></a>
             <a href="https://geditor.net/" target="_blank"><i className="fas fa-layer-group"></i><span>Pluto's Level Editor</span></a>
             <a href="https://gs2.gscript.dev/" target="_blank"><i className="fas fa-server"></i><span>GS2 Emulator</span></a>
             <a href="/?beautify"><i className="fas fa-magic"></i><span>Beautifier</span></a>
@@ -809,7 +818,14 @@ function App() {
             <a href="https://github.com/fungsiyan/assets" target="_blank"><i className="fab fa-github"></i><span>fungsiyan Assets</span></a>
             <a href="https://api.gscript.dev/" target="_blank"><i className="fas fa-database"></i><span>GScript LSP Data</span></a>
             <a href="https://fungsiyan.github.io/index/" target="_blank"><i className="fas fa-box-open"></i><span>fungsiyan Resource List</span></a>
-            <a href="https://graalserver.com/" target="_blank"><i className="fas fa-globe"></i><span>GraalServer</span></a>
+            <div className="home-card-split">
+              <span><i className="fas fa-globe"></i><a className="home-card-main-link" href="https://gscript.dev/reborn" target="_blank">GraalServer</a></span>
+              <div>
+                <a className="home-card-text-link" href="https://graalserver.com/accountcreator.php" target="_blank">Account Creation</a>
+                <span>/</span>
+                <a className="home-card-text-link" href="https://www.graalserver.com/user/settings" target="_blank">Settings</a>
+              </div>
+            </div>
             <a href="/?indexing"><i className="fas fa-list-check"></i><span>Indexing Guide</span></a>
           </div>
           <div className="home-board-group home-board-downloads">
@@ -873,6 +889,7 @@ function App() {
                   <a href="https://github.com/MorenoLand/GScript.SublimeHightlighting" target="_blank"><i className="fas fa-code"></i> Sublime Syntax</a>
                   <a href="https://marketplace.visualstudio.com/items?itemName=ruanfernandes.graalscript-lsp" target="_blank"><i className="fab fa-microsoft"></i> VSCode LSP</a>
                   <a href="https://github.com/xtjoeytx/grc-vscode-ext" target="_blank"><i className="fab fa-microsoft"></i> GRC VSCode</a>
+                  <a href="https://github.com/Preagonal/HxDGraal" target="_blank"><i className="fas fa-puzzle-piece"></i> HxD Plugin</a>
                   <a href="https://gscript.dev/graal-language-0.0.1.vsix"><i className="fas fa-download"></i> VSIX Syntax</a>
                 </div>
               </div>
