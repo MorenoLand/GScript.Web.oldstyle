@@ -7,7 +7,7 @@
 <title>GScript.dev</title>
 <link rel="icon" type="image/x-icon" href="favicon.ico">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="stylesheet" href="css/shared.css?v=15">
+<link rel="stylesheet" href="css/shared.css?v=16">
 <style>
   html{height:100%;}
   body{margin:0;padding:0;min-height:100vh;background:transparent;color:#fff;overflow-x:hidden;}
@@ -484,7 +484,7 @@ function DiscordWidget({ compact = false, onStats = null, onUnavailable = null }
         <p>{stats.online || widget.presence_count || 0} online / {stats.total || '?'} total</p>
       </div>}
       {membersHtml && <div className="discord-members" ref={membersRef} onScroll={updateParticles} onMouseEnter={() => pauseScrollRef.current = true} onMouseLeave={() => pauseScrollRef.current = false}>{membersHtml}</div>}
-      <a href="https://discord.gscript.dev" target="_blank"><i className="fab fa-discord"></i><span>Join Discord</span></a>
+      <a href="https://discord.gscript.dev" target="_blank"><i className="fab fa-discord"></i><span>Join #gscript</span></a>
     </div>
   );
 }
@@ -660,6 +660,107 @@ function App() {
   const [transitioning, setTransitioning] = React.useState(false), [filteredServer, setFilteredServer] = React.useState(null), changesCache = React.useRef({});
   const [resizingColumn, setResizingColumn] = React.useState(null), [guidePosition, setGuidePosition] = React.useState(null);
   const [discordHidden, setDiscordHidden] = React.useState(true);
+  const [videoPlayer, setVideoPlayer] = React.useState(null);
+  const ytPlayerRef = React.useRef(null);
+
+  const videoLinks = [
+    { text: 'GS2 Tutorial', href: 'https://www.youtube.com/playlist?list=PLGCNVthRlw5EHakguzfJe4E2N9HrMhCb4' },
+    { text: 'GS2 Intro', href: 'https://youtu.be/nOA0iOOaeQA' },
+    { text: 'GS2 Basics', href: 'https://www.youtube.com/playlist?list=PLj7V7gCaCF2u-MrVyTn1c3ZN01BHKGq2m' },
+    { text: 'Graal Developers', href: 'https://www.youtube.com/@graalonlinedevelopers1547/videos', externalOnly: true },
+    { text: 'iMagic', href: 'https://www.youtube.com/@iMagicIAm/videos', externalOnly: true },
+    { text: 'BiTzSAM', href: 'https://www.youtube.com/@D34dlyI3rute/videos', externalOnly: true },
+    { text: 'Syahrul', href: 'https://www.youtube.com/@syahrulzahwan/videos', externalOnly: true },
+    { text: 'Gani Intro', href: 'https://www.youtube.com/playlist?list=PLtDohBs99GZeZgYIX97nFtj_ik4zbM845' },
+    { text: 'Gani Frames', href: 'https://www.youtube.com/watch?v=MdUGHXZAAMY' },
+    { text: 'Gani Action', href: 'https://www.youtube.com/watch?v=T5xOwGuymBw' },
+    { text: 'Gani Melee', href: 'https://www.youtube.com/@swiggerswogger8818', externalOnly: true },
+    { text: 'Gani Gun', href: 'https://www.youtube.com/watch?v=6vrXDhQ-d5k' },
+    { text: 'GIMP Drawing', href: 'https://www.youtube.com/watch?v=LlXa5FyrIb8' },
+    { text: 'GIMP Recoloring', href: 'https://www.youtube.com/watch?v=9Ku6R8tzEj0' },
+    { text: 'GIMP GIFs', href: 'https://www.youtube.com/watch?v=2QShpdhsnLE' },
+    { text: 'Pixel Studio', href: 'https://www.youtube.com/watch?v=ry8q8srzpIc' },
+    { text: 'Coco', href: 'https://www.youtube.com/playlist?list=PLkJnsgy7P_5pxaHAYDXYIAPMwmrRCjVn8' },
+    { text: 'Leah', href: 'https://www.youtube.com/@LeahLikesToDraw/videos' },
+    { text: 'Graal Modders', href: 'https://www.youtube.com/@TheGraalModders', externalOnly: true },
+    { text: 'Localization RU', href: 'https://www.youtube.com/watch?v=qAn9yHqbAsY' },
+    { text: 'Kuroneko', href: 'https://www.youtube.com/@cky2013/videos' },
+    { text: 'Robg', href: 'https://www.youtube.com/@RobG-videos/videos' },
+    { text: 'Classic Graal', href: 'https://www.youtube.com/@classicgraal', externalOnly: true },
+    { text: 'NYN', href: 'https://www.youtube.com/@newyorkernick/videos' }
+  ];
+
+  const getYouTubePlayerConfig = (href) => {
+    try {
+      const url = new URL(href);
+      const list = url.searchParams.get('list');
+      if (list) return { list };
+      if (url.hostname === 'youtu.be') {
+        const videoId = url.pathname.replace(/^\/+/, '').split('/')[0];
+        return videoId ? { videoId } : null;
+      }
+      const videoId = url.searchParams.get('v');
+      return videoId ? { videoId } : null;
+    } catch {
+      return null;
+    }
+  };
+
+  const playVideoLink = (link) => {
+    const config = getYouTubePlayerConfig(link.href);
+    if (!config) return;
+    setVideoPlayer({ ...link, ...config });
+  };
+
+  useEffect(() => {
+    if (!videoPlayer) return;
+    let disposed = false;
+    const ensureYouTubeApi = () => new Promise(resolve => {
+      if (window.YT && window.YT.Player) {
+        resolve();
+        return;
+      }
+      const previousReady = window.onYouTubeIframeAPIReady;
+      window.onYouTubeIframeAPIReady = () => {
+        if (typeof previousReady === 'function') previousReady();
+        resolve();
+      };
+      if (!document.querySelector('script[src="https://www.youtube.com/iframe_api"]')) {
+        const script = document.createElement('script');
+        script.src = 'https://www.youtube.com/iframe_api';
+        document.head.appendChild(script);
+      }
+    });
+
+    ensureYouTubeApi().then(() => {
+      if (disposed) return;
+      if (ytPlayerRef.current && typeof ytPlayerRef.current.destroy === 'function') {
+        ytPlayerRef.current.destroy();
+      }
+      const playerVars = { autoplay: 1, rel: 0, modestbranding: 1 };
+      if (videoPlayer.list) {
+        playerVars.listType = 'playlist';
+        playerVars.list = videoPlayer.list;
+      }
+      ytPlayerRef.current = new YT.Player('youtube-player', {
+        width: '100%',
+        height: '100%',
+        videoId: videoPlayer.videoId || undefined,
+        playerVars,
+        events: {
+          onReady: event => event.target.playVideo()
+        }
+      });
+    });
+
+    return () => {
+      disposed = true;
+      if (ytPlayerRef.current && typeof ytPlayerRef.current.destroy === 'function') {
+        ytPlayerRef.current.destroy();
+      }
+      ytPlayerRef.current = null;
+    };
+  }, [videoPlayer]);
 
   useEffect(() => {
     const handlePopState = () => {
@@ -828,8 +929,23 @@ function App() {
             </div>
             <a href="/?indexing"><i className="fas fa-list-check"></i><span>Indexing Guide</span></a>
           </div>
+          <div className="home-board-group home-board-videos">
+            <h2><i className="fas fa-video"></i> Videos</h2>
+            {videoLinks.map(link => {
+              const playable = getYouTubePlayerConfig(link.href);
+              return playable ? (
+                <button key={link.text} type="button" className="home-video-link" onClick={() => playVideoLink(link)}>
+                  <i className="fab fa-youtube"></i><span>{link.text}</span>
+                </button>
+              ) : (
+                <a key={link.text} href={link.href} target="_blank">
+                  <i className="fab fa-youtube"></i><span>{link.text}</span>
+                </a>
+              );
+            })}
+          </div>
           <div className="home-board-group home-board-downloads">
-            <h2><i className="fas fa-download"></i> Downloads</h2>
+            <h2><i className="fas fa-download"></i> Downloads / Sources</h2>
             <div className="home-download-grid">
               <div className="home-download-row">
                 <span><i className="fas fa-desktop"></i> Suite</span>
@@ -879,6 +995,8 @@ function App() {
                 <div>
                   <a href="https://github.com/MorenoLand/Preagonal.RCPatcher" target="_blank"><i className="fab fa-github"></i> RC Patcher</a>
                   <a href="https://github.com/Denveous/graal-2fa-fix" target="_blank"><i className="fab fa-github"></i> 2FA Fix</a>
+                  <a href="https://github.com/MorenoLand/GScript.GCLib" target="_blank"><i className="fab fa-github"></i> GCLib</a>
+                  <a href="https://github.com/MorenoLand/GScript.GRClib" target="_blank"><i className="fab fa-github"></i> GRClib</a>
                 </div>
               </div>
               <div className="home-download-row home-download-extensions">
@@ -896,6 +1014,23 @@ function App() {
             </div>
           </div>
         </section>
+
+        {videoPlayer && (
+          <div className="video-modal" role="dialog" aria-modal="true" aria-label={videoPlayer.text} onClick={() => setVideoPlayer(null)}>
+            <div className="video-modal-panel" onClick={(e) => e.stopPropagation()}>
+              <div className="video-modal-bar">
+                <strong>{videoPlayer.text}</strong>
+                <div>
+                  <a href={videoPlayer.href} target="_blank">Open on YouTube</a>
+                  <button type="button" onClick={() => setVideoPlayer(null)} aria-label="Close video"><i className="fas fa-times"></i></button>
+                </div>
+              </div>
+              <div className="video-player-shell">
+                <div id="youtube-player"></div>
+              </div>
+            </div>
+          </div>
+        )}
 
         <footer className="home-footer">
           <p>
