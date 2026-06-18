@@ -9,17 +9,13 @@ function GSDoc() {
   const [activeSection, setActiveSection] = React.useState(null);
   const sidebarRef = React.useRef(null);
   const contentRef = React.useRef(null);
+  const docsListRef = React.useRef(null);
+  const initialHashHandledRef = React.useRef(false);
   const isMobile = window.innerWidth <= 768;
 
   React.useEffect(() => {
     fetch('https://api.moreno.land/api/gscript').then(r => r.json()).then(data => {
       setApiData(data);
-      const hash = window.location.hash.replace('#', '');
-      if (hash) {
-        const matchKey = Object.keys(data).find(k => k.toLowerCase() === hash.toLowerCase());
-        if (matchKey) setCurrentHash(matchKey);
-        setTimeout(() => scrollToHash(matchKey || hash), 100);
-      }
       setTimeout(() => {
         if (window.Prism) window.Prism.highlightAll();
       }, 100);
@@ -65,10 +61,16 @@ function GSDoc() {
     if (twitterDesc) twitterDesc.setAttribute('content', fullDesc);
   }, [apiData]);
 
+  const resolveDocId = React.useCallback((hash) => {
+    const id = hash.replace('#', '').toLowerCase();
+    return Object.keys(apiData).find(key => {
+      const itemName = (apiData[key]?.name || '').toLowerCase();
+      return key.toLowerCase() === id || itemName === id;
+    }) || '';
+  }, [apiData]);
+
   const scrollToHash = React.useCallback((hash) => {
-    let id = hash.replace('#', '');
-    const matchKey = Object.keys(apiData).find(k => k.toLowerCase() === id.toLowerCase());
-    if (matchKey) id = matchKey;
+    let id = resolveDocId(hash) || hash.replace('#', '');
     const el = document.getElementById(id);
     if (el) {
       setCurrentHash(id);
@@ -76,7 +78,7 @@ function GSDoc() {
       el.scrollIntoView({ behavior: 'smooth', block: 'start' });
       updateMetaTags(id);
     }
-  }, [apiData, updateMetaTags]);
+  }, [resolveDocId, updateMetaTags]);
 
   const handleSearch = React.useCallback((e) => {
     setSearchQuery(e.target.value.toLowerCase());
@@ -206,35 +208,68 @@ function GSDoc() {
 
   React.useEffect(() => {
     if (orderedKeys.length === 0) return;
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const key = entry.target.id;
-          setCurrentHash(key);
-          setActiveSection(key);
-          window.history.replaceState(null, '', `#${key}`);
-          const { grouped, ungrouped } = groups;
-          for (const groupName in grouped) {
-            if (grouped[groupName].includes(key)) {
-              setExpandedGroups(prev => new Set([...prev, groupName]));
-              break;
-            }
-          }
-          setTimeout(() => {
-            const activeLink = document.querySelector(`#sidebar a[href="#${key}"]`);
-            if (activeLink) {
-              activeLink.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }
-          }, 100);
+    const scroller = docsListRef.current;
+    if (!scroller) return;
+    let scrollFrame = null;
+
+    const setActiveKey = (key) => {
+      if (!key) return;
+      setCurrentHash(key);
+      setActiveSection(key);
+      window.history.replaceState(null, '', `#${key}`);
+      for (const groupName in groups.grouped) {
+        if (groups.grouped[groupName].includes(key)) {
+          setExpandedGroups(prev => new Set([...prev, groupName]));
+          break;
         }
-      });
-    }, { rootMargin: '-10% 0px -60% 0px', threshold: 0 });
-    orderedKeys.forEach(key => {
-      const el = document.getElementById(key);
-      if (el) observer.observe(el);
-    });
-    return () => observer.disconnect();
-  }, [orderedKeys, groups]);
+      }
+      setTimeout(() => {
+        const activeLink = document.querySelector(`#sidebar a[href="#${key}"]`);
+        if (activeLink) activeLink.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 80);
+    };
+
+    const updateActiveFromScroll = () => {
+      if (scroller.scrollTop <= 2) {
+        setActiveKey(orderedKeys[0]);
+        return;
+      }
+      if (scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 2) {
+        setActiveKey(orderedKeys[orderedKeys.length - 1]);
+        return;
+      }
+      const scrollerTop = scroller.getBoundingClientRect().top;
+      let nextActive = orderedKeys[0];
+      for (const key of orderedKeys) {
+        const el = document.getElementById(key);
+        if (!el) continue;
+        const top = el.getBoundingClientRect().top - scrollerTop;
+        if (top <= 24) nextActive = key;
+        else break;
+      }
+      setActiveKey(nextActive);
+    };
+
+    const onScroll = () => {
+      if (scrollFrame) cancelAnimationFrame(scrollFrame);
+      scrollFrame = requestAnimationFrame(updateActiveFromScroll);
+    };
+
+    const hash = window.location.hash.replace('#', '');
+    const initialKey = !initialHashHandledRef.current && hash ? resolveDocId(hash) : '';
+    initialHashHandledRef.current = true;
+    if (initialKey) {
+      setTimeout(() => scrollToHash(initialKey), 50);
+      setTimeout(updateActiveFromScroll, 500);
+    } else {
+      updateActiveFromScroll();
+    }
+    scroller.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      if (scrollFrame) cancelAnimationFrame(scrollFrame);
+      scroller.removeEventListener('scroll', onScroll);
+    };
+  }, [orderedKeys, groups, resolveDocId, scrollToHash]);
 
   React.useEffect(() => {
     document.body.classList.add('docs-active');
@@ -242,6 +277,8 @@ function GSDoc() {
       document.body.classList.remove('docs-active');
     };
   }, []);
+
+  const docsCount = Object.keys(apiData).length;
 
   return React.createElement(React.Fragment, null,
     React.createElement('meta', { charSet: 'UTF-8' }),
@@ -259,51 +296,60 @@ function GSDoc() {
     React.createElement('meta', { name: 'twitter:image', content: 'https://docs.gscript.dev/graal_icon.png' }),
     React.createElement('link', { rel: 'stylesheet', href: 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css' }),
     React.createElement('script', { src: 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js' }),
-    React.createElement('div', { id: 'sidebar-toggle', onClick: () => setSidebarOpen(!sidebarOpen), className: sidebarOpen ? '' : 'collapsed' },
-      React.createElement('span', null, sidebarOpen ? '❮' : '❯')
-    ),
-    React.createElement('div', { id: 'sidebar-overlay', className: sidebarOpen ? 'show' : '', onClick: () => setSidebarOpen(false) }),
-    React.createElement('div', { id: 'sidebar', className: sidebarOpen ? 'show' : (isMobile ? '' : 'hidden') },
-      React.createElement('div', { id: 'sidebar-header' },
-        React.createElement('h2', null, 'GScript Docs'),
-        React.createElement('input', { type: 'text', id: 'search', placeholder: 'Search...', value: searchQuery, onChange: handleSearch })
+    React.createElement('div', { className: `docs-shell ${sidebarOpen ? 'sidebar-open' : 'sidebar-collapsed'}` },
+      !sidebarOpen && React.createElement('button', { id: 'sidebar-open-toggle', type: 'button', onClick: () => setSidebarOpen(true), 'aria-label': 'Open docs menu' },
+        React.createElement('span', null, '❯')
       ),
-      React.createElement('div', { id: 'sidebar-links' },
-        groups.ungrouped.map(key => {
-          const item = apiData[key];
-          const name = item.name || key;
-          return React.createElement('a', {
-            href: `#${key}`,
-            key: key,
-            className: activeSection === key ? 'active' : '',
-            style: { display: searchQuery && !key.toLowerCase().includes(searchQuery) && !name.toLowerCase().includes(searchQuery) ? 'none' : 'flex' },
-            onClick: (e) => handleSectionClick(key, e)
-          }, name);
-        }),
-        Object.keys(groups.grouped).sort().map(groupName =>
-          React.createElement(React.Fragment, { key: groupName },
-            React.createElement('div', { className: 'tree-parent' + (expandedGroups.has(groupName) ? ' expanded' : ''), onClick: (e) => toggleGroup(groupName, e) },
-              React.createElement('span', { className: 'arrow' }, '▶'),
-              React.createElement('span', null, groupName)
-            ),
-            React.createElement('div', { className: 'tree-children' + (expandedGroups.has(groupName) ? ' show' : '') },
-              [...new Set(groups.grouped[groupName])].map(key =>
-                React.createElement('a', {
-                  href: `#${key}`,
-                  key: key,
-                  className: activeSection === key ? 'active' : '',
-                  style: { display: searchQuery && !key.toLowerCase().includes(searchQuery) && (!apiData[key]?.name || !apiData[key].name.toLowerCase().includes(searchQuery)) ? 'none' : 'flex' },
-                  onClick: (e) => handleSectionClick(key, e)
-                }, apiData[key]?.name || key)
+      React.createElement('div', { id: 'sidebar-overlay', className: sidebarOpen ? 'show' : '', onClick: () => setSidebarOpen(false) }),
+      React.createElement('div', { id: 'sidebar', className: sidebarOpen ? 'show' : (isMobile ? '' : 'hidden') },
+        React.createElement('div', { id: 'sidebar-header' },
+          React.createElement('button', { id: 'sidebar-toggle', type: 'button', onClick: () => setSidebarOpen(!sidebarOpen), className: sidebarOpen ? '' : 'collapsed', 'aria-label': sidebarOpen ? 'Collapse docs menu' : 'Open docs menu' },
+            React.createElement('span', null, sidebarOpen ? '❮' : '❯')
+          ),
+          React.createElement('a', { className: 'docs-back-link', href: './' }, 'Back'),
+          React.createElement('h2', null, '#gscript docs'),
+          React.createElement('p', null, docsCount ? `${docsCount} entries` : 'Loading entries'),
+          React.createElement('input', { type: 'text', id: 'search', placeholder: 'Search functions...', value: searchQuery, onChange: handleSearch })
+        ),
+        React.createElement('div', { id: 'sidebar-links' },
+          groups.ungrouped.map(key => {
+            const item = apiData[key];
+            const name = item.name || key;
+            return React.createElement('a', {
+              href: `#${key}`,
+              key: key,
+              className: activeSection === key ? 'active' : '',
+              style: { display: searchQuery && !key.toLowerCase().includes(searchQuery) && !name.toLowerCase().includes(searchQuery) ? 'none' : 'flex' },
+              onClick: (e) => handleSectionClick(key, e)
+            }, name);
+          }),
+          Object.keys(groups.grouped).sort().map(groupName =>
+            React.createElement(React.Fragment, { key: groupName },
+              React.createElement('div', { className: 'tree-parent' + (expandedGroups.has(groupName) ? ' expanded' : ''), onClick: (e) => toggleGroup(groupName, e) },
+                React.createElement('span', { className: 'arrow' }, '▶'),
+                React.createElement('span', null, groupName)
+              ),
+              React.createElement('div', { className: 'tree-children' + (expandedGroups.has(groupName) ? ' show' : '') },
+                [...new Set(groups.grouped[groupName])].map(key =>
+                  React.createElement('a', {
+                    href: `#${key}`,
+                    key: key,
+                    className: activeSection === key ? 'active' : '',
+                    style: { display: searchQuery && !key.toLowerCase().includes(searchQuery) && (!apiData[key]?.name || !apiData[key].name.toLowerCase().includes(searchQuery)) ? 'none' : 'flex' },
+                    onClick: (e) => handleSectionClick(key, e)
+                  }, apiData[key]?.name || key)
+                )
               )
             )
           )
         )
+      ),
+      React.createElement('main', { id: 'content', ref: contentRef, className: sidebarOpen ? '' : 'expanded' },
+        React.createElement('div', { className: 'docs-list', ref: docsListRef },
+          orderedKeys.length === 0 ? React.createElement('p', { className: 'docs-loading' }, 'Loading documentation...') :
+          orderedKeys.map(key => renderSection(key))
+        )
       )
-    ),
-    React.createElement('div', { id: 'content', ref: contentRef, className: sidebarOpen ? '' : 'expanded' },
-      orderedKeys.length === 0 ? React.createElement('p', { style: { color: '#fff', position: 'relative', zIndex: 1, fontSize: '18px', textAlign: 'center' } }, 'Loading documentation...') :
-      orderedKeys.map(key => renderSection(key))
     )
   );
 }
