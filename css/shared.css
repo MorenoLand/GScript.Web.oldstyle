@@ -455,8 +455,12 @@ body.docs-active .container{height:100vh;min-height:100vh;padding:0;align-items:
 .docs-shell #sidebar-header h2{position:absolute;left:92px;right:58px;top:12px;margin:0;padding:0 0 5px 2px;color:#ffd75b;font-size:22px;line-height:1.25;text-align:left;text-shadow:0 2px 8px rgba(0,0,0,0.8);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .docs-shell #sidebar-header p{margin:8px 0 13px;color:#bcd8c8;font-size:14px;line-height:1;text-align:left;text-shadow:0 2px 8px rgba(0,0,0,0.75);}
 .docs-shell .docs-auth-row{display:grid;grid-template-columns:minmax(0,1fr) 42px;gap:8px;align-items:center;}
+.docs-shell .docs-auth-row.can-add{grid-template-columns:minmax(0,1fr) repeat(2,42px);}
 .docs-shell #sidebar input{width:100%;height:42px;padding:0 12px;background:rgba(4,7,9,0.58);border:1px solid rgba(255,255,255,0.12);border-top-color:rgba(255,215,91,0.22);border-radius:0;color:#eef7f1;font:16px "Tempus Sans ITC","Palatino Linotype",serif;box-sizing:border-box;text-align:left;text-shadow:none;}
 .docs-shell #sidebar input:focus{outline:none;border-color:rgba(255,215,91,0.48);box-shadow:0 0 0 2px rgba(255,215,91,0.08);}
+.docs-shell #sidebar .docs-sidebar-action{position:relative;display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;min-height:42px;margin:0;padding:0;background:rgba(4,7,9,0.58);border:1px solid rgba(255,255,255,0.12);border-top-color:rgba(255,215,91,0.22);color:#dce8ff;text-decoration:none;text-shadow:1px 1px 1px rgba(0,0,255,1);box-sizing:border-box;cursor:pointer;overflow:visible;font:22px/1 Consolas,"Courier New",monospace;}
+.docs-shell #sidebar .docs-sidebar-action:hover,.docs-shell #sidebar .docs-sidebar-action.active{background:rgba(255,215,91,0.08);border-color:rgba(255,215,91,0.42);color:#fff;}
+.docs-shell #sidebar .docs-sidebar-action span{display:block;text-align:center;text-shadow:inherit;}
 .docs-shell #sidebar .docs-discord-auth{position:relative;display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;min-height:42px;margin:0;padding:0;background:rgba(4,7,9,0.58);border:1px solid rgba(255,255,255,0.12);border-top-color:rgba(255,215,91,0.22);border-left:1px solid rgba(255,255,255,0.12);color:#fff;text-decoration:none;text-shadow:1px 1px 1px rgba(0,0,255,1);box-sizing:border-box;cursor:pointer;overflow:visible;}
 .docs-shell #sidebar .docs-discord-auth:hover{background:rgba(255,215,91,0.08);border-color:rgba(255,215,91,0.42);color:#fff;}
 .docs-shell #sidebar .docs-discord-auth.has-error{border-color:rgba(255,105,105,0.5);box-shadow:0 0 0 1px rgba(255,105,105,0.08);}
@@ -505,6 +509,8 @@ body.docs-active .container{height:100vh;min-height:100vh;padding:0;align-items:
 .docs-shell .docs-edit-strip button{background:rgba(6,10,12,0.68);border:1px solid rgba(255,255,255,0.12);color:#dce8ff;padding:5px 10px;border-radius:0;cursor:pointer;font-size:12px;transition:all 0.16s ease;text-shadow:none;font-family:inherit;line-height:normal;}
 .docs-shell .docs-edit-strip button:hover{background:rgba(255,215,91,0.1);border-color:rgba(255,215,91,0.32);color:#fff;}
 .docs-shell .docs-edit-strip button:disabled{opacity:0.78;cursor:wait;}
+.docs-shell .docs-edit-strip button.is-danger{color:#ffb6b6;border-color:rgba(255,105,105,0.25);}
+.docs-shell .docs-edit-strip button.is-danger:hover{background:rgba(255,105,105,0.1);border-color:rgba(255,105,105,0.45);color:#fff;}
 .docs-shell .docs-edit-strip button.is-saving{display:inline-flex;align-items:center;gap:7px;}
 .docs-save-spinner{width:11px;height:11px;border:2px solid rgba(220,232,255,0.28);border-top-color:#dce8ff;border-radius:50%;box-sizing:border-box;animation:docsSpin 0.72s linear infinite;}
 @keyframes docsSpin{to{transform:rotate(360deg);}}
@@ -516,6 +522,15 @@ body.docs-active .container{height:100vh;min-height:100vh;padding:0;align-items:
 .docs-shell .docs-example-edit{width:100%;min-height:210px;margin:0;font:14px/1.55 Consolas,"Courier New",monospace;color:#dce8ff;text-shadow:none;}
 .docs-shell .docs-edit-status{margin:0 18px 16px;color:#bcd8c8;font-size:14px;text-align:right;text-shadow:0 2px 8px rgba(0,0,0,0.75);}
 .docs-shell .docs-edit-status.is-error{color:#ff9d9d;}
+.docs-shell .docs-delete-panel{margin:0 18px 16px;padding:12px 14px;border:1px solid rgba(255,105,105,0.24);background:rgba(42,5,5,0.22);display:grid;gap:10px;}
+.docs-shell .docs-delete-panel p{padding:0;margin:0;color:#ffd0d0;font-size:15px;text-align:left;text-shadow:0 2px 8px rgba(0,0,0,0.8);}
+.docs-shell .docs-delete-panel div{display:flex;align-items:center;gap:8px;}
+.docs-shell .docs-delete-panel input{min-width:0;flex:1;height:34px;background:#030607;border:1px solid rgba(255,255,255,0.13);border-top-color:rgba(255,105,105,0.3);color:#edf7ef;font:15px/1.35 Consolas,"Courier New",monospace;padding:0 9px;text-shadow:1px 1px 1px rgba(0,0,255,1);}
+.docs-shell .docs-delete-panel button{height:34px;background:rgba(6,10,12,0.72);border:1px solid rgba(255,105,105,0.34);color:#ffb6b6;padding:0 11px;cursor:pointer;font:13px "Tempus Sans ITC","Palatino Linotype",serif;text-shadow:none;}
+.docs-shell .docs-delete-panel button:disabled{opacity:0.45;cursor:not-allowed;}
+.docs-shell .docs-delete-panel button:not(:disabled):hover{background:rgba(255,105,105,0.12);color:#fff;}
+.docs-shell .docs-delete-panel span{font-size:14px;text-align:right;color:#bcd8c8;}
+.docs-shell .docs-delete-panel span.is-error{color:#ff9d9d;}
 .docs-shell .section-wrapper strong{color:#ffd75b!important;text-shadow:0 2px 8px rgba(0,0,0,0.8);}
 .docs-shell .section-wrapper code{background:rgba(2,5,7,0.62)!important;color:#ff7aa8!important;border:1px solid rgba(255,255,255,0.06);border-radius:0!important;text-shadow:none;}
 .docs-shell .share-btn{margin-left:auto;background:rgba(6,10,12,0.68);border:1px solid rgba(255,255,255,0.12);color:#dce8ff;padding:5px 10px;border-radius:0;cursor:pointer;font-size:12px;transition:all 0.16s ease;text-shadow:none;}

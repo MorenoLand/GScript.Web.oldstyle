@@ -73,11 +73,17 @@ function GSDoc() {
   const [editingKey, setEditingKey] = React.useState(null);
   const [editDraft, setEditDraft] = React.useState(null);
   const [editStatus, setEditStatus] = React.useState('');
+  const [creatingDefinition, setCreatingDefinition] = React.useState(false);
+  const [createStatus, setCreateStatus] = React.useState('');
+  const [deletingKey, setDeletingKey] = React.useState(null);
+  const [deleteConfirm, setDeleteConfirm] = React.useState('');
+  const [deleteStatus, setDeleteStatus] = React.useState('');
   const restoreScrollRef = React.useRef(null);
   const sidebarRef = React.useRef(null);
   const contentRef = React.useRef(null);
   const docsListRef = React.useRef(null);
   const editFormRef = React.useRef(null);
+  const createFormRef = React.useRef(null);
   const initialHashHandledRef = React.useRef(false);
   const isMobile = window.innerWidth <= 768;
 
@@ -221,7 +227,29 @@ function GSDoc() {
 
   const canEditDocs = hasDocsEditAccess(discordUser);
 
+  const readDefinitionForm = React.useCallback((form, fallback = {}, fallbackKey = '') => {
+    const read = (field) => form?.querySelector(`[name="${field}"]`)?.value ?? fallback[field] ?? '';
+    const key = read('key').trim();
+    return {
+      key: key || fallbackKey,
+      payload: {
+        name: read('name') || key || fallbackKey,
+        type: read('type'),
+        scope: read('scope') || 'clientside',
+        params: read('params').split(',').map(p => p.trim()).filter(Boolean),
+        returns: read('returns') || 'void',
+        description: read('description'),
+        example: read('example')
+      }
+    };
+  }, []);
+
   const beginEdit = React.useCallback((key, item) => {
+    setCreatingDefinition(false);
+    setCreateStatus('');
+    setDeletingKey(null);
+    setDeleteConfirm('');
+    setDeleteStatus('');
     const scroller = docsListRef.current;
     const section = document.getElementById(key);
     const sectionOffset = scroller && section
@@ -250,6 +278,9 @@ function GSDoc() {
     setEditingKey(null);
     setEditDraft(null);
     setEditStatus('');
+    setDeletingKey(null);
+    setDeleteConfirm('');
+    setDeleteStatus('');
     if (key) {
       restoreScrollRef.current = restoreScrollRef.current || { key, top: docsListRef.current?.scrollTop ?? 0, offset: 0 };
       window.history.replaceState(null, '', `#${key}`);
@@ -265,16 +296,7 @@ function GSDoc() {
     setEditStatus('Saving...');
     try {
       const form = editFormRef.current;
-      const read = (field) => form?.querySelector(`[name="${field}"]`)?.value ?? editDraft[field] ?? '';
-      const payload = {
-        name: read('name') || key,
-        type: read('type'),
-        scope: read('scope') || 'clientside',
-        params: read('params').split(',').map(p => p.trim()).filter(Boolean),
-        returns: read('returns') || 'void',
-        description: read('description'),
-        example: read('example')
-      };
+      const { payload } = readDefinitionForm(form, editDraft, key);
 
       const response = await fetch(`https://api.moreno.land/api/gscript/${encodeURIComponent(key)}`, {
         method: 'PUT',
@@ -290,14 +312,100 @@ function GSDoc() {
       setApiData(prev => ({ ...prev, [key]: result.item || payload }));
       setEditingKey(null);
       setEditDraft(null);
+      setDeletingKey(null);
+      setDeleteConfirm('');
+      setDeleteStatus('');
       restoreScrollRef.current = restoreScrollRef.current || { key, top: docsListRef.current?.scrollTop ?? 0, offset: 0 };
-      setEditStatus(result.pushed ? 'Saved and pushed.' : 'Saved.');
+      setEditStatus(result.message || 'Saved.');
       window.history.replaceState(null, '', `#${key}`);
       setTimeout(() => setEditStatus(''), 2400);
     } catch (err) {
       setEditStatus(err.message || 'Save failed.');
     }
-  }, [discordUser, editDraft]);
+  }, [discordUser, editDraft, readDefinitionForm]);
+
+  const beginCreate = React.useCallback(() => {
+    setEditingKey(null);
+    setEditDraft(null);
+    setEditStatus('');
+    setDeletingKey(null);
+    setDeleteConfirm('');
+    setDeleteStatus('');
+    setCreatingDefinition(true);
+    setCreateStatus('');
+    window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}`);
+    requestAnimationFrame(() => {
+      const scroller = docsListRef.current;
+      if (scroller) scroller.scrollTop = 0;
+    });
+  }, []);
+
+  const cancelCreate = React.useCallback(() => {
+    setCreatingDefinition(false);
+    setCreateStatus('');
+  }, []);
+
+  const saveCreate = React.useCallback(async () => {
+    if (!discordUser?.token) return;
+    setCreateStatus('Creating...');
+    try {
+      const { key, payload } = readDefinitionForm(createFormRef.current, { scope: 'clientside', returns: 'void' });
+      if (!key || key.length > 120) throw new Error('Give the definition a valid key first.');
+
+      const response = await fetch(`https://api.moreno.land/api/gscript/${encodeURIComponent(key)}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${discordUser.token}`
+        },
+        body: JSON.stringify(payload)
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok || !result.success) throw new Error(result.error || 'Create failed.');
+
+      setApiData(prev => ({ ...prev, [key]: result.item || payload }));
+      setCreatingDefinition(false);
+      setCreateStatus(result.message || 'Created.');
+      setCurrentHash(key);
+      setActiveSection(key);
+      window.history.replaceState(null, '', `#${key}`);
+      setTimeout(() => scrollToHash(key), 80);
+      setTimeout(() => setCreateStatus(''), 2400);
+    } catch (err) {
+      setCreateStatus(err.message || 'Create failed.');
+    }
+  }, [discordUser, readDefinitionForm, scrollToHash]);
+
+  const deleteDefinition = React.useCallback(async (key) => {
+    if (!discordUser?.token || deleteConfirm.trim() !== key) return;
+    setDeleteStatus('Deleting...');
+    try {
+      const response = await fetch(`https://api.moreno.land/api/gscript/${encodeURIComponent(key)}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${discordUser.token}`
+        },
+        body: JSON.stringify({ confirmation: deleteConfirm.trim() })
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok || !result.success) throw new Error(result.error || 'Delete failed.');
+
+      setApiData(prev => {
+        const next = { ...prev };
+        delete next[key];
+        return next;
+      });
+      setEditingKey(null);
+      setEditDraft(null);
+      setDeletingKey(null);
+      setDeleteConfirm('');
+      setDeleteStatus('');
+      window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}`);
+    } catch (err) {
+      setDeleteStatus(err.message || 'Delete failed.');
+    }
+  }, [discordUser, deleteConfirm]);
 
   const groups = React.useMemo(() => {
     const grouped = {};
@@ -368,7 +476,12 @@ function GSDoc() {
               isSaving && React.createElement('span', { className: 'docs-save-spinner', 'aria-hidden': 'true' }),
               isSaving ? 'Saving' : 'Save'
             ),
-            React.createElement('button', { type: 'button', disabled: isSaving, onClick: cancelEdit }, 'Cancel')
+            React.createElement('button', { type: 'button', disabled: isSaving, onClick: cancelEdit }, 'Cancel'),
+            React.createElement('button', { type: 'button', className: 'is-danger', disabled: isSaving, onClick: () => {
+              setDeletingKey(key);
+              setDeleteConfirm('');
+              setDeleteStatus('');
+            } }, 'Delete')
           )
         ),
         React.createElement('button', {
@@ -408,9 +521,65 @@ function GSDoc() {
           )
       ),
       isEditing && editStatus && React.createElement('div', { className: `docs-edit-status ${/fail|required|invalid|forbidden|error/i.test(editStatus) ? 'is-error' : ''}` }, editStatus),
+      isEditing && deletingKey === key && React.createElement('div', { className: 'docs-delete-panel' },
+        React.createElement('p', null, `Type ${key} to permanently delete this definition.`),
+        React.createElement('div', null,
+          React.createElement('input', { value: deleteConfirm, onChange: e => setDeleteConfirm(e.target.value), ...EDIT_FIELD_PROPS, 'aria-label': `Type ${key} to confirm deletion` }),
+          React.createElement('button', { type: 'button', disabled: deleteConfirm.trim() !== key || deleteStatus === 'Deleting...', onClick: () => deleteDefinition(key) }, deleteStatus === 'Deleting...' ? 'Deleting' : 'Confirm Delete')
+        ),
+        deleteStatus && React.createElement('span', { className: /fail|required|invalid|forbidden|error/i.test(deleteStatus) ? 'is-error' : '' }, deleteStatus)
+      ),
       React.createElement('hr', null)
     );
-  }, [apiData, copiedShare, copiedCode, canEditDocs, editingKey, editDraft, editStatus, beginEdit, cancelEdit, saveEdit, updateEditDraft]);
+  }, [apiData, copiedShare, copiedCode, canEditDocs, editingKey, editDraft, editStatus, deletingKey, deleteConfirm, deleteStatus, beginEdit, cancelEdit, saveEdit, deleteDefinition, updateEditDraft]);
+
+  const renderCreateSection = React.useCallback(() => {
+    if (!creatingDefinition) return null;
+    const isCreating = createStatus === 'Creating...';
+    const renderMeta = (label, field, defaultValue) => React.createElement('div', { className: 'docs-editable-meta is-editing' },
+      React.createElement('strong', null, `${label}: `),
+      field === 'scope'
+        ? React.createElement('select', { name: field, defaultValue: defaultValue },
+          React.createElement('option', { value: 'clientside' }, 'clientside'),
+          React.createElement('option', { value: 'serverside' }, 'serverside'),
+          React.createElement('option', { value: 'global' }, 'global')
+        )
+        : field === 'type'
+          ? React.createElement('select', { name: field, defaultValue: defaultValue },
+            React.createElement('option', { value: '' }, ''),
+            React.createElement('option', { value: 'function' }, 'function'),
+            React.createElement('option', { value: 'variable' }, 'variable')
+          )
+          : React.createElement('input', { name: field, defaultValue: defaultValue, ...EDIT_FIELD_PROPS })
+    );
+
+    return React.createElement('div', { className: 'section-wrapper is-editing docs-create-section', key: '__create__', ref: createFormRef },
+      React.createElement('h2', null,
+        React.createElement('span', { className: 'docs-section-title' }, 'Add definition'),
+        React.createElement('span', { className: 'docs-edit-strip' },
+          React.createElement('button', { type: 'button', className: isCreating ? 'is-saving' : '', disabled: isCreating, onClick: saveCreate },
+            isCreating && React.createElement('span', { className: 'docs-save-spinner', 'aria-hidden': 'true' }),
+            isCreating ? 'Creating' : 'Create'
+          ),
+          React.createElement('button', { type: 'button', disabled: isCreating, onClick: cancelCreate }, 'Cancel')
+        )
+      ),
+      React.createElement('div', { className: 'docs-meta-panel docs-create-key' },
+        renderMeta('Key', 'key', ''),
+        renderMeta('Name', 'name', ''),
+        renderMeta('Type', 'type', 'function'),
+        renderMeta('Parameters', 'params', ''),
+        renderMeta('Returns', 'returns', 'void'),
+        renderMeta('Scope', 'scope', 'clientside')
+      ),
+      React.createElement('textarea', { name: 'description', className: 'docs-inline-edit docs-description-edit', defaultValue: '', rows: 5, ...EDIT_FIELD_PROPS, 'aria-label': 'Description' }),
+      React.createElement('div', { className: 'code-wrapper is-editing' },
+        React.createElement('textarea', { name: 'example', className: 'docs-inline-edit docs-example-edit', defaultValue: '', rows: 9, ...EDIT_FIELD_PROPS, 'aria-label': 'Example' })
+      ),
+      createStatus && React.createElement('div', { className: `docs-edit-status ${/fail|required|invalid|forbidden|error/i.test(createStatus) ? 'is-error' : ''}` }, createStatus),
+      React.createElement('hr', null)
+    );
+  }, [creatingDefinition, createStatus, saveCreate, cancelCreate]);
 
   const orderedKeys = React.useMemo(() => {
     const keys = [];
@@ -565,8 +734,15 @@ function GSDoc() {
           React.createElement('a', { className: 'docs-back-link', href: './' }, 'Back'),
           React.createElement('h2', null, '#gscript docs'),
           React.createElement('p', null, docsCount ? `${docsCount} entries` : 'Loading entries'),
-          React.createElement('div', { className: 'docs-auth-row' },
+          React.createElement('div', { className: `docs-auth-row ${canEditDocs ? 'can-add' : ''}` },
             React.createElement('input', { type: 'text', id: 'search', placeholder: 'Search functions...', value: searchQuery, onChange: handleSearch }),
+            canEditDocs && React.createElement('button', {
+              type: 'button',
+              className: `docs-sidebar-action ${creatingDefinition ? 'active' : ''}`,
+              onClick: beginCreate,
+              title: 'Add definition',
+              'aria-label': 'Add definition'
+            }, React.createElement('span', null, '+')),
             discordUser
               ? React.createElement('button', {
                   type: 'button',
@@ -624,7 +800,10 @@ function GSDoc() {
       React.createElement('main', { id: 'content', ref: contentRef, className: `${sidebarOpen ? '' : 'expanded'} ${editingKey ? 'docs-editing-active' : ''}`.trim() },
         React.createElement('div', { className: 'docs-list', ref: docsListRef },
           orderedKeys.length === 0 ? React.createElement('p', { className: 'docs-loading' }, 'Loading documentation...') :
-          visibleKeys.map(key => renderSection(key))
+          React.createElement(React.Fragment, null,
+            renderCreateSection(),
+            visibleKeys.map(key => renderSection(key))
+          )
         )
       )
     )
