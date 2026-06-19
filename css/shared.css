@@ -532,6 +532,9 @@ body.docs-active .container{height:100vh;min-height:100vh;padding:0;align-items:
 .docs-shell .docs-monaco-example:focus-within{outline:1px solid rgba(101,226,126,0.55);outline-offset:0;border-color:rgba(101,226,126,0.55);}
 .docs-shell .docs-monaco-example .monaco-editor,.docs-shell .docs-monaco-example .monaco-editor-background,.docs-shell .docs-monaco-example .overflow-guard{background:#030607!important;}
 .docs-shell .docs-monaco-example .margin{background:#05090a!important;}
+.docs-shell .docs-monaco-code{width:100%;box-sizing:border-box;background:#030607;border:1px solid rgba(255,215,91,0.16);box-shadow:inset 0 1px 14px rgba(0,0,0,0.22);overflow:hidden;}
+.docs-shell .docs-monaco-code .monaco-editor,.docs-shell .docs-monaco-code .monaco-editor-background,.docs-shell .docs-monaco-code .overflow-guard{background:#030607!important;}
+.docs-shell .docs-monaco-code .margin{background:#030607!important;}
 .docs-shell .docs-edit-status{margin:0 18px 16px;color:#bcd8c8;font-size:14px;text-align:right;text-shadow:0 2px 8px rgba(0,0,0,0.75);}
 .docs-shell .docs-edit-status.is-error{color:#ff9d9d;}
 .docs-shell .docs-delete-panel{margin:0 18px 16px;padding:12px 14px;border:1px solid rgba(255,105,105,0.24);background:rgba(42,5,5,0.22);display:grid;gap:10px;}

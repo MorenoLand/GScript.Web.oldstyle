@@ -104,78 +104,102 @@ function registerDocsMonacoLanguage() {
   if (!window.monaco || window.__gscriptDocsMonacoReady) return;
   window.__gscriptDocsMonacoReady = true;
 
-  if (!window.monaco.languages.getLanguages().some(language => language.id === 'gscript')) {
-    window.monaco.languages.register({ id: 'gscript' });
+  if (!window.monaco.languages.getLanguages().some(language => language.id === 'graalscript')) {
+    window.monaco.languages.register({ id: 'graalscript' });
   }
 
-  window.monaco.languages.setMonarchTokensProvider('gscript', {
+  window.monaco.languages.setMonarchTokensProvider('graalscript', {
     keywords: [
-      'break', 'case', 'continue', 'default', 'do', 'else', 'elseif', 'for', 'if',
-      'in', 'return', 'switch', 'while', 'with', 'join', 'leave', 'public', 'private',
-      'const', 'enum', 'function', 'new', 'datablock', 'true', 'false', 'nil', 'null',
-      'NULL', 'pi', 'timevar2'
+      'class', 'extends', 'implements', 'import', 'instanceof', 'interface', 'native', 'package', 'volatile', 'throws',
+      'break', 'case', 'continue', 'default', 'do', 'else', 'elseif', 'for', 'function', 'if', 'in', 'return', 'switch', 'while', 'with', 'xor',
+      'public', 'const', 'enum'
     ],
-    builtinVariables: ['this', 'thiso', 'temp', 'server', 'serverr', 'client', 'clientr', 'player', 'name'],
+    memory: ['new', 'datablock'],
+    builtins: ['true', 'false', 'nil', 'null', 'pi'],
+    extras: ['this', 'thiso', 'temp', 'server', 'serverr', 'client', 'clientr', 'player'],
+    objectProperties: ['name'],
     tokenizer: {
       root: [
-        [/\s*#.*$/, 'comment'],
         [/\/\/.*$/, 'comment'],
-        [/\/\*/, 'comment', '@comment'],
-        [/"([^"\\]|\\.)*$/, 'string.invalid'],
-        [/"/, 'string', '@string'],
-        [/\$[a-zA-Z_][a-zA-Z0-9_]*(?:::[a-zA-Z_][a-zA-Z0-9_]*)*/, 'variable.predefined'],
-        [/\b0[xX][0-9a-fA-F]+\b/, 'number.hex'],
-        [/\b[0-9]+(?:\.[0-9]+)?\b/, 'number'],
-        [/\b(break|case|continue|default|do|else|elseif|for|if|in|return|switch|while|with)\b/, 'keyword'],
-        [/\b(join|leave)\b/, 'type'],
-        [/\b(public|private|const|enum|function)\b/, 'storage.modifier'],
-        [/\b(new|datablock)\b/, 'keyword.other'],
-        [/\b(true|false|nil|null|NULL|pi|timevar2)\b/, 'constant.language'],
-        [/\b(this|thiso|temp|server|serverr|client|clientr|player|name)\b/, 'variable.language'],
-        [/[a-zA-Z_][a-zA-Z0-9_]*(?=\()/, 'entity.name.function'],
-        [/[a-zA-Z_][a-zA-Z0-9_]*/, 'identifier']
+        [/\/\*/, 'comment', '@blockcomment'],
+        [/"/, 'string', '@string_dq'],
+        [/'/, 'string', '@string_sq'],
+        [/0[xX][0-9a-fA-F]+[Ll]?\b/, 'number'],
+        [/[0-9]*\.[0-9]+([eE][-+]?[0-9]+)?[fFdD]?\b/, 'number.float'],
+        [/[0-9]+[eE][-+]?[0-9]+[fFdD]?\b/, 'number.float'],
+        [/[0-9]+[fFdD]\b/, 'number.float'],
+        [/[0-9]+[Ll]?\b/, 'number'],
+        [/\b(?:true|false|nil|null|pi)\b/i, 'keyword.builtin'],
+        [/\b(?:this|thiso|temp|server|serverr|client|clientr|player)\b/i, 'keyword.extras'],
+        [/[a-zA-Z_]\w*(?=\s*\()/, {
+          cases: {
+            '@keywords': 'keyword',
+            '@memory': 'keyword.memory',
+            '@default': 'function.call'
+          }
+        }],
+        [/[a-zA-Z_]\w*/, {
+          cases: {
+            '@keywords': 'keyword',
+            '@memory': 'keyword.memory',
+            '@objectProperties': 'variable.property',
+            '@default': 'identifier'
+          }
+        }],
+        [/[-~^@/%|=+*!?&<>]/, 'operator'],
+        [/[\[\]]/, 'operator'],
+        [/[{}();:,.]/, 'delimiter']
       ],
-      comment: [
-        [/[^\/*]+/, 'comment'],
-        [/\/\*/, 'comment', '@push'],
-        ['\\*/', 'comment', '@pop'],
-        [/[\/*]/, 'comment']
+      blockcomment: [
+        [/[^/*]+/, 'comment'],
+        [/\*\//, 'comment', '@pop'],
+        [/[/*]/, 'comment']
       ],
-      string: [
-        [/[^\\"]+/, 'string'],
+      string_dq: [
+        [/[^"]+/, 'string'],
         [/"/, 'string', '@pop']
+      ],
+      string_sq: [
+        [/[^'\n]+/, 'string'],
+        [/\n/, '', '@pop'],
+        [/'/, 'string', '@pop']
       ]
     }
   });
 
   window.monaco.editor.defineTheme('gscript-docs', {
     base: 'vs-dark',
-    inherit: true,
+    inherit: false,
     rules: [
-      { token: 'comment', foreground: '8fa0b8', fontStyle: 'italic' },
-      { token: 'keyword', foreground: 'ff7aa8' },
-      { token: 'keyword.other', foreground: 'ff7aa8' },
-      { token: 'storage.modifier', foreground: 'ff7aa8' },
-      { token: 'type', foreground: 'ff7aa8' },
-      { token: 'string', foreground: 'f1fa8c' },
-      { token: 'number', foreground: 'bd93f9' },
-      { token: 'number.hex', foreground: 'bd93f9' },
-      { token: 'constant.language', foreground: 'bd93f9' },
-      { token: 'variable.predefined', foreground: 'ffd75b' },
-      { token: 'variable.language', foreground: 'ffd75b' },
-      { token: 'entity.name.function', foreground: '65e27e' },
-      { token: 'identifier', foreground: 'edf7ef' }
+      { token: '', foreground: 'f8f8f2' },
+      { token: 'comment', foreground: '75715e', fontStyle: 'italic' },
+      { token: 'string', foreground: 'e6db74' },
+      { token: 'number', foreground: 'be84ff' },
+      { token: 'number.float', foreground: 'be84ff' },
+      { token: 'keyword', foreground: 'f92672' },
+      { token: 'keyword.memory', foreground: 'f92672', fontStyle: 'bold' },
+      { token: 'keyword.builtin', foreground: 'be84ff' },
+      { token: 'keyword.extras', foreground: 'f57900' },
+      { token: 'function.call', foreground: 'a6e22b' },
+      { token: 'variable.property', foreground: '3f8c61' },
+      { token: 'operator', foreground: 'f92672' },
+      { token: 'delimiter', foreground: 'ffffff' },
+      { token: 'identifier', foreground: 'f8f8f2' }
     ],
     colors: {
       'editor.background': '#030607',
-      'editor.foreground': '#edf7ef',
-      'editorCursor.foreground': '#edf7ef',
+      'editor.foreground': '#f8f8f2',
+      'editorLineNumber.foreground': '#60615d',
+      'editorLineNumber.activeForeground': '#f8f8f2',
+      'editorCursor.foreground': '#f8f8f0',
+      'editor.selectionBackground': '#444444',
       'editor.lineHighlightBackground': '#091211',
       'editor.lineHighlightBorder': '#091211',
-      'editor.selectionBackground': '#173d2a',
-      'editor.inactiveSelectionBackground': '#0f261d',
-      'editorLineNumber.foreground': '#61756b',
-      'editorLineNumber.activeForeground': '#dce8ff'
+      'editorIndentGuide.background1': '#1a211f',
+      'editorIndentGuide.activeBackground1': '#516058',
+      'scrollbarSlider.background': '#5c5c5c66',
+      'scrollbarSlider.hoverBackground': '#77777788',
+      'scrollbarSlider.activeBackground': '#999999cc'
     }
   });
 }
@@ -193,7 +217,7 @@ function DocsMonacoExampleEditor({ name, defaultValue = '', placeholder = '', ar
       if (disposed || !containerRef.current) return;
       const editor = monacoInstance.editor.create(containerRef.current, {
         value: defaultValue || '',
-        language: 'gscript',
+        language: 'graalscript',
         theme: 'gscript-docs',
         automaticLayout: true,
         fontSize: 14,
@@ -271,6 +295,80 @@ function DocsMonacoExampleEditor({ name, defaultValue = '', placeholder = '', ar
       'data-placeholder': placeholder
     }, !ready && React.createElement('span', null, placeholder || 'Loading editor...'))
   );
+}
+
+function DocsMonacoCodeBlock({ value = '' }) {
+  const containerRef = React.useRef(null);
+  const editorRef = React.useRef(null);
+  const [failed, setFailed] = React.useState(false);
+  const lineCount = Math.max(1, String(value || '').split('\n').length);
+  const editorHeight = Math.min(520, Math.max(96, lineCount * 22 + 28));
+
+  React.useEffect(() => {
+    let disposed = false;
+    ensureDocsMonaco().then(monacoInstance => {
+      if (disposed || !containerRef.current) return;
+      const editor = monacoInstance.editor.create(containerRef.current, {
+        value: value || '',
+        language: 'graalscript',
+        theme: 'gscript-docs',
+        readOnly: true,
+        domReadOnly: true,
+        automaticLayout: true,
+        fontSize: 14,
+        fontFamily: 'Consolas, Monaco, "Courier New", monospace',
+        lineHeight: 22,
+        minimap: { enabled: false },
+        scrollBeyondLastLine: false,
+        wordWrap: 'on',
+        wrappingIndent: 'indent',
+        tabSize: 2,
+        renderLineHighlight: 'none',
+        overviewRulerLanes: 0,
+        hideMarkersInOverviewRuler: true,
+        lineNumbers: 'off',
+        glyphMargin: false,
+        folding: false,
+        lineDecorationsWidth: 0,
+        lineNumbersMinChars: 0,
+        renderValidationDecorations: 'off',
+        contextmenu: false,
+        scrollbar: { useShadows: false, verticalScrollbarSize: 10, horizontalScrollbarSize: 10 }
+      });
+      editorRef.current = editor;
+      setTimeout(() => editor.layout(), 0);
+    }).catch(error => {
+      console.error('Failed to load Monaco code block for docs:', error);
+      setFailed(true);
+    });
+
+    return () => {
+      disposed = true;
+      if (editorRef.current) {
+        editorRef.current.dispose();
+        editorRef.current = null;
+      }
+    };
+  }, []);
+
+  React.useEffect(() => {
+    if (editorRef.current && editorRef.current.getValue() !== (value || '')) {
+      editorRef.current.setValue(value || '');
+    }
+  }, [value]);
+
+  if (failed) {
+    return React.createElement('pre', null,
+      React.createElement('code', { className: 'language-javascript', dangerouslySetInnerHTML: { __html: value.replace(/</g, '&lt;').replace(/>/g, '&gt;') } })
+    );
+  }
+
+  return React.createElement('div', {
+    ref: containerRef,
+    className: 'docs-monaco-code',
+    style: { height: `${editorHeight}px` },
+    'aria-label': 'Example code'
+  });
 }
 
 function GSDoc() {
@@ -744,9 +842,7 @@ function GSDoc() {
         }, isCodeCopied ? '✓' : 'Copy'),
         isEditing
           ? React.createElement(DocsMonacoExampleEditor, { name: 'example', defaultValue: editDraft.example, placeholder: 'Example', ariaLabel: 'Example' })
-          : React.createElement('pre', null,
-            React.createElement('code', { className: 'language-javascript', dangerouslySetInnerHTML: { __html: item.example.replace(/</g, '&lt;').replace(/>/g, '&gt;') } })
-          )
+          : React.createElement(DocsMonacoCodeBlock, { value: item.example || '' })
       ),
       isEditing && editStatus && React.createElement('div', { className: `docs-edit-status ${/fail|required|invalid|forbidden|error/i.test(editStatus) ? 'is-error' : ''}` }, editStatus),
       isEditing && deletingKey === key && React.createElement('div', { className: 'docs-delete-panel' },
