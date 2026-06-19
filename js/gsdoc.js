@@ -82,7 +82,10 @@ function GSDoc() {
   const isMobile = window.innerWidth <= 768;
 
   const discordLoginUrl = React.useMemo(() => {
-    const returnUrl = `${window.location.origin}${window.location.pathname}${window.location.search}`;
+    const isDocsHost = window.location.hostname.toLowerCase() === 'docs.gscript.dev';
+    const returnUrl = isDocsHost
+      ? `${window.location.origin}${window.location.pathname || '/'}`
+      : `${window.location.origin}${window.location.pathname}${window.location.search}`;
     return `https://api.moreno.land/api/auth/discord/login?returnUrl=${encodeURIComponent(returnUrl)}`;
   }, []);
 
