@@ -229,7 +229,7 @@ function GSDoc() {
 
   const readDefinitionForm = React.useCallback((form, fallback = {}, fallbackKey = '') => {
     const read = (field) => form?.querySelector(`[name="${field}"]`)?.value ?? fallback[field] ?? '';
-    const key = read('key').trim();
+    const key = (read('key') || read('name')).trim();
     return {
       key: key || fallbackKey,
       payload: {
@@ -525,7 +525,12 @@ function GSDoc() {
         React.createElement('p', null, `Type ${key} to permanently delete this definition.`),
         React.createElement('div', null,
           React.createElement('input', { value: deleteConfirm, onChange: e => setDeleteConfirm(e.target.value), ...EDIT_FIELD_PROPS, 'aria-label': `Type ${key} to confirm deletion` }),
-          React.createElement('button', { type: 'button', disabled: deleteConfirm.trim() !== key || deleteStatus === 'Deleting...', onClick: () => deleteDefinition(key) }, deleteStatus === 'Deleting...' ? 'Deleting' : 'Confirm Delete')
+          React.createElement('button', { type: 'button', disabled: deleteConfirm.trim() !== key || deleteStatus === 'Deleting...', onClick: () => deleteDefinition(key) }, deleteStatus === 'Deleting...' ? 'Deleting' : 'Confirm Delete'),
+          React.createElement('button', { type: 'button', className: 'is-cancel', disabled: deleteStatus === 'Deleting...', onClick: () => {
+            setDeletingKey(null);
+            setDeleteConfirm('');
+            setDeleteStatus('');
+          } }, 'Cancel')
         ),
         deleteStatus && React.createElement('span', { className: /fail|required|invalid|forbidden|error/i.test(deleteStatus) ? 'is-error' : '' }, deleteStatus)
       ),
@@ -552,6 +557,10 @@ function GSDoc() {
           )
           : React.createElement('input', { name: field, defaultValue: defaultValue, ...EDIT_FIELD_PROPS })
     );
+    const renderIdentity = (label, field, placeholder) => React.createElement('label', { className: 'docs-create-identity-field' },
+      React.createElement('strong', null, `${label}: `),
+      React.createElement('input', { name: field, placeholder: placeholder, ...EDIT_FIELD_PROPS })
+    );
 
     return React.createElement('div', { className: 'section-wrapper is-editing docs-create-section', key: '__create__', ref: createFormRef },
       React.createElement('h2', null,
@@ -564,17 +573,18 @@ function GSDoc() {
           React.createElement('button', { type: 'button', disabled: isCreating, onClick: cancelCreate }, 'Cancel')
         )
       ),
-      React.createElement('div', { className: 'docs-meta-panel docs-create-key' },
-        renderMeta('Key', 'key', ''),
-        renderMeta('Name', 'name', ''),
+      React.createElement('div', { className: 'docs-create-identity' },
+        renderIdentity('Name', 'name', 'function_or_variable_name')
+      ),
+      React.createElement('textarea', { name: 'description', className: 'docs-inline-edit docs-description-edit', defaultValue: '', rows: 5, placeholder: 'Description', ...EDIT_FIELD_PROPS, 'aria-label': 'Description' }),
+      React.createElement('div', { className: 'docs-meta-panel' },
         renderMeta('Type', 'type', 'function'),
         renderMeta('Parameters', 'params', ''),
         renderMeta('Returns', 'returns', 'void'),
         renderMeta('Scope', 'scope', 'clientside')
       ),
-      React.createElement('textarea', { name: 'description', className: 'docs-inline-edit docs-description-edit', defaultValue: '', rows: 5, ...EDIT_FIELD_PROPS, 'aria-label': 'Description' }),
       React.createElement('div', { className: 'code-wrapper is-editing' },
-        React.createElement('textarea', { name: 'example', className: 'docs-inline-edit docs-example-edit', defaultValue: '', rows: 9, ...EDIT_FIELD_PROPS, 'aria-label': 'Example' })
+        React.createElement('textarea', { name: 'example', className: 'docs-inline-edit docs-example-edit', defaultValue: '', rows: 9, placeholder: 'Example', ...EDIT_FIELD_PROPS, 'aria-label': 'Example' })
       ),
       createStatus && React.createElement('div', { className: `docs-edit-status ${/fail|required|invalid|forbidden|error/i.test(createStatus) ? 'is-error' : ''}` }, createStatus),
       React.createElement('hr', null)

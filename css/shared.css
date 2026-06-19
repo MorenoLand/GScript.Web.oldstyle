@@ -505,6 +505,12 @@ body.docs-active .container{height:100vh;min-height:100vh;padding:0;align-items:
 .docs-shell .docs-section-title{min-width:0;flex:1 1 auto;overflow:hidden;text-overflow:ellipsis;}
 .docs-shell .section-wrapper p{padding:16px 18px;margin:0;color:#edf7ef;font-size:16px;line-height:1.48;text-shadow:0 2px 8px rgba(0,0,0,0.75);}
 .docs-shell .docs-meta-panel{margin:0 18px 16px!important;padding:12px 14px!important;border-radius:0!important;background:rgba(4,7,9,0.42)!important;border:1px solid rgba(255,255,255,0.08)!important;border-left:2px solid rgba(255,215,91,0.38)!important;color:#edf7ef;text-align:left;display:grid;gap:8px;}
+.docs-shell .docs-create-section .docs-section-title{text-align:left;}
+.docs-shell .docs-create-identity{margin:16px 18px 0;padding:12px 14px;background:rgba(4,7,9,0.32);border:1px solid rgba(255,255,255,0.08);border-left:2px solid rgba(101,226,126,0.5);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;}
+.docs-shell .docs-create-identity-field{display:flex;align-items:center;gap:8px;min-width:0;color:#edf7ef;}
+.docs-shell .docs-create-identity-field input{min-width:0;flex:1;height:30px;background:#030607;border:1px solid rgba(255,255,255,0.11);border-top-color:rgba(101,226,126,0.25);color:#edf7ef;font:15px/1.35 Consolas,"Courier New",monospace;padding:0 8px;text-shadow:1px 1px 1px rgba(0,0,255,1);}
+.docs-shell .docs-create-identity-field input:focus{outline:1px solid rgba(101,226,126,0.55);outline-offset:0;border-color:rgba(101,226,126,0.55);box-shadow:none;}
+.docs-shell .docs-create-section input::placeholder,.docs-shell .docs-create-section textarea::placeholder{color:rgba(237,247,239,0.38);text-shadow:none;}
 .docs-shell .docs-edit-strip{margin-left:0;padding:0;display:inline-flex;align-items:center;justify-content:flex-end;gap:8px;background:transparent;border:0;flex:0 0 auto;}
 .docs-shell .docs-edit-strip button{background:rgba(6,10,12,0.68);border:1px solid rgba(255,255,255,0.12);color:#dce8ff;padding:5px 10px;border-radius:0;cursor:pointer;font-size:12px;transition:all 0.16s ease;text-shadow:none;font-family:inherit;line-height:normal;}
 .docs-shell .docs-edit-strip button:hover{background:rgba(255,215,91,0.1);border-color:rgba(255,215,91,0.32);color:#fff;}
@@ -527,8 +533,10 @@ body.docs-active .container{height:100vh;min-height:100vh;padding:0;align-items:
 .docs-shell .docs-delete-panel div{display:flex;align-items:center;gap:8px;}
 .docs-shell .docs-delete-panel input{min-width:0;flex:1;height:34px;background:#030607;border:1px solid rgba(255,255,255,0.13);border-top-color:rgba(255,105,105,0.3);color:#edf7ef;font:15px/1.35 Consolas,"Courier New",monospace;padding:0 9px;text-shadow:1px 1px 1px rgba(0,0,255,1);}
 .docs-shell .docs-delete-panel button{height:34px;background:rgba(6,10,12,0.72);border:1px solid rgba(255,105,105,0.34);color:#ffb6b6;padding:0 11px;cursor:pointer;font:13px "Tempus Sans ITC","Palatino Linotype",serif;text-shadow:none;}
+.docs-shell .docs-delete-panel button.is-cancel{border-color:rgba(255,255,255,0.14);color:#dce8ff;}
 .docs-shell .docs-delete-panel button:disabled{opacity:0.45;cursor:not-allowed;}
 .docs-shell .docs-delete-panel button:not(:disabled):hover{background:rgba(255,105,105,0.12);color:#fff;}
+.docs-shell .docs-delete-panel button.is-cancel:not(:disabled):hover{background:rgba(255,215,91,0.08);border-color:rgba(255,215,91,0.3);}
 .docs-shell .docs-delete-panel span{font-size:14px;text-align:right;color:#bcd8c8;}
 .docs-shell .docs-delete-panel span.is-error{color:#ff9d9d;}
 .docs-shell .section-wrapper strong{color:#ffd75b!important;text-shadow:0 2px 8px rgba(0,0,0,0.8);}
