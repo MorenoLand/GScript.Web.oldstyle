@@ -95,6 +95,12 @@ function GSDoc() {
     return `https://api.moreno.land/api/auth/discord/login?returnUrl=${encodeURIComponent(returnUrl)}`;
   }, []);
 
+  const docsBackHref = React.useMemo(() => (
+    window.location.hostname.toLowerCase() === 'docs.gscript.dev'
+      ? 'https://gscript.dev/'
+      : './'
+  ), []);
+
   const handleDiscordLogout = React.useCallback(() => {
     localStorage.removeItem(DISCORD_AUTH_STORAGE_KEY);
     setDiscordUser(null);
@@ -177,12 +183,17 @@ function GSDoc() {
 
   const scrollToHash = React.useCallback((hash) => {
     let id = resolveDocId(hash) || hash.replace('#', '');
-    const el = document.getElementById(id);
-    if (el) {
-      setCurrentHash(id);
+    if (id) setCurrentHash(id);
+    const scrollToElement = () => {
+      const el = document.getElementById(id);
+      if (!el) return false;
       window.history.replaceState(null, '', `#${id}`);
       el.scrollIntoView({ behavior: 'smooth', block: 'start' });
       updateMetaTags(id);
+      return true;
+    };
+    if (!scrollToElement()) {
+      requestAnimationFrame(() => requestAnimationFrame(scrollToElement));
     }
   }, [resolveDocId, updateMetaTags]);
 
@@ -226,6 +237,7 @@ function GSDoc() {
   }, []);
 
   const canEditDocs = hasDocsEditAccess(discordUser);
+  const canDeleteDocs = !!discordUser?.botAdmin;
 
   const readDefinitionForm = React.useCallback((form, fallback = {}, fallbackKey = '') => {
     const read = (field) => form?.querySelector(`[name="${field}"]`)?.value ?? fallback[field] ?? '';
@@ -409,6 +421,7 @@ function GSDoc() {
 
   const groups = React.useMemo(() => {
     const grouped = {};
+    const keyGroups = {};
     const ungrouped = [];
     Object.keys(apiData).forEach(key => {
       const item = apiData[key];
@@ -428,7 +441,8 @@ function GSDoc() {
           const groupKey = rawGroup.toLowerCase();
           if (groupKey === 'clientside' || groupKey === 'serverside') return;
           if (!grouped[rawGroup]) grouped[rawGroup] = [];
-          grouped[rawGroup].push(key);
+          if (!grouped[rawGroup].includes(key)) grouped[rawGroup].push(key);
+          if (!keyGroups[key]) keyGroups[key] = rawGroup;
           added = true;
         });
         if (!added) ungrouped.push(key);
@@ -436,7 +450,7 @@ function GSDoc() {
         ungrouped.push(key);
       }
     });
-    return { grouped, ungrouped };
+    return { grouped, ungrouped, keyGroups };
   }, [apiData]);
 
   const renderSection = React.useCallback((key) => {
@@ -477,7 +491,7 @@ function GSDoc() {
               isSaving ? 'Saving' : 'Save'
             ),
             React.createElement('button', { type: 'button', disabled: isSaving, onClick: cancelEdit }, 'Cancel'),
-            React.createElement('button', { type: 'button', className: 'is-danger', disabled: isSaving, onClick: () => {
+            canDeleteDocs && React.createElement('button', { type: 'button', className: 'is-danger', disabled: isSaving, onClick: () => {
               setDeletingKey(key);
               setDeleteConfirm('');
               setDeleteStatus('');
@@ -536,7 +550,7 @@ function GSDoc() {
       ),
       React.createElement('hr', null)
     );
-  }, [apiData, copiedShare, copiedCode, canEditDocs, editingKey, editDraft, editStatus, deletingKey, deleteConfirm, deleteStatus, beginEdit, cancelEdit, saveEdit, deleteDefinition, updateEditDraft]);
+  }, [apiData, copiedShare, copiedCode, canEditDocs, canDeleteDocs, editingKey, editDraft, editStatus, deletingKey, deleteConfirm, deleteStatus, beginEdit, cancelEdit, saveEdit, deleteDefinition, updateEditDraft]);
 
   const renderCreateSection = React.useCallback(() => {
     if (!creatingDefinition) return null;
@@ -591,7 +605,7 @@ function GSDoc() {
     );
   }, [creatingDefinition, createStatus, saveCreate, cancelCreate]);
 
-  const orderedKeys = React.useMemo(() => {
+  const topLevelKeys = React.useMemo(() => {
     const keys = [];
     const { grouped, ungrouped } = groups;
     ungrouped.forEach(key => {
@@ -605,17 +619,25 @@ function GSDoc() {
       if (merged) return;
       keys.push(key);
     });
-    Object.keys(grouped).sort().forEach(groupName => {
-      const groupKeys = grouped[groupName];
-      groupKeys.forEach(key => keys.push(key));
-    });
     return keys;
   }, [apiData, groups]);
 
+  const orderedKeys = React.useMemo(() => {
+    const groupedKeys = [];
+    Object.keys(groups.grouped).sort().forEach(groupName => {
+      groups.grouped[groupName].forEach(key => groupedKeys.push(key));
+    });
+    return [...topLevelKeys, ...groupedKeys];
+  }, [groups, topLevelKeys]);
+
   const visibleKeys = React.useMemo(() => {
     if (editingKey) return [editingKey];
-    return orderedKeys;
-  }, [editingKey, orderedKeys]);
+    if (searchQuery) return orderedKeys;
+    const selectedKey = currentHash || activeSection;
+    const selectedGroup = selectedKey ? groups.keyGroups[selectedKey] : '';
+    if (selectedGroup && groups.grouped[selectedGroup]) return groups.grouped[selectedGroup];
+    return topLevelKeys;
+  }, [activeSection, currentHash, editingKey, groups, orderedKeys, searchQuery, topLevelKeys]);
 
   React.useEffect(() => {
     if (editingKey || !restoreScrollRef.current) return;
@@ -637,7 +659,7 @@ function GSDoc() {
   }, [editingKey, visibleKeys]);
 
   React.useEffect(() => {
-    if (orderedKeys.length === 0) return;
+    if (visibleKeys.length === 0) return;
     const scroller = docsListRef.current;
     if (!scroller) return;
     let scrollFrame = null;
@@ -661,16 +683,16 @@ function GSDoc() {
 
     const updateActiveFromScroll = () => {
       if (scroller.scrollTop <= 2) {
-        setActiveKey(orderedKeys[0]);
+        setActiveKey(visibleKeys[0]);
         return;
       }
       if (scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 2) {
-        setActiveKey(orderedKeys[orderedKeys.length - 1]);
+        setActiveKey(visibleKeys[visibleKeys.length - 1]);
         return;
       }
       const scrollerTop = scroller.getBoundingClientRect().top;
-      let nextActive = orderedKeys[0];
-      for (const key of orderedKeys) {
+      let nextActive = visibleKeys[0];
+      for (const key of visibleKeys) {
         const el = document.getElementById(key);
         if (!el) continue;
         const top = el.getBoundingClientRect().top - scrollerTop;
@@ -699,7 +721,7 @@ function GSDoc() {
       if (scrollFrame) cancelAnimationFrame(scrollFrame);
       scroller.removeEventListener('scroll', onScroll);
     };
-  }, [orderedKeys, groups, resolveDocId, scrollToHash]);
+  }, [visibleKeys, groups, resolveDocId, scrollToHash]);
 
   React.useEffect(() => {
     document.body.classList.add('docs-active');
@@ -741,7 +763,7 @@ function GSDoc() {
           React.createElement('button', { id: 'sidebar-toggle', type: 'button', onClick: () => setSidebarOpen(!sidebarOpen), className: sidebarOpen ? '' : 'collapsed', 'aria-label': sidebarOpen ? 'Collapse docs menu' : 'Open docs menu' },
             React.createElement('span', null, sidebarOpen ? '❮' : '❯')
           ),
-          React.createElement('a', { className: 'docs-back-link', href: './' }, 'Back'),
+          React.createElement('a', { className: 'docs-back-link', href: docsBackHref }, 'Back'),
           React.createElement('h2', null, '#gscript docs'),
           React.createElement('p', null, docsCount ? `${docsCount} entries` : 'Loading entries'),
           React.createElement('div', { className: `docs-auth-row ${canEditDocs ? 'can-add' : ''}` },
