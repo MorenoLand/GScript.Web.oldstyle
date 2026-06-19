@@ -1,3 +1,64 @@
+const DISCORD_AUTH_STORAGE_KEY = 'gscript_discord_auth';
+const BOT_ADMIN_ROLE_ID = '1441076653852725420';
+const BOT_EDITOR_ROLE_ID = '1440497287427129414';
+
+function parseDiscordBool(value) {
+  return value === true || value === 'true' || value === '1';
+}
+
+function normalizeDiscordAuth(user) {
+  if (!user) return null;
+  const roles = Array.isArray(user.roles)
+    ? user.roles.map(String)
+    : String(user.roles || '').split(',').map(role => role.trim()).filter(Boolean);
+  const botAdmin = parseDiscordBool(user.botAdmin) || parseDiscordBool(user.bot_admin) || roles.includes(BOT_ADMIN_ROLE_ID);
+  const botEditor = parseDiscordBool(user.botEditor) || parseDiscordBool(user.bot_editor) || roles.includes(BOT_EDITOR_ROLE_ID);
+  return { ...user, roles, botAdmin, botEditor };
+}
+
+function hasDocsEditAccess(user) {
+  const auth = normalizeDiscordAuth(user);
+  return !!(auth && (auth.botAdmin || auth.botEditor));
+}
+
+const EDIT_FIELD_PROPS = {
+  spellCheck: false,
+  autoCorrect: 'off',
+  autoCapitalize: 'off',
+  autoComplete: 'off',
+  'data-gramm': 'false',
+  'data-gramm_editor': 'false',
+  'data-enable-grammarly': 'false'
+};
+
+function readDiscordAuth() {
+  try {
+    const raw = localStorage.getItem(DISCORD_AUTH_STORAGE_KEY);
+    const auth = raw ? normalizeDiscordAuth(JSON.parse(raw)) : null;
+    if (auth) localStorage.setItem(DISCORD_AUTH_STORAGE_KEY, JSON.stringify(auth));
+    return auth;
+  } catch {
+    return null;
+  }
+}
+
+function isDiscordAuthHash(hash) {
+  const cleanHash = hash.replace(/^#/, '');
+  if (!cleanHash) return false;
+  const params = new URLSearchParams(cleanHash);
+  return params.has('token') || params.has('error');
+}
+
+function renderDocText(value) {
+  return (value || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/\*\*\*([^*]+)\*\*\*/g, '<strong><em>$1</em></strong>')
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+    .replace(/`([^`]+)`/g, '<code style="background: #2a2a3a; color: #ff6b9d; padding: 0.2em 0.4em; border-radius: 3px;">$1</code>')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" style="color: #5ba5ff;">$1</a>')
+    .replace(/\n/g, '<br>');
+}
+
 function GSDoc() {
   const [apiData, setApiData] = React.useState({});
   const [currentHash, setCurrentHash] = React.useState('');
@@ -7,11 +68,58 @@ function GSDoc() {
   const [copiedShare, setCopiedShare] = React.useState(null);
   const [copiedCode, setCopiedCode] = React.useState(null);
   const [activeSection, setActiveSection] = React.useState(null);
+  const [discordUser, setDiscordUser] = React.useState(readDiscordAuth);
+  const [discordAuthError, setDiscordAuthError] = React.useState('');
+  const [editingKey, setEditingKey] = React.useState(null);
+  const [editDraft, setEditDraft] = React.useState(null);
+  const [editStatus, setEditStatus] = React.useState('');
+  const restoreScrollRef = React.useRef(null);
   const sidebarRef = React.useRef(null);
   const contentRef = React.useRef(null);
   const docsListRef = React.useRef(null);
+  const editFormRef = React.useRef(null);
   const initialHashHandledRef = React.useRef(false);
   const isMobile = window.innerWidth <= 768;
+
+  const discordLoginUrl = React.useMemo(() => {
+    const returnUrl = `${window.location.origin}${window.location.pathname}${window.location.search}`;
+    return `https://api.moreno.land/api/auth/discord/login?returnUrl=${encodeURIComponent(returnUrl)}`;
+  }, []);
+
+  const handleDiscordLogout = React.useCallback(() => {
+    localStorage.removeItem(DISCORD_AUTH_STORAGE_KEY);
+    setDiscordUser(null);
+  }, []);
+
+  const handleDiscordAuthHash = React.useCallback(() => {
+    if (!isDiscordAuthHash(window.location.hash)) return false;
+
+    const params = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+    if (params.has('token')) {
+      const user = normalizeDiscordAuth({
+        token: params.get('token') || '',
+        username: params.get('username') || '',
+        nickname: params.get('nickname') || '',
+        avatarUrl: params.get('avatar_url') || '',
+        discordId: params.get('discord_id') || '',
+        roles: (params.get('roles') || '').split(',').filter(Boolean),
+        botAdmin: params.get('bot_admin') === 'true',
+        botEditor: params.get('bot_editor') === 'true'
+      });
+      localStorage.setItem(DISCORD_AUTH_STORAGE_KEY, JSON.stringify(user));
+      setDiscordUser(user);
+      setDiscordAuthError('');
+    } else if (params.has('error')) {
+      setDiscordAuthError(params.get('error') || 'discord_login_failed');
+    }
+
+    window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}`);
+    return true;
+  }, []);
+
+  React.useEffect(() => {
+    handleDiscordAuthHash();
+  }, [handleDiscordAuthHash]);
 
   React.useEffect(() => {
     fetch('https://api.moreno.land/api/gscript').then(r => r.json()).then(data => {
@@ -21,17 +129,6 @@ function GSDoc() {
       }, 100);
     }).catch(e => console.error('GSDoc fetch error:', e));
   }, []);
-
-  React.useEffect(() => {
-    const handleHashChange = () => {
-      const hash = window.location.hash.replace('#', '');
-      if (hash) {
-        scrollToHash(hash);
-      }
-    };
-    window.addEventListener('hashchange', handleHashChange);
-    return () => window.removeEventListener('hashchange', handleHashChange);
-  }, [apiData]);
 
   const updateMetaTags = React.useCallback((id) => {
     if (!apiData[id]) return;
@@ -80,6 +177,18 @@ function GSDoc() {
     }
   }, [resolveDocId, updateMetaTags]);
 
+  React.useEffect(() => {
+    const handleHashChange = () => {
+      if (handleDiscordAuthHash()) return;
+      const hash = window.location.hash.replace('#', '');
+      if (hash) {
+        scrollToHash(hash);
+      }
+    };
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, [apiData, handleDiscordAuthHash, scrollToHash]);
+
   const handleSearch = React.useCallback((e) => {
     setSearchQuery(e.target.value.toLowerCase());
   }, []);
@@ -106,6 +215,86 @@ function GSDoc() {
       return newSet;
     });
   }, []);
+
+  const canEditDocs = hasDocsEditAccess(discordUser);
+
+  const beginEdit = React.useCallback((key, item) => {
+    const scroller = docsListRef.current;
+    const section = document.getElementById(key);
+    const sectionOffset = scroller && section
+      ? section.getBoundingClientRect().top - scroller.getBoundingClientRect().top
+      : 0;
+    restoreScrollRef.current = {
+      key,
+      top: scroller?.scrollTop ?? 0,
+      offset: sectionOffset
+    };
+    setEditingKey(key);
+    setEditStatus('');
+    setEditDraft({
+      name: item.name || key,
+      type: item.type || '',
+      scope: item.scope || 'clientside',
+      params: Array.isArray(item.params) ? item.params.join(', ') : '',
+      returns: item.returns || 'void',
+      description: item.description || '',
+      example: item.example || ''
+    });
+  }, []);
+
+  const cancelEdit = React.useCallback(() => {
+    const key = editingKey;
+    setEditingKey(null);
+    setEditDraft(null);
+    setEditStatus('');
+    if (key) {
+      restoreScrollRef.current = restoreScrollRef.current || { key, top: docsListRef.current?.scrollTop ?? 0, offset: 0 };
+      window.history.replaceState(null, '', `#${key}`);
+    }
+  }, [editingKey]);
+
+  const updateEditDraft = React.useCallback((field, value) => {
+    setEditDraft(prev => ({ ...prev, [field]: value }));
+  }, []);
+
+  const saveEdit = React.useCallback(async (key) => {
+    if (!editDraft || !discordUser?.token) return;
+    setEditStatus('Saving...');
+    try {
+      const form = editFormRef.current;
+      const read = (field) => form?.querySelector(`[name="${field}"]`)?.value ?? editDraft[field] ?? '';
+      const payload = {
+        name: read('name') || key,
+        type: read('type'),
+        scope: read('scope') || 'clientside',
+        params: read('params').split(',').map(p => p.trim()).filter(Boolean),
+        returns: read('returns') || 'void',
+        description: read('description'),
+        example: read('example')
+      };
+
+      const response = await fetch(`https://api.moreno.land/api/gscript/${encodeURIComponent(key)}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${discordUser.token}`
+        },
+        body: JSON.stringify(payload)
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok || !result.success) throw new Error(result.error || 'Save failed.');
+
+      setApiData(prev => ({ ...prev, [key]: result.item || payload }));
+      setEditingKey(null);
+      setEditDraft(null);
+      restoreScrollRef.current = restoreScrollRef.current || { key, top: docsListRef.current?.scrollTop ?? 0, offset: 0 };
+      setEditStatus(result.pushed ? 'Saved and pushed.' : 'Saved.');
+      window.history.replaceState(null, '', `#${key}`);
+      setTimeout(() => setEditStatus(''), 2400);
+    } catch (err) {
+      setEditStatus(err.message || 'Save failed.');
+    }
+  }, [discordUser, editDraft]);
 
   const groups = React.useMemo(() => {
     const grouped = {};
@@ -145,9 +334,40 @@ function GSDoc() {
     const name = item.name || key;
     const isShareCopied = copiedShare === key;
     const isCodeCopied = copiedCode === key;
-    return React.createElement('div', { className: 'section-wrapper', key: key },
+    const isEditing = editingKey === key && editDraft;
+    const isSaving = isEditing && editStatus === 'Saving...';
+    const draftParams = editDraft?.params.split(',').map(p => p.trim()).filter(Boolean) || [];
+    const renderMeta = (label, field, value) => React.createElement('div', { className: isEditing ? 'docs-editable-meta is-editing' : '' },
+      React.createElement('strong', null, `${label}: `),
+      isEditing
+        ? (field === 'scope'
+          ? React.createElement('select', { name: field, defaultValue: editDraft.scope },
+            React.createElement('option', { value: 'clientside' }, 'clientside'),
+            React.createElement('option', { value: 'serverside' }, 'serverside'),
+            React.createElement('option', { value: 'global' }, 'global')
+          )
+          : field === 'type'
+            ? React.createElement('select', { name: field, defaultValue: editDraft.type },
+              React.createElement('option', { value: '' }, ''),
+              React.createElement('option', { value: 'function' }, 'function'),
+              React.createElement('option', { value: 'variable' }, 'variable')
+            )
+            : React.createElement('input', { name: field, defaultValue: editDraft[field], ...EDIT_FIELD_PROPS }))
+        : value && React.createElement('code', null, value)
+    );
+    return React.createElement('div', { className: `section-wrapper ${isEditing ? 'is-editing' : ''}`, key: key, ref: isEditing ? editFormRef : null },
       React.createElement('h2', { id: key },
-        name,
+        React.createElement('span', { className: 'docs-section-title' }, name),
+        canEditDocs && React.createElement('span', { className: 'docs-edit-strip' },
+          !isEditing && React.createElement('button', { type: 'button', onClick: () => beginEdit(key, item) }, 'Edit'),
+          isEditing && React.createElement(React.Fragment, null,
+            React.createElement('button', { type: 'button', className: isSaving ? 'is-saving' : '', disabled: isSaving, onClick: () => saveEdit(key) },
+              isSaving && React.createElement('span', { className: 'docs-save-spinner', 'aria-hidden': 'true' }),
+              isSaving ? 'Saving' : 'Save'
+            ),
+            React.createElement('button', { type: 'button', disabled: isSaving, onClick: cancelEdit }, 'Cancel')
+          )
+        ),
         React.createElement('button', {
           className: 'share-btn' + (isShareCopied ? ' copied' : ''),
           onClick: (e) => {
@@ -157,17 +377,19 @@ function GSDoc() {
             setCopiedShare(key);
             setTimeout(() => setCopiedShare(null), 2000);
           }
-        }, isShareCopied ? '✓' : 'Share')
+        }, isShareCopied ? 'Copied' : 'Share')
       ),
-      item.description && React.createElement('p', { dangerouslySetInnerHTML: { __html: item.description.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\*\*\*([^*]+)\*\*\*/g, '<strong><em>$1</em></strong>').replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>').replace(/\*([^*]+)\*/g, '<em>$1</em>').replace(/`([^`]+)`/g, '<code style="background: #2a2a3a; color: #ff6b9d; padding: 0.2em 0.4em; border-radius: 3px;">$1</code>').replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" style="color: #5ba5ff;">$1</a>').replace(/\n/g, '<br>') } }),
-      (item.type || item.params || item.returns || item.scope) && React.createElement('div', { style: { background: 'rgba(42, 42, 58, 0.85)', padding: '1rem', borderRadius: '6px', marginBottom: '1.5rem', borderLeft: '3px solid rgba(91, 165, 255, 0.5)' } },
-        item.type && React.createElement('div', null, React.createElement('strong', { style: { color: '#7bb5ff' } }, 'Type: '), React.createElement('code', { style: { background: '#2a2a3a', color: '#ff6b9d', padding: '0.2em 0.4em', borderRadius: '3px' } }, item.type)),
-        item.params && item.params.length > 0 && React.createElement('div', null, React.createElement('strong', { style: { color: '#7bb5ff' } }, 'Parameters: '), React.createElement('code', { style: { background: '#2a2a3a', color: '#ff6b9d', padding: '0.2em 0.4em', borderRadius: '3px' } }, item.params.join(', '))),
-        item.returns && React.createElement('div', null, React.createElement('strong', { style: { color: '#7bb5ff' } }, 'Returns: '), React.createElement('code', { style: { background: '#2a2a3a', color: '#ff6b9d', padding: '0.2em 0.4em', borderRadius: '3px' } }, item.returns)),
-        item.scope && React.createElement('div', null, React.createElement('strong', { style: { color: '#7bb5ff' } }, 'Scope: '), React.createElement('code', { style: { background: '#2a2a3a', color: '#ff6b9d', padding: '0.2em 0.4em', borderRadius: '3px' } }, item.scope))
+      isEditing
+        ? React.createElement('textarea', { name: 'description', className: 'docs-inline-edit docs-description-edit', defaultValue: editDraft.description, rows: 5, ...EDIT_FIELD_PROPS, 'aria-label': 'Description' })
+        : item.description && React.createElement('p', { dangerouslySetInnerHTML: { __html: renderDocText(item.description) } }),
+      (isEditing || item.type || item.params || item.returns || item.scope) && React.createElement('div', { className: 'docs-meta-panel' },
+        renderMeta('Type', 'type', item.type),
+        renderMeta('Parameters', 'params', isEditing ? draftParams.join(', ') : (item.params || []).join(', ')),
+        renderMeta('Returns', 'returns', item.returns),
+        renderMeta('Scope', 'scope', item.scope)
       ),
-      item.example && React.createElement('div', { className: 'code-wrapper' },
-        React.createElement('button', {
+      (isEditing || item.example) && React.createElement('div', { className: `code-wrapper ${isEditing ? 'is-editing' : ''}` },
+        !isEditing && React.createElement('button', {
           className: 'copy-btn' + (isCodeCopied ? ' copied' : ''),
           onClick: (e) => {
             e.stopPropagation();
@@ -176,13 +398,16 @@ function GSDoc() {
             setTimeout(() => setCopiedCode(null), 2000);
           }
         }, isCodeCopied ? '✓' : 'Copy'),
-        React.createElement('pre', null,
-          React.createElement('code', { className: 'language-javascript', dangerouslySetInnerHTML: { __html: item.example.replace(/</g, '&lt;').replace(/>/g, '&gt;') } })
-        )
+        isEditing
+          ? React.createElement('textarea', { name: 'example', className: 'docs-inline-edit docs-example-edit', defaultValue: editDraft.example, rows: 9, ...EDIT_FIELD_PROPS, 'aria-label': 'Example' })
+          : React.createElement('pre', null,
+            React.createElement('code', { className: 'language-javascript', dangerouslySetInnerHTML: { __html: item.example.replace(/</g, '&lt;').replace(/>/g, '&gt;') } })
+          )
       ),
+      isEditing && editStatus && React.createElement('div', { className: `docs-edit-status ${/fail|required|invalid|forbidden|error/i.test(editStatus) ? 'is-error' : ''}` }, editStatus),
       React.createElement('hr', null)
     );
-  }, [apiData, copiedShare, copiedCode]);
+  }, [apiData, copiedShare, copiedCode, canEditDocs, editingKey, editDraft, editStatus, beginEdit, cancelEdit, saveEdit, updateEditDraft]);
 
   const orderedKeys = React.useMemo(() => {
     const keys = [];
@@ -196,7 +421,6 @@ function GSDoc() {
         if (groupName.toLowerCase() === nameKey) merged = true;
       });
       if (merged) return;
-      if (name.match(/^on[A-Z]/) || name.match(/^mud/i) || name.match(/^matrix/i) || name.match(/^kingdom/i)) return;
       keys.push(key);
     });
     Object.keys(grouped).sort().forEach(groupName => {
@@ -205,6 +429,30 @@ function GSDoc() {
     });
     return keys;
   }, [apiData, groups]);
+
+  const visibleKeys = React.useMemo(() => {
+    if (editingKey) return [editingKey];
+    return orderedKeys;
+  }, [editingKey, orderedKeys]);
+
+  React.useEffect(() => {
+    if (editingKey || !restoreScrollRef.current) return;
+    const restore = restoreScrollRef.current;
+    restoreScrollRef.current = null;
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const scroller = docsListRef.current;
+        if (!scroller) return;
+        const section = document.getElementById(restore.key);
+        if (section) {
+          const delta = (section.getBoundingClientRect().top - scroller.getBoundingClientRect().top) - (restore.offset || 0);
+          scroller.scrollTop += delta;
+        } else {
+          scroller.scrollTop = restore.top;
+        }
+      });
+    });
+  }, [editingKey, visibleKeys]);
 
   React.useEffect(() => {
     if (orderedKeys.length === 0) return;
@@ -255,7 +503,7 @@ function GSDoc() {
       scrollFrame = requestAnimationFrame(updateActiveFromScroll);
     };
 
-    const hash = window.location.hash.replace('#', '');
+    const hash = isDiscordAuthHash(window.location.hash) ? '' : window.location.hash.replace('#', '');
     const initialKey = !initialHashHandledRef.current && hash ? resolveDocId(hash) : '';
     initialHashHandledRef.current = true;
     if (initialKey) {
@@ -279,6 +527,11 @@ function GSDoc() {
   }, []);
 
   const docsCount = Object.keys(apiData).length;
+  const discordDisplayName = discordUser?.nickname || discordUser?.username || 'Discord';
+  const discordRoleLabel = discordUser?.botAdmin ? 'Bot Admin' : (discordUser?.botEditor ? 'Bot Editor' : 'Logged in');
+  const discordLoginTitle = discordAuthError === 'discord_oauth_not_configured'
+    ? 'Discord OAuth is not configured yet'
+    : 'Login with Discord';
 
   return React.createElement(React.Fragment, null,
     React.createElement('meta', { charSet: 'UTF-8' }),
@@ -309,7 +562,28 @@ function GSDoc() {
           React.createElement('a', { className: 'docs-back-link', href: './' }, 'Back'),
           React.createElement('h2', null, '#gscript docs'),
           React.createElement('p', null, docsCount ? `${docsCount} entries` : 'Loading entries'),
-          React.createElement('input', { type: 'text', id: 'search', placeholder: 'Search functions...', value: searchQuery, onChange: handleSearch })
+          React.createElement('div', { className: 'docs-auth-row' },
+            React.createElement('input', { type: 'text', id: 'search', placeholder: 'Search functions...', value: searchQuery, onChange: handleSearch }),
+            discordUser
+              ? React.createElement('button', {
+                  type: 'button',
+                  className: `docs-discord-auth logged-in ${discordUser.botAdmin ? 'is-admin' : (discordUser.botEditor ? 'is-editor' : '')}`,
+                  onClick: handleDiscordLogout,
+                  title: `${discordDisplayName} - ${discordRoleLabel}. Click to log out.`,
+                  'aria-label': 'Log out of Discord'
+                },
+                  discordUser.avatarUrl
+                    ? React.createElement('img', { src: discordUser.avatarUrl, alt: '' })
+                    : React.createElement('i', { className: 'fab fa-discord' }),
+                  (discordUser.botAdmin || discordUser.botEditor) && React.createElement('span', { className: 'docs-role-badge' }, discordUser.botAdmin ? 'A' : 'E')
+                )
+              : React.createElement('a', {
+                  className: `docs-discord-auth ${discordAuthError ? 'has-error' : ''}`,
+                  href: discordLoginUrl,
+                  title: discordLoginTitle,
+                  'aria-label': 'Login with Discord'
+                }, React.createElement('i', { className: 'fab fa-discord' }))
+          )
         ),
         React.createElement('div', { id: 'sidebar-links' },
           groups.ungrouped.map(key => {
@@ -344,10 +618,10 @@ function GSDoc() {
           )
         )
       ),
-      React.createElement('main', { id: 'content', ref: contentRef, className: sidebarOpen ? '' : 'expanded' },
+      React.createElement('main', { id: 'content', ref: contentRef, className: `${sidebarOpen ? '' : 'expanded'} ${editingKey ? 'docs-editing-active' : ''}`.trim() },
         React.createElement('div', { className: 'docs-list', ref: docsListRef },
           orderedKeys.length === 0 ? React.createElement('p', { className: 'docs-loading' }, 'Loading documentation...') :
-          orderedKeys.map(key => renderSection(key))
+          visibleKeys.map(key => renderSection(key))
         )
       )
     )
