@@ -59,6 +59,216 @@ function renderDocText(value) {
     .replace(/\n/g, '<br>');
 }
 
+let docsMonacoPromise = null;
+
+function ensureDocsMonaco() {
+  if (window.monaco) {
+    registerDocsMonacoLanguage();
+    return Promise.resolve(window.monaco);
+  }
+  if (docsMonacoPromise) return docsMonacoPromise;
+
+  docsMonacoPromise = new Promise((resolve, reject) => {
+    const loadEditor = () => {
+      window.require.config({ paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs' } });
+      window.require(['vs/editor/editor.main'], () => {
+        registerDocsMonacoLanguage();
+        resolve(window.monaco);
+      }, reject);
+    };
+
+    if (typeof window.require === 'function' && window.require.config) {
+      loadEditor();
+      return;
+    }
+
+    const existingLoader = document.querySelector('script[data-docs-monaco-loader="true"]');
+    if (existingLoader) {
+      existingLoader.addEventListener('load', loadEditor, { once: true });
+      existingLoader.addEventListener('error', reject, { once: true });
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js';
+    script.dataset.docsMonacoLoader = 'true';
+    script.onload = loadEditor;
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
+
+  return docsMonacoPromise;
+}
+
+function registerDocsMonacoLanguage() {
+  if (!window.monaco || window.__gscriptDocsMonacoReady) return;
+  window.__gscriptDocsMonacoReady = true;
+
+  if (!window.monaco.languages.getLanguages().some(language => language.id === 'gscript')) {
+    window.monaco.languages.register({ id: 'gscript' });
+  }
+
+  window.monaco.languages.setMonarchTokensProvider('gscript', {
+    keywords: [
+      'break', 'case', 'continue', 'default', 'do', 'else', 'elseif', 'for', 'if',
+      'in', 'return', 'switch', 'while', 'with', 'join', 'leave', 'public', 'private',
+      'const', 'enum', 'function', 'new', 'datablock', 'true', 'false', 'nil', 'null',
+      'NULL', 'pi', 'timevar2'
+    ],
+    builtinVariables: ['this', 'thiso', 'temp', 'server', 'serverr', 'client', 'clientr', 'player', 'name'],
+    tokenizer: {
+      root: [
+        [/\s*#.*$/, 'comment'],
+        [/\/\/.*$/, 'comment'],
+        [/\/\*/, 'comment', '@comment'],
+        [/"([^"\\]|\\.)*$/, 'string.invalid'],
+        [/"/, 'string', '@string'],
+        [/\$[a-zA-Z_][a-zA-Z0-9_]*(?:::[a-zA-Z_][a-zA-Z0-9_]*)*/, 'variable.predefined'],
+        [/\b0[xX][0-9a-fA-F]+\b/, 'number.hex'],
+        [/\b[0-9]+(?:\.[0-9]+)?\b/, 'number'],
+        [/\b(break|case|continue|default|do|else|elseif|for|if|in|return|switch|while|with)\b/, 'keyword'],
+        [/\b(join|leave)\b/, 'type'],
+        [/\b(public|private|const|enum|function)\b/, 'storage.modifier'],
+        [/\b(new|datablock)\b/, 'keyword.other'],
+        [/\b(true|false|nil|null|NULL|pi|timevar2)\b/, 'constant.language'],
+        [/\b(this|thiso|temp|server|serverr|client|clientr|player|name)\b/, 'variable.language'],
+        [/[a-zA-Z_][a-zA-Z0-9_]*(?=\()/, 'entity.name.function'],
+        [/[a-zA-Z_][a-zA-Z0-9_]*/, 'identifier']
+      ],
+      comment: [
+        [/[^\/*]+/, 'comment'],
+        [/\/\*/, 'comment', '@push'],
+        ['\\*/', 'comment', '@pop'],
+        [/[\/*]/, 'comment']
+      ],
+      string: [
+        [/[^\\"]+/, 'string'],
+        [/"/, 'string', '@pop']
+      ]
+    }
+  });
+
+  window.monaco.editor.defineTheme('gscript-docs', {
+    base: 'vs-dark',
+    inherit: true,
+    rules: [
+      { token: 'comment', foreground: '8fa0b8', fontStyle: 'italic' },
+      { token: 'keyword', foreground: 'ff7aa8' },
+      { token: 'keyword.other', foreground: 'ff7aa8' },
+      { token: 'storage.modifier', foreground: 'ff7aa8' },
+      { token: 'type', foreground: 'ff7aa8' },
+      { token: 'string', foreground: 'f1fa8c' },
+      { token: 'number', foreground: 'bd93f9' },
+      { token: 'number.hex', foreground: 'bd93f9' },
+      { token: 'constant.language', foreground: 'bd93f9' },
+      { token: 'variable.predefined', foreground: 'ffd75b' },
+      { token: 'variable.language', foreground: 'ffd75b' },
+      { token: 'entity.name.function', foreground: '65e27e' },
+      { token: 'identifier', foreground: 'edf7ef' }
+    ],
+    colors: {
+      'editor.background': '#030607',
+      'editor.foreground': '#edf7ef',
+      'editorCursor.foreground': '#edf7ef',
+      'editor.lineHighlightBackground': '#091211',
+      'editor.lineHighlightBorder': '#091211',
+      'editor.selectionBackground': '#173d2a',
+      'editor.inactiveSelectionBackground': '#0f261d',
+      'editorLineNumber.foreground': '#61756b',
+      'editorLineNumber.activeForeground': '#dce8ff'
+    }
+  });
+}
+
+function DocsMonacoExampleEditor({ name, defaultValue = '', placeholder = '', ariaLabel = 'Example' }) {
+  const containerRef = React.useRef(null);
+  const hiddenRef = React.useRef(null);
+  const editorRef = React.useRef(null);
+  const [ready, setReady] = React.useState(false);
+  const [failed, setFailed] = React.useState(false);
+
+  React.useEffect(() => {
+    let disposed = false;
+    ensureDocsMonaco().then(monacoInstance => {
+      if (disposed || !containerRef.current) return;
+      const editor = monacoInstance.editor.create(containerRef.current, {
+        value: defaultValue || '',
+        language: 'gscript',
+        theme: 'gscript-docs',
+        automaticLayout: true,
+        fontSize: 14,
+        fontFamily: 'Consolas, Monaco, "Courier New", monospace',
+        lineHeight: 22,
+        minimap: { enabled: false },
+        scrollBeyondLastLine: false,
+        wordWrap: 'on',
+        wrappingIndent: 'indent',
+        tabSize: 2,
+        insertSpaces: true,
+        renderLineHighlight: 'none',
+        overviewRulerLanes: 0,
+        hideMarkersInOverviewRuler: true,
+        scrollbar: { useShadows: false, verticalScrollbarSize: 10, horizontalScrollbarSize: 10 }
+      });
+      editorRef.current = editor;
+      setReady(true);
+      editor.onDidChangeModelContent(() => {
+        if (hiddenRef.current) hiddenRef.current.value = editor.getValue();
+      });
+      setTimeout(() => editor.layout(), 0);
+    }).catch(error => {
+      console.error('Failed to load Monaco for docs:', error);
+      setFailed(true);
+    });
+
+    return () => {
+      disposed = true;
+      if (editorRef.current) {
+        editorRef.current.dispose();
+        editorRef.current = null;
+      }
+    };
+  }, []);
+
+  React.useEffect(() => {
+    if (hiddenRef.current) hiddenRef.current.value = defaultValue || '';
+    if (editorRef.current && editorRef.current.getValue() !== (defaultValue || '')) {
+      editorRef.current.setValue(defaultValue || '');
+    }
+  }, [defaultValue]);
+
+  if (failed) {
+    return React.createElement('textarea', {
+      name,
+      className: 'docs-inline-edit docs-example-edit',
+      defaultValue,
+      rows: 9,
+      placeholder,
+      'aria-label': ariaLabel,
+      ...EDIT_FIELD_PROPS
+    });
+  }
+
+  return React.createElement(React.Fragment, null,
+    React.createElement('textarea', {
+      ref: hiddenRef,
+      name,
+      defaultValue,
+      className: 'docs-example-hidden-field',
+      tabIndex: -1,
+      'aria-hidden': 'true',
+      ...EDIT_FIELD_PROPS
+    }),
+    React.createElement('div', {
+      ref: containerRef,
+      className: `docs-monaco-example ${ready ? 'is-ready' : ''}`,
+      role: 'textbox',
+      'aria-label': ariaLabel,
+      'data-placeholder': placeholder
+    }, !ready && React.createElement('span', null, placeholder || 'Loading editor...'))
+  );
+}
+
 function GSDoc() {
   const [apiData, setApiData] = React.useState({});
   const [currentHash, setCurrentHash] = React.useState('');
@@ -529,7 +739,7 @@ function GSDoc() {
           }
         }, isCodeCopied ? '✓' : 'Copy'),
         isEditing
-          ? React.createElement('textarea', { name: 'example', className: 'docs-inline-edit docs-example-edit', defaultValue: editDraft.example, rows: 9, ...EDIT_FIELD_PROPS, 'aria-label': 'Example' })
+          ? React.createElement(DocsMonacoExampleEditor, { name: 'example', defaultValue: editDraft.example, placeholder: 'Example', ariaLabel: 'Example' })
           : React.createElement('pre', null,
             React.createElement('code', { className: 'language-javascript', dangerouslySetInnerHTML: { __html: item.example.replace(/</g, '&lt;').replace(/>/g, '&gt;') } })
           )
@@ -598,7 +808,7 @@ function GSDoc() {
         renderMeta('Scope', 'scope', 'clientside')
       ),
       React.createElement('div', { className: 'code-wrapper is-editing' },
-        React.createElement('textarea', { name: 'example', className: 'docs-inline-edit docs-example-edit', defaultValue: '', rows: 9, placeholder: 'Example', ...EDIT_FIELD_PROPS, 'aria-label': 'Example' })
+        React.createElement(DocsMonacoExampleEditor, { name: 'example', defaultValue: '', placeholder: 'Example', ariaLabel: 'Example' })
       ),
       createStatus && React.createElement('div', { className: `docs-edit-status ${/fail|required|invalid|forbidden|error/i.test(createStatus) ? 'is-error' : ''}` }, createStatus),
       React.createElement('hr', null)

@@ -526,6 +526,12 @@ body.docs-active .container{height:100vh;min-height:100vh;padding:0;align-items:
 .docs-shell .docs-inline-edit:focus,.docs-shell .docs-editable-meta input:focus,.docs-shell .docs-editable-meta select:focus{outline:1px solid rgba(101,226,126,0.55);outline-offset:0;border-color:rgba(101,226,126,0.55);box-shadow:none;}
 .docs-shell .docs-description-edit{min-height:118px;}
 .docs-shell .docs-example-edit{width:100%;min-height:210px;margin:0;font:14px/1.55 Consolas,"Courier New",monospace;color:#dce8ff;text-shadow:none;}
+.docs-shell .docs-example-hidden-field{position:absolute!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important;left:-9999px!important;}
+.docs-shell .docs-monaco-example{height:260px;width:100%;box-sizing:border-box;background:#030607;border:1px solid rgba(255,255,255,0.13);border-top-color:rgba(255,215,91,0.26);box-shadow:inset 0 1px 14px rgba(0,0,0,0.28);overflow:hidden;color:rgba(237,247,239,0.42);font:14px/1.55 Consolas,"Courier New",monospace;padding:12px 14px;}
+.docs-shell .docs-monaco-example.is-ready{padding:0;color:inherit;}
+.docs-shell .docs-monaco-example:focus-within{outline:1px solid rgba(101,226,126,0.55);outline-offset:0;border-color:rgba(101,226,126,0.55);}
+.docs-shell .docs-monaco-example .monaco-editor,.docs-shell .docs-monaco-example .monaco-editor-background,.docs-shell .docs-monaco-example .overflow-guard{background:#030607!important;}
+.docs-shell .docs-monaco-example .margin{background:#05090a!important;}
 .docs-shell .docs-edit-status{margin:0 18px 16px;color:#bcd8c8;font-size:14px;text-align:right;text-shadow:0 2px 8px rgba(0,0,0,0.75);}
 .docs-shell .docs-edit-status.is-error{color:#ff9d9d;}
 .docs-shell .docs-delete-panel{margin:0 18px 16px;padding:12px 14px;border:1px solid rgba(255,105,105,0.24);background:rgba(42,5,5,0.22);display:grid;gap:10px;}
