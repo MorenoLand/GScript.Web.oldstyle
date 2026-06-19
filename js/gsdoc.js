@@ -736,13 +736,6 @@ function GSDoc() {
           React.createElement('p', null, docsCount ? `${docsCount} entries` : 'Loading entries'),
           React.createElement('div', { className: `docs-auth-row ${canEditDocs ? 'can-add' : ''}` },
             React.createElement('input', { type: 'text', id: 'search', placeholder: 'Search functions...', value: searchQuery, onChange: handleSearch }),
-            canEditDocs && React.createElement('button', {
-              type: 'button',
-              className: `docs-sidebar-action ${creatingDefinition ? 'active' : ''}`,
-              onClick: beginCreate,
-              title: 'Add definition',
-              'aria-label': 'Add definition'
-            }, React.createElement('span', null, '+')),
             discordUser
               ? React.createElement('button', {
                   type: 'button',
@@ -761,7 +754,14 @@ function GSDoc() {
                   href: discordLoginUrl,
                   title: discordLoginTitle,
                   'aria-label': 'Login with Discord'
-                }, React.createElement('i', { className: 'fab fa-discord' }))
+                }, React.createElement('i', { className: 'fab fa-discord' })),
+            canEditDocs && React.createElement('button', {
+              type: 'button',
+              className: `docs-sidebar-action ${creatingDefinition ? 'active' : ''}`,
+              onClick: beginCreate,
+              title: 'Add definition',
+              'aria-label': 'Add definition'
+            }, React.createElement('span', null, '+'))
           )
         ),
         React.createElement('div', { id: 'sidebar-links' },
