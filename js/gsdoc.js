@@ -297,78 +297,48 @@ function DocsMonacoExampleEditor({ name, defaultValue = '', placeholder = '', ar
   );
 }
 
-function DocsMonacoCodeBlock({ value = '' }) {
-  const containerRef = React.useRef(null);
-  const editorRef = React.useRef(null);
-  const [failed, setFailed] = React.useState(false);
-  const lineCount = Math.max(1, String(value || '').split('\n').length);
-  const editorHeight = Math.min(520, Math.max(96, lineCount * 22 + 28));
+const GS_CODE_KEYWORDS = new Set(['class', 'extends', 'implements', 'import', 'instanceof', 'interface', 'native', 'package', 'volatile', 'throws', 'break', 'case', 'continue', 'default', 'do', 'else', 'elseif', 'for', 'function', 'if', 'in', 'return', 'switch', 'while', 'with', 'xor', 'public', 'const', 'enum']);
+const GS_CODE_MEMORY = new Set(['new', 'datablock']);
+const GS_CODE_BUILTINS = new Set(['true', 'false', 'nil', 'null', 'pi']);
+const GS_CODE_EXTRAS = new Set(['this', 'thiso', 'temp', 'server', 'serverr', 'client', 'clientr', 'player']);
+const GS_CODE_PROPERTIES = new Set(['name']);
 
-  React.useEffect(() => {
-    let disposed = false;
-    ensureDocsMonaco().then(monacoInstance => {
-      if (disposed || !containerRef.current) return;
-      const editor = monacoInstance.editor.create(containerRef.current, {
-        value: value || '',
-        language: 'graalscript',
-        theme: 'gscript-docs',
-        readOnly: true,
-        domReadOnly: true,
-        automaticLayout: true,
-        fontSize: 14,
-        fontFamily: 'Consolas, Monaco, "Courier New", monospace',
-        lineHeight: 22,
-        minimap: { enabled: false },
-        scrollBeyondLastLine: false,
-        wordWrap: 'on',
-        wrappingIndent: 'indent',
-        tabSize: 2,
-        renderLineHighlight: 'none',
-        overviewRulerLanes: 0,
-        hideMarkersInOverviewRuler: true,
-        lineNumbers: 'off',
-        glyphMargin: false,
-        folding: false,
-        lineDecorationsWidth: 0,
-        lineNumbersMinChars: 0,
-        renderValidationDecorations: 'off',
-        contextmenu: false,
-        scrollbar: { useShadows: false, verticalScrollbarSize: 10, horizontalScrollbarSize: 10 }
-      });
-      editorRef.current = editor;
-      setTimeout(() => editor.layout(), 0);
-    }).catch(error => {
-      console.error('Failed to load Monaco code block for docs:', error);
-      setFailed(true);
-    });
-
-    return () => {
-      disposed = true;
-      if (editorRef.current) {
-        editorRef.current.dispose();
-        editorRef.current = null;
-      }
-    };
-  }, []);
-
-  React.useEffect(() => {
-    if (editorRef.current && editorRef.current.getValue() !== (value || '')) {
-      editorRef.current.setValue(value || '');
+function tokenizeGSCode(value = '') {
+  const tokens = [];
+  const text = String(value || '');
+  let i = 0;
+  while (i < text.length) {
+    const rest = text.slice(i);
+    let match = rest.match(/^\/\/[^\n]*/);
+    if (match) { tokens.push(['comment', match[0]]); i += match[0].length; continue; }
+    match = rest.match(/^\/\*[\s\S]*?(?:\*\/|$)/);
+    if (match) { tokens.push(['comment', match[0]]); i += match[0].length; continue; }
+    match = rest.match(/^"([^"\\]|\\.)*"?/);
+    if (match && match[0]) { tokens.push(['string', match[0]]); i += match[0].length; continue; }
+    match = rest.match(/^'([^'\\\n]|\\.)*'?/);
+    if (match && match[0]) { tokens.push(['string', match[0]]); i += match[0].length; continue; }
+    match = rest.match(/^(?:0[xX][0-9a-fA-F]+[Ll]?|[0-9]*\.[0-9]+(?:[eE][-+]?[0-9]+)?[fFdD]?|[0-9]+[eE][-+]?[0-9]+[fFdD]?|[0-9]+[fFdD]|[0-9]+[Ll]?)/);
+    if (match) { tokens.push(['number', match[0]]); i += match[0].length; continue; }
+    match = rest.match(/^[a-zA-Z_]\w*/);
+    if (match) {
+      const word = match[0], lower = word.toLowerCase(), after = text.slice(i + word.length);
+      const type = GS_CODE_KEYWORDS.has(lower) ? 'keyword' : GS_CODE_MEMORY.has(lower) ? 'memory' : GS_CODE_BUILTINS.has(lower) ? 'builtin' : GS_CODE_EXTRAS.has(lower) ? 'extra' : GS_CODE_PROPERTIES.has(lower) ? 'property' : /^\s*\(/.test(after) ? 'function' : 'plain';
+      tokens.push([type, word]); i += word.length; continue;
     }
-  }, [value]);
-
-  if (failed) {
-    return React.createElement('pre', null,
-      React.createElement('code', { className: 'language-javascript', dangerouslySetInnerHTML: { __html: value.replace(/</g, '&lt;').replace(/>/g, '&gt;') } })
-    );
+    match = rest.match(/^[-~^@/%|=+*!?&<>\[\]]+/);
+    if (match) { tokens.push(['operator', match[0]]); i += match[0].length; continue; }
+    match = rest.match(/^[{}();:,.]+/);
+    if (match) { tokens.push(['delimiter', match[0]]); i += match[0].length; continue; }
+    tokens.push(['plain', text[i]]);
+    i += 1;
   }
+  return tokens;
+}
 
-  return React.createElement('div', {
-    ref: containerRef,
-    className: 'docs-monaco-code',
-    style: { height: `${editorHeight}px` },
-    'aria-label': 'Example code'
-  });
+function DocsCodeBlock({ value = '' }) {
+  return React.createElement('pre', { className: 'docs-code-block', 'aria-label': 'Example code' },
+    React.createElement('code', null, tokenizeGSCode(value).map((token, index) => React.createElement('span', { key: index, className: `gs-token-${token[0]}` }, token[1])))
+  );
 }
 
 function GSDoc() {
@@ -380,6 +350,7 @@ function GSDoc() {
   const [copiedShare, setCopiedShare] = React.useState(null);
   const [copiedCode, setCopiedCode] = React.useState(null);
   const [activeSection, setActiveSection] = React.useState(null);
+  const [showScrollTop, setShowScrollTop] = React.useState(false);
   const [discordUser, setDiscordUser] = React.useState(readDiscordAuth);
   const [discordAuthError, setDiscordAuthError] = React.useState('');
   const [editingKey, setEditingKey] = React.useState(null);
@@ -842,7 +813,7 @@ function GSDoc() {
         }, isCodeCopied ? '✓' : 'Copy'),
         isEditing
           ? React.createElement(DocsMonacoExampleEditor, { name: 'example', defaultValue: editDraft.example, placeholder: 'Example', ariaLabel: 'Example' })
-          : React.createElement(DocsMonacoCodeBlock, { value: item.example || '' })
+          : React.createElement(DocsCodeBlock, { value: item.example || '' })
       ),
       isEditing && editStatus && React.createElement('div', { className: `docs-edit-status ${/fail|required|invalid|forbidden|error/i.test(editStatus) ? 'is-error' : ''}` }, editStatus),
       isEditing && deletingKey === key && React.createElement('div', { className: 'docs-delete-panel' },
@@ -992,6 +963,7 @@ function GSDoc() {
     };
 
     const updateActiveFromScroll = () => {
+      setShowScrollTop(scroller.scrollTop > 360);
       if (scroller.scrollTop <= 2) {
         setActiveKey(visibleKeys[0]);
         return;
@@ -1146,7 +1118,13 @@ function GSDoc() {
             renderCreateSection(),
             visibleKeys.map(key => renderSection(key))
           )
-        )
+        ),
+        React.createElement('button', {
+          type: 'button',
+          className: `docs-scroll-top ${showScrollTop ? 'show' : ''}`,
+          onClick: () => docsListRef.current?.scrollTo({ top: 0, behavior: 'smooth' }),
+          'aria-label': 'Scroll to top'
+        }, React.createElement('span', null, String.fromCharCode(8593)))
       )
     )
   );
