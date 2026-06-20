@@ -1127,7 +1127,9 @@ function GSDoc() {
             React.createElement('span', null, sidebarOpen ? '\u276E' : '\u276F')
           ),
           React.createElement('a', { className: 'docs-back-link', href: docsBackHref }, 'Back'),
-          React.createElement('a', { className: 'docs-title-link', href: 'https://api.moreno.land/api/gscript', target: '_blank', rel: 'noopener noreferrer' }, '#gscript docs'),
+          React.createElement('h2', null,
+            React.createElement('a', { href: 'https://api.moreno.land/api/gscript', target: '_blank', rel: 'noopener noreferrer', className: 'docs-title-link' }, '#gscript docs')
+          ),
           React.createElement('p', null, docsCount ? docsCount + ' entries' : 'Loading entries'),
           React.createElement('div', { className: 'docs-auth-row' + (canEditDocs ? ' can-add' : '') },
             React.createElement('div', { className: 'docs-search-wrapper' },
@@ -1162,14 +1164,14 @@ function GSDoc() {
             }, React.createElement('span', null, '\u21BB')),
             React.createElement('button', {
               type: 'button',
-              className: 'docs-sidebar-action' + (searchQuery ? ' active' : ''),
+              className: 'docs-sidebar-action docs-expand-btn' + (searchQuery ? ' active' : ''),
               onClick: expandAllGroups,
               title: 'Expand all groups',
               'aria-label': 'Expand all groups'
             }, React.createElement('span', null, '\u2261')),
             canEditDocs && React.createElement('button', {
               type: 'button',
-              className: 'docs-sidebar-action' + (creatingDefinition ? ' active' : ''),
+              className: 'docs-sidebar-action docs-create-btn' + (creatingDefinition ? ' active' : ''),
               onClick: beginCreate,
               title: 'Add definition',
               'aria-label': 'Add definition'
