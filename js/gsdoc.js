@@ -872,8 +872,20 @@ function GSDoc() {
   }, [apiData]);
 
   const expandAllGroups = React.useCallback(function() {
-    setExpandedGroups(new Set(Object.keys(groups.grouped)));
+    setExpandedGroups(function(prev) {
+      var groupCount = Object.keys(groups.grouped).length;
+      if (prev.size >= groupCount) return new Set();
+      return new Set(Object.keys(groups.grouped));
+    });
   }, [groups]);
+
+  const clearSearch = React.useCallback(function() {
+    setSearchQuery('');
+  }, []);
+
+  const refreshEntries = React.useCallback(function() {
+    fetchDocsApi().then(function(data) { setApiData(data); });
+  }, []);
 
   const renderSection = React.useCallback(function(key) {
     const item = apiData[key];
@@ -1083,6 +1095,8 @@ function GSDoc() {
     return function() { document.body.classList.remove('docs-active'); };
   }, []);
 
+  const searchInputRef = React.useRef(null);
+
   const docsCount = Object.keys(apiData).length;
   const discordDisplayName = (discordUser && (discordUser.nickname || discordUser.username)) || 'Discord';
   const discordRoleLabel = discordUser && discordUser.botAdmin ? 'Bot Admin' : (discordUser && discordUser.botEditor ? 'Bot Editor' : 'Logged in');
@@ -1113,10 +1127,13 @@ function GSDoc() {
             React.createElement('span', null, sidebarOpen ? '\u276E' : '\u276F')
           ),
           React.createElement('a', { className: 'docs-back-link', href: docsBackHref }, 'Back'),
-          React.createElement('h2', null, '#gscript docs'),
+          React.createElement('a', { className: 'docs-title-link', href: 'https://api.moreno.land/api/gscript', target: '_blank', rel: 'noopener noreferrer' }, '#gscript docs'),
           React.createElement('p', null, docsCount ? docsCount + ' entries' : 'Loading entries'),
           React.createElement('div', { className: 'docs-auth-row' + (canEditDocs ? ' can-add' : '') },
-            React.createElement('input', { type: 'text', id: 'search', placeholder: 'Search functions...', defaultValue: searchQuery, onChange: handleSearch }),
+            React.createElement('div', { className: 'docs-search-wrapper' },
+              React.createElement('input', { ref: searchInputRef, type: 'text', id: 'search', placeholder: 'Search functions...', defaultValue: searchQuery, onChange: handleSearch }),
+              searchQuery && React.createElement('button', { type: 'button', className: 'docs-search-clear', onClick: function() { clearSearch(); if (searchInputRef.current) searchInputRef.current.value = ''; }, 'aria-label': 'Clear search' }, '\u00D7')
+            ),
             discordUser
               ? React.createElement('button', {
                   type: 'button',
@@ -1136,6 +1153,13 @@ function GSDoc() {
                   title: discordLoginTitle,
                   'aria-label': 'Login with Discord'
                 }, React.createElement('i', { className: 'fab fa-discord' })),
+            React.createElement('button', {
+              type: 'button',
+              className: 'docs-sidebar-action docs-refresh-btn',
+              onClick: refreshEntries,
+              title: 'Refresh entries',
+              'aria-label': 'Refresh entries'
+            }, React.createElement('span', null, '\u21BB')),
             React.createElement('button', {
               type: 'button',
               className: 'docs-sidebar-action' + (searchQuery ? ' active' : ''),

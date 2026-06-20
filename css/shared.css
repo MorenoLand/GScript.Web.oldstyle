@@ -583,3 +583,11 @@ body.docs-active .container{height:100vh;min-height:100vh;padding:0;align-items:
   .docs-shell .section-wrapper h2{font-size:22px;align-items:flex-start;}
   .docs-shell .share-btn{margin-left:0;}
 }
+.docs-title-link{color:#40ff40;font-size:22px;font-family:"Tempus Sans ITC","Palatino Linotype",serif;text-decoration:none;text-shadow:1px 1px 1px rgba(0,0,255,1);font-weight:bold;margin:0 8px;}
+.docs-title-link:hover{color:#60ff60;text-decoration:underline;}
+.docs-search-wrapper{position:relative;flex:1;min-width:0;}
+.docs-search-clear{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:none;color:#40ff40;font-size:20px;cursor:pointer;padding:2px 6px;line-height:1;opacity:0.7;}
+.docs-search-clear:hover{opacity:1;color:#ff4444;}
+.docs-refresh-btn{animation:none !important;}
+.docs-section-title,.section-wrapper p,.docs-meta-panel,.docs-meta-panel *,.docs-code-block,.docs-code-block *,#content p,.section-wrapper .docs-description-edit{user-select:text !important;}
+.section-wrapper h2{user-select:text !important;}
