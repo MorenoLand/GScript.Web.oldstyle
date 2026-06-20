@@ -466,7 +466,7 @@ body.docs-active .container{height:100vh;min-height:100vh;padding:0;align-items:
 .docs-shell #sidebar input:focus{outline:none;border-color:rgba(255,215,91,0.48);box-shadow:0 0 0 2px rgba(255,215,91,0.08);}
 .docs-shell #sidebar .docs-sidebar-action{position:absolute;right:8px;display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;min-height:42px;margin:0;padding:0;background:rgba(4,7,9,0.58);border:1px solid rgba(255,255,255,0.12);border-top-color:rgba(255,215,91,0.22);color:#dce8ff;text-decoration:none;text-shadow:1px 1px 1px rgba(0,0,255,1);box-sizing:border-box;cursor:pointer;overflow:visible;font:22px/1 Consolas,"Courier New",monospace;}
 .docs-shell #sidebar .docs-sidebar-action.docs-refresh-btn{top:50px;}
-.docs-shell #sidebar .docs-sidebar-action.docs-expand-btn{bottom:20px;}
+.docs-shell #sidebar .docs-sidebar-action.docs-expand-btn{bottom:12px;}
 .docs-shell #sidebar .docs-sidebar-action:hover,.docs-shell #sidebar .docs-sidebar-action.active{background:rgba(255,215,91,0.08);border-color:rgba(255,215,91,0.42);color:#fff;}
 .docs-shell #sidebar .docs-sidebar-action span{display:block;text-align:center;text-shadow:inherit;}
 .docs-shell #sidebar .docs-discord-auth{position:relative;display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;min-height:42px;margin:0;padding:0;background:rgba(4,7,9,0.58);border:1px solid rgba(255,255,255,0.12);border-top-color:rgba(255,215,91,0.22);border-left:1px solid rgba(255,255,255,0.12);color:#fff;text-decoration:none;text-shadow:1px 1px 1px rgba(0,0,255,1);box-sizing:border-box;cursor:pointer;overflow:visible;}
