@@ -626,7 +626,7 @@ function GSDoc() {
     if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
     searchTimeoutRef.current = setTimeout(function() {
       setSearchQuery(value);
-    }, 200);
+    }, 400);
   }, []);
 
   const handleSectionClick = React.useCallback(function(key, e) {
@@ -871,6 +871,10 @@ function GSDoc() {
     return { grouped: grouped, ungrouped: ungrouped, keyGroups: keyGroups };
   }, [apiData]);
 
+  const expandAllGroups = React.useCallback(function() {
+    setExpandedGroups(new Set(Object.keys(groups.grouped)));
+  }, [groups]);
+
   const renderSection = React.useCallback(function(key) {
     const item = apiData[key];
     if (!item) return null;
@@ -979,6 +983,26 @@ function GSDoc() {
     if (selectedGroup && groups.grouped[selectedGroup]) return groups.grouped[selectedGroup];
     return topLevelKeys;
   }, [activeSection, currentHash, editingKey, groups, orderedKeys, searchQuery, topLevelKeys]);
+
+  React.useEffect(function() {
+    if (!searchQuery) return;
+    var groupsToExpand = [];
+    Object.keys(groups.grouped).forEach(function(groupName) {
+      var hasMatch = groups.grouped[groupName].some(function(key) {
+        var item = apiData[key];
+        var name = (item && item.name) || key;
+        return key.toLowerCase().indexOf(searchQuery) !== -1 || name.toLowerCase().indexOf(searchQuery) !== -1;
+      });
+      if (hasMatch) groupsToExpand.push(groupName);
+    });
+    if (groupsToExpand.length > 0) {
+      setExpandedGroups(function(prev) {
+        var updated = new Set(prev);
+        groupsToExpand.forEach(function(g) { updated.add(g); });
+        return updated;
+      });
+    }
+  }, [searchQuery, groups, apiData]);
 
   React.useEffect(function() {
     if (editingKey || !restoreScrollRef.current) return;
@@ -1112,6 +1136,13 @@ function GSDoc() {
                   title: discordLoginTitle,
                   'aria-label': 'Login with Discord'
                 }, React.createElement('i', { className: 'fab fa-discord' })),
+            React.createElement('button', {
+              type: 'button',
+              className: 'docs-sidebar-action' + (searchQuery ? ' active' : ''),
+              onClick: expandAllGroups,
+              title: 'Expand all groups',
+              'aria-label': 'Expand all groups'
+            }, React.createElement('span', null, '\u2261')),
             canEditDocs && React.createElement('button', {
               type: 'button',
               className: 'docs-sidebar-action' + (creatingDefinition ? ' active' : ''),
@@ -1161,7 +1192,11 @@ function GSDoc() {
           React.createElement(React.Fragment, null,
             renderCreateSection(),
             searchQuery
-              ? visibleKeys.map(function(key) { return renderSection(key); })
+              ? orderedKeys.filter(function(key) {
+                  var item = apiData[key];
+                  var name = (item && item.name) || key;
+                  return key.toLowerCase().indexOf(searchQuery) !== -1 || name.toLowerCase().indexOf(searchQuery) !== -1;
+                }).map(function(key) { return renderSection(key); })
               : visibleKeys.map(function(key) { return renderSection(key); })
           )
         ),
