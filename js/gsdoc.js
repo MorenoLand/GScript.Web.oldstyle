@@ -469,9 +469,11 @@ function GSDoc() {
     if (id) setCurrentHash(id);
     const scrollToElement = () => {
       const el = document.getElementById(id);
+      const scroller = docsListRef.current;
       if (!el) return false;
       window.history.replaceState(null, '', `#${id}`);
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (scroller) scroller.scrollTo({ top: scroller.scrollTop + el.getBoundingClientRect().top - scroller.getBoundingClientRect().top, behavior: 'smooth' });
+      else el.scrollIntoView({ behavior: 'smooth', block: 'start' });
       updateMetaTags(id);
       return true;
     };
@@ -763,8 +765,8 @@ function GSDoc() {
             : React.createElement('input', { name: field, defaultValue: editDraft[field], ...EDIT_FIELD_PROPS }))
         : value && React.createElement('code', null, value)
     );
-    return React.createElement('div', { className: `section-wrapper ${isEditing ? 'is-editing' : ''}`, key: key, ref: isEditing ? editFormRef : null },
-      React.createElement('h2', { id: key },
+    return React.createElement('div', { id: key, className: `section-wrapper ${isEditing ? 'is-editing' : ''}`, key: key, ref: isEditing ? editFormRef : null },
+      React.createElement('h2', null,
         React.createElement('span', { className: 'docs-section-title' }, name),
         canEditDocs && React.createElement('span', { className: 'docs-edit-strip' },
           !isEditing && React.createElement('button', { type: 'button', onClick: () => beginEdit(key, item) }, 'Edit'),
@@ -888,20 +890,12 @@ function GSDoc() {
 
   const topLevelKeys = React.useMemo(() => {
     const keys = [];
-    const { grouped, ungrouped } = groups;
+    const { ungrouped } = groups;
     ungrouped.forEach(key => {
-      const item = apiData[key];
-      const name = item.name || key;
-      const nameKey = name.toLowerCase();
-      let merged = false;
-      Object.keys(grouped).forEach(groupName => {
-        if (groupName.toLowerCase() === nameKey) merged = true;
-      });
-      if (merged) return;
       keys.push(key);
     });
     return keys;
-  }, [apiData, groups]);
+  }, [groups]);
 
   const orderedKeys = React.useMemo(() => {
     const groupedKeys = [];
@@ -945,11 +939,11 @@ function GSDoc() {
     if (!scroller) return;
     let scrollFrame = null;
 
-    const setActiveKey = (key) => {
+    const setActiveKey = (key, updateHash = false) => {
       if (!key) return;
       setCurrentHash(key);
       setActiveSection(key);
-      window.history.replaceState(null, '', `#${key}`);
+      if (updateHash) window.history.replaceState(null, '', `#${key}`);
       for (const groupName in groups.grouped) {
         if (groups.grouped[groupName].includes(key)) {
           setExpandedGroups(prev => new Set([...prev, groupName]));
