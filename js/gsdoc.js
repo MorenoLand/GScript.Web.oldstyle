@@ -1136,25 +1136,34 @@ function GSDoc() {
               React.createElement('input', { ref: searchInputRef, type: 'text', id: 'search', placeholder: 'Search functions...', defaultValue: searchQuery, onChange: handleSearch }),
               searchQuery && React.createElement('button', { type: 'button', className: 'docs-search-clear', onClick: function() { clearSearch(); if (searchInputRef.current) searchInputRef.current.value = ''; }, 'aria-label': 'Clear search' }, '\u00D7')
             ),
-            discordUser
-              ? React.createElement('button', {
-                  type: 'button',
-                  className: 'docs-discord-auth logged-in' + (discordUser.botAdmin ? ' is-admin' : (discordUser.botEditor ? ' is-editor' : '')),
-                  onClick: handleDiscordLogout,
-                  title: discordDisplayName + ' - ' + discordRoleLabel + '. Click to log out.',
-                  'aria-label': 'Log out of Discord'
-                },
-                  discordUser.avatarUrl
-                    ? React.createElement('img', { src: discordUser.avatarUrl, alt: '' })
-                    : React.createElement('i', { className: 'fab fa-discord' }),
-                  (discordUser.botAdmin || discordUser.botEditor) && React.createElement('span', { className: 'docs-role-badge' }, discordUser.botAdmin ? 'A' : 'E')
-                )
-              : React.createElement('a', {
-                  className: 'docs-discord-auth' + (discordAuthError ? ' has-error' : ''),
-                  href: discordLoginUrl,
-                  title: discordLoginTitle,
-                  'aria-label': 'Login with Discord'
-                }, React.createElement('i', { className: 'fab fa-discord' })),
+            React.createElement('div', { className: 'docs-auth-side' },
+              canEditDocs && React.createElement('button', {
+                type: 'button',
+                className: 'docs-auth-side-action docs-create-btn' + (creatingDefinition ? ' active' : ''),
+                onClick: beginCreate,
+                title: 'Add definition',
+                'aria-label': 'Add definition'
+              }, React.createElement('span', null, '+')),
+              discordUser
+                ? React.createElement('button', {
+                    type: 'button',
+                    className: 'docs-discord-auth logged-in' + (discordUser.botAdmin ? ' is-admin' : (discordUser.botEditor ? ' is-editor' : '')),
+                    onClick: handleDiscordLogout,
+                    title: discordDisplayName + ' - ' + discordRoleLabel + '. Click to log out.',
+                    'aria-label': 'Log out of Discord'
+                  },
+                    discordUser.avatarUrl
+                      ? React.createElement('img', { src: discordUser.avatarUrl, alt: '' })
+                      : React.createElement('i', { className: 'fab fa-discord' }),
+                    (discordUser.botAdmin || discordUser.botEditor) && React.createElement('span', { className: 'docs-role-badge' }, discordUser.botAdmin ? 'A' : 'E')
+                  )
+                : React.createElement('a', {
+                    className: 'docs-discord-auth' + (discordAuthError ? ' has-error' : ''),
+                    href: discordLoginUrl,
+                    title: discordLoginTitle,
+                    'aria-label': 'Login with Discord'
+                  }, React.createElement('i', { className: 'fab fa-discord' }))
+            ),
             React.createElement('button', {
               type: 'button',
               className: 'docs-sidebar-action docs-refresh-btn',
@@ -1169,13 +1178,6 @@ function GSDoc() {
               title: 'Expand all groups',
               'aria-label': 'Expand all groups'
             }, React.createElement('span', null, '\u2261')),
-            canEditDocs && React.createElement('button', {
-              type: 'button',
-              className: 'docs-sidebar-action docs-create-btn' + (creatingDefinition ? ' active' : ''),
-              onClick: beginCreate,
-              title: 'Add definition',
-              'aria-label': 'Add definition'
-            }, React.createElement('span', null, '+'))
           )
         ),
         React.createElement('div', { id: 'sidebar-links' },
