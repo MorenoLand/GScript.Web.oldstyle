@@ -396,7 +396,9 @@ function DocsSection({ sectionKey, item, editingKey, editDraft, editStatus, dele
             ? React.createElement('select', { name: field, defaultValue: editDraft.type },
               React.createElement('option', { value: '' }, ''),
               React.createElement('option', { value: 'function' }, 'function'),
-              React.createElement('option', { value: 'variable' }, 'variable')
+              React.createElement('option', { value: 'variable' }, 'variable'),
+              React.createElement('option', { value: 'event' }, 'event'),
+              React.createElement('option', { value: 'object' }, 'object')
             )
             : React.createElement('input', { name: field, defaultValue: editDraft[field], ...EDIT_FIELD_PROPS }))
         : value && React.createElement('code', null, value)
@@ -483,6 +485,7 @@ function GSDoc() {
   const [activeSection, setActiveSection] = React.useState(null);
   const [showScrollTop, setShowScrollTop] = React.useState(false);
   const [discordUser, setDiscordUser] = React.useState(readDiscordAuth);
+  const [logoutConfirmOpen, setLogoutConfirmOpen] = React.useState(false);
   const [discordAuthError, setDiscordAuthError] = React.useState('');
   const [editingKey, setEditingKey] = React.useState(null);
   const [editDraft, setEditDraft] = React.useState(null);
@@ -518,6 +521,7 @@ function GSDoc() {
   const handleDiscordLogout = React.useCallback(function() {
     localStorage.removeItem(DISCORD_AUTH_STORAGE_KEY);
     setDiscordUser(null);
+    setLogoutConfirmOpen(false);
   }, []);
 
   const handleDiscordAuthHash = React.useCallback(function() {
@@ -931,7 +935,9 @@ function GSDoc() {
             ? React.createElement('select', { name: field, defaultValue: defaultValue },
               React.createElement('option', { value: '' }, ''),
               React.createElement('option', { value: 'function' }, 'function'),
-              React.createElement('option', { value: 'variable' }, 'variable')
+              React.createElement('option', { value: 'variable' }, 'variable'),
+              React.createElement('option', { value: 'event' }, 'event'),
+              React.createElement('option', { value: 'object' }, 'object')
             )
             : React.createElement('input', { name: field, defaultValue: defaultValue, ...EDIT_FIELD_PROPS })
       );
@@ -1148,9 +1154,10 @@ function GSDoc() {
                 ? React.createElement('button', {
                     type: 'button',
                     className: 'docs-discord-auth logged-in' + (discordUser.botAdmin ? ' is-admin' : (discordUser.botEditor ? ' is-editor' : '')),
-                    onClick: handleDiscordLogout,
-                    title: discordDisplayName + ' - ' + discordRoleLabel + '. Click to log out.',
-                    'aria-label': 'Log out of Discord'
+                    onClick: function() { setLogoutConfirmOpen(function(open) { return !open; }); },
+                    title: discordDisplayName + ' - ' + discordRoleLabel + '.',
+                    'aria-label': 'Discord account menu',
+                    'aria-expanded': logoutConfirmOpen ? 'true' : 'false'
                   },
                     discordUser.avatarUrl
                       ? React.createElement('img', { src: discordUser.avatarUrl, alt: '' })
@@ -1178,6 +1185,13 @@ function GSDoc() {
               title: 'Expand all groups',
               'aria-label': 'Expand all groups'
             }, React.createElement('span', null, '\u2261')),
+          ),
+          discordUser && logoutConfirmOpen && React.createElement('div', { className: 'docs-logout-popover' },
+            React.createElement('span', null, 'Log out ' + discordDisplayName + '?'),
+            React.createElement('div', null,
+              React.createElement('button', { type: 'button', onClick: handleDiscordLogout }, 'Confirm'),
+              React.createElement('button', { type: 'button', onClick: function() { setLogoutConfirmOpen(false); } }, 'Cancel')
+            )
           )
         ),
         React.createElement('div', { id: 'sidebar-links' },

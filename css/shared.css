@@ -478,6 +478,12 @@ body.docs-active .container{height:100vh;min-height:100vh;padding:0;align-items:
 .docs-shell #sidebar .docs-discord-auth.is-editor{border-color:rgba(101,226,126,0.5);box-shadow:0 0 0 1px rgba(101,226,126,0.12);}
 .docs-shell #sidebar .docs-role-badge{position:absolute;right:-5px;bottom:-5px;display:flex;align-items:center;justify-content:center;width:15px;height:15px;background:#ffd75b;border:1px solid rgba(0,0,0,0.55);color:#07100a;font:700 10px/1 Consolas,"Courier New",monospace;text-shadow:none;}
 .docs-shell #sidebar .docs-discord-auth.is-editor .docs-role-badge{background:#65e27e;}
+.docs-shell .docs-logout-popover{position:absolute;z-index:80;right:14px;top:138px;width:168px;padding:10px;background:linear-gradient(180deg,rgba(13,18,19,0.96),rgba(5,8,11,0.94));border:1px solid rgba(255,255,255,0.13);border-top-color:rgba(255,215,91,0.36);box-shadow:0 18px 34px rgba(0,0,0,0.34);box-sizing:border-box;}
+.docs-shell .docs-logout-popover span{display:block;margin:0 0 9px;color:#edf7ef;font-size:13px;line-height:1.25;text-align:left;text-shadow:0 2px 8px rgba(0,0,0,0.8);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.docs-shell .docs-logout-popover div{display:flex;gap:8px;justify-content:flex-end;}
+.docs-shell .docs-logout-popover button{height:28px;padding:0 9px;background:rgba(6,10,12,0.68);border:1px solid rgba(255,255,255,0.12);color:#dce8ff;cursor:pointer;font:12px "Tempus Sans ITC","Palatino Linotype",serif;text-shadow:none;}
+.docs-shell .docs-logout-popover button:first-child{border-color:rgba(255,215,91,0.34);color:#fff;}
+.docs-shell .docs-logout-popover button:hover{background:rgba(255,215,91,0.08);border-color:rgba(255,215,91,0.42);}
 .docs-shell #sidebar-links{padding:10px;overflow-y:auto;overflow-x:hidden;flex:1;scrollbar-width:thin;scrollbar-color:rgba(255,215,91,0.35) rgba(0,0,0,0.12);}
 .docs-shell #sidebar-links::-webkit-scrollbar{width:8px;}
 .docs-shell #sidebar-links::-webkit-scrollbar-track{background:rgba(0,0,0,0.12);}
