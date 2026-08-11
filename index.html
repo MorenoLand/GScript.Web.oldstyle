@@ -48,8 +48,8 @@
 <script src="js/react.production.min.js" crossorigin></script>
 <script src="js/react-dom.production.min.js" crossorigin></script>
 <script src="js/babel.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@floating-ui/core@1.6.8"></script>
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script async src="https://cdn.jsdelivr.net/npm/@floating-ui/core@1.6.8"></script>
+<script async src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.7/beautify.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.7/beautify-css.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.7/beautify-html.min.js"></script>
@@ -331,7 +331,6 @@ const data = {
     { icon: 'fas fa-map', text: 'Gmap Generator', href: 'https://gmap.gscript.dev/' },
     { icon: 'fas fa-magic', text: 'Beautifier', href: '/?beautify' },
     { icon: 'fas fa-edit', text: 'Graal Suite', href: 'https://suite.gscript.dev' },
-    { icon: 'fas fa-paste', text: 'Gscript Pastebin', href: 'https://paste.gscript.dev' },
     { icon: 'fas fa-shapes', text: 'setshape2/setimgpart', href: 'https://setshape.gscript.dev' },
     { icon: 'fab fa-github', text: 'Graal Suite Source', href: 'https://github.com/MorenoLand/GScript.GraalSuite' }
   ],
@@ -644,7 +643,10 @@ function App() {
     return params.has('byte') || window.location.hostname === 'byte.gscript.dev';
   });
   const [showDocs, setShowDocs] = useState(() => new URLSearchParams(window.location.search).has('docs') || window.location.hostname === 'docs.gscript.dev');
-  const [isStatsDomain, setIsStatsDomain] = useState(() => window.location.hostname === 'stats.gscript.dev' || window.location.hostname === 'gstats.moreno.land');
+  const [isStatsDomain, setIsStatsDomain] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    return window.location.hostname === 'stats.gscript.dev' || window.location.hostname === 'gstats.moreno.land' || ((window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && params.has('graph'));
+  });
   const [statsView, setStatsView] = useState(() => {
     const params = new URLSearchParams(window.location.search);
     return params.has('graph') ? 'graph' : (params.has('changes') ? 'changes' : 'list');
@@ -860,7 +862,7 @@ function App() {
           <aside className="home-side" aria-label="Mascot">
             <div className="home-avatar-wrap">
             <div className="character home-character">
-              <div className="character-img" title="Ctrl, Shift, or Alt click for hidden tools" onClick={(e) => {
+              <div className="character-img" title="Ctrl, Shift, or Alt click for tools" onClick={(e) => {
                 if (e.ctrlKey) {
                   e.preventDefault();
                   setShowByte(true);
@@ -905,7 +907,6 @@ function App() {
             <a href="https://geditor.net/" target="_blank"><i className="fas fa-layer-group"></i><span>Pluto's Level Editor</span></a>
             <a href="https://gs2.gscript.dev/" target="_blank"><i className="fas fa-server"></i><span>GS2 Emulator</span></a>
             <a href="/?beautify"><i className="fas fa-magic"></i><span>Beautifier</span></a>
-            <a href="https://paste.gscript.dev" target="_blank"><i className="fas fa-paste"></i><span>Pastebin</span></a>
             <a href="https://setshape.gscript.dev" target="_blank"><i className="fas fa-shapes"></i><span>setshape2 / setimgpart</span></a>
           </div>
           <div className="home-board-group">
@@ -916,7 +917,6 @@ function App() {
             <a href="https://github.com/fungsiyan/assets" target="_blank"><i className="fab fa-github"></i><span>fungsiyan Assets</span></a>
             <a href="https://api.gscript.dev/" target="_blank"><i className="fas fa-database"></i><span>GScript LSP Data</span></a>
             <a href="https://fungsiyan.github.io/index/" target="_blank"><i className="fas fa-box-open"></i><span>fungsiyan Resource List</span></a>
-
             <a href="/?indexing"><i className="fas fa-list-check"></i><span>Graphics Indexing Guides (Gimp / PS)</span></a>
           </div>
           <div className="home-board-group home-board-videos">
