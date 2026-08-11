@@ -729,7 +729,7 @@ function GSDoc() {
     if (!editDraft || !discordUser || !discordUser.token) return;
     setEditStatus('Saving...');
     try {
-      const form = editFormRef.current;
+      const form = document.getElementById(key);
       const payload = readDefinitionForm(form, editDraft, key).payload;
 
       const response = await fetch('https://api.moreno.land/api/gscript/' + encodeURIComponent(key), {
@@ -743,7 +743,11 @@ function GSDoc() {
       const result = await response.json().catch(function() { return {}; });
       if (!response.ok || !result.success) throw new Error(result.error || 'Save failed.');
 
-      setApiData(function(prev) { return { ...prev, [key]: result.item || payload }; });
+      setApiData(function(prev) {
+        const next = { ...prev, [key]: result.item || payload };
+        try { localStorage.setItem(DOCS_CACHE_KEY, JSON.stringify({ timestamp: Date.now(), data: next })); } catch { }
+        return next;
+      });
       setEditingKey(null);
       setEditDraft(null);
       setDeletingKey(null);
